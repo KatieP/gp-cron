@@ -135,12 +135,13 @@ function get_database_results() {
 	//$stories = array();
 	//Says >1 weeks because testing db is old
 
-	$sql = "SELECT post_title, post_content, post_name, post_type, ID 
+	$sql = "SELECT post_title, post_content, post_name, post_type, ID, popularity_score 
        		FROM wp_posts 
 	        WHERE post_modified > DATE_SUB(CURDATE(), 
-       		    INTERVAL 2 WEEK) 
+       		    INTERVAL 1 WEEK) 
 	            AND (post_type = 'gp_news' OR post_type = 'gp_projects' OR post_type = 'gp_advertorial')
        		    AND post_status = 'publish'";
+
 
 	$db_result = mysql_query($sql);
 
@@ -150,6 +151,27 @@ function get_database_results() {
 		
 	return $db_result;
 }
+
+function get_users() {
+	mysql_connect("127.0.0.1", "s1-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
+	mysql_select_db("s1-wordpress") or die(mysql_error());
+
+	//Get user emails and their location
+	
+	$sql_user = 'SELECT user_email, display_name, ID, 
+	                    post_latitude, post_longitude
+				 FROM wp_users
+				 WHERE ID = "2"';
+
+	$db_result = mysql_query($sql_user);
+
+	if (! $db_result){
+	   echo('Database error: ' . mysql_error());
+	}
+		
+	return $db_result;
+}
+
 	
 function get_posts() {
     
@@ -157,24 +179,129 @@ function get_posts() {
 	$i = 0;
 	$posts_set = '';
 		
-	while ($i < 7) {
+	while ($i < 15) {
 		mysql_data_seek($db_result, $i);
 		$row = mysql_fetch_object($db_result);
 		$post = get_single_post($row);
 		$posts_set .= $post . '<br />';
+		
+		$user_lat = -34; 
+		$user_long = 151; 
+	
+		$unsorted_posts = array();
+			
+		$c = user_post_distance($row, $user_lat, $user_long);
+		$popularity_score_thisuser = page_rank($c, $row);
+		
+		echo '<hr /><hr /><hr />';
+		echo '$c:<br /><br />';
+		var_dump($c);
+		echo '<hr />';
+		echo '$popularity_score_thisuser:<br /><br />';
+		var_dump($popularity_score_thisuser);
+		echo '<hr />';
+		#$unsorted_single_post = array(
+		#							'post' => $row,
+		#							'rank' => $popularity_score_thisuser
+		#						);
+		#$unsorted_single_post[] = $row;
+		#$unsorted_single_post[] = $current_user_popularity_score;
+		#$unsorted_posts[] = $unsorted_single_post;
+		$row->popularity_score_thisuser = $popularity_score_thisuser;
+		$unsorted_posts[$popularity_score_thisuser] = $row;
+		echo '<hr />';
 		$i++;
+
 	}
 	return $posts_set;
 	
 }
 
-echo '<br /><br />';
+//STEP 3: Work out distance of user to post by hypotenuse  
+
+function user_post_distance($row, $user_lat, $user_long) {
+
+	$post_title = $row->post_title;	
+	$post_ID = $row->ID;
+	$popularity_score = $row->popularity_score;
+	$post_latitude = $row->post_latitude;
+	$post_longitude = $row->post_longitude;
+
+	#echo '$post_title:<br />';
+	#echo $post_title;
+	#echo '<hr />';
+	echo '$post_ID:<br />';
+	echo $post_ID;
+	echo '<hr />';
+	echo '$post_latitude:<br />';
+	echo $post_latitude;
+	echo '<hr />';
+	echo '$post_longitude:<br />';
+	echo $post_longitude; 
+	echo '<hr />';
+
+	$a = $post_latitude - $user_lat;
+	$b = $post_longitude - $user_long;
+	
+	echo 'a:';
+	echo $a;
+	echo '<br />';
+	
+	echo 'b:';
+	echo $b;
+	echo '<br />';
+	
+	$c = sqrt(pow($a,2) + pow($b,2));
+	
+	echo '$c:';
+	echo $c;
+	echo '<br />';
+	echo '<hr />';
+	
+	return $c;
+}
+
+//STEP 4: Add or subtract hypotenuse as converted to unixtime to popularity_score for previous array
+
+function page_rank($c, $row) {
+
+	$popularity_score = $row->popularity_score;
+	echo 'Popularity score BEFORE equation<br />';
+	echo $popularity_score;
+
+	if ($c > 2) {
+ 
+    	$location_as_unix = pow(($c*2000), 1.2);
+    	$location_as_unix = (int) $location_as_unix;
+    	$popularity_score_thisuser = $popularity_score - $location_as_unix;
+    	
+    	echo 'POST IS > 2 // Popularity score<br />';
+    	echo $popularity_score_thisuser;
+    	echo '<hr />';
+
+		echo '<hr /><hr /<hr />';
+		
+	} elseif ($c < 1) {
+	
+		$popularity_score_thisuser = $popularity_score + pow(((1/$c)*3600), 1.2);
+		$popularity_score_thisuser = (int) $popularity_score_thisuser;
+		
+		echo 'POST IS < 1 // Popularity score<br />';
+    	echo '<hr />';
+    	echo $popularity_score_thisuser;
+		echo '<hr /><hr /<hr />';
+	
+	}
+	
+	return $popularity_score_thisuser;
+
+}
 
 
 
 //Send email using mailgun API
 
-function send_simple_message($posts_set) {
+function send_email_notification($user_email, $posts_set) {
   $ch = curl_init();
 
   curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
@@ -184,8 +311,8 @@ function send_simple_message($posts_set) {
   curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
   curl_setopt($ch, CURLOPT_URL, 'https://api.mailgun.net/v2/greenpag.es/messages');
   
-  curl_setopt($ch, CURLOPT_POSTFIELDS, array('from' => 'katie.patrick@thegreenpages.com.au',
-                                             'to' => 'katie.patrick@thegreenpages.com.au',
+  curl_setopt($ch, CURLOPT_POSTFIELDS, array('from' => 'hello@greenpag.es',
+                                             'to' => $user_email,
                                              //'cc' => 'info@thegreenpages.com.au',
                                              'subject' => 'Look who\'s changing the world around you this week!',
                                              'text' => 'Some text',
@@ -591,9 +718,29 @@ $(document).ready(function () {
  
 }
 
-$posts = get_posts();
+function send_notifcations() {
 
-send_simple_message($posts);
+    $users = get_users();
+
+	$i = 0;
+	$data_set = mysql_num_rows($users);    
+
+	while ($i < $data_set) {
+		
+		mysql_data_seek($users, $i);
+		$row = mysql_fetch_object($users);
+		$user_email = $row->user_email;
+
+		echo $user_email;
+
+        $posts_set = get_posts();
+        send_email_notification($user_email, $posts_set);
+        $i++;
+	}
+
+}
+
+send_notifcations();
 
 echo '<br /> ends <br />';
 echo '<br /> It didn\'t break! <br />';
