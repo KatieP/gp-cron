@@ -158,9 +158,11 @@ function get_users() {
 	//Get user emails and their location
 	
 	$sql_user = 'SELECT wp_users.user_email, wp_users.display_name, wp_users.ID, 
-	                    wp_usermeta.gp_google_geo_latitude, wp_usermeta.gp_google_geo_longitude
-				 FROM wp_users, wp_usermeta
-				 WHERE ID = "3"';
+	                    wp_usermeta.meta_key, wp_usermeta.met_value
+				 FROM   wp_users, wp_usermeta
+				 WHERE  wp_users.ID = "3" 
+				 		AND (wp_usermeta.meta_key = "gp_google_geo_latitude"
+				 		     OR wp_usermeta.meta_key = "gp_google_geo_longitude")';
 
 	$db_result = mysql_query($sql_user);
 
@@ -199,13 +201,6 @@ function get_posts($user_lat, $user_long) {
 		echo '$popularity_score_thisuser:<br /><br />';
 		var_dump($popularity_score_thisuser);
 		echo '<hr />';
-		#$unsorted_single_post = array(
-		#							'post' => $row,
-		#							'rank' => $popularity_score_thisuser
-		#						);
-		#$unsorted_single_post[] = $row;
-		#$unsorted_single_post[] = $current_user_popularity_score;
-		#$unsorted_posts[] = $unsorted_single_post;
 		$row->popularity_score_thisuser = $popularity_score_thisuser;
 		$unsorted_posts[$popularity_score_thisuser] = $row;
 		echo '<hr />';
@@ -729,9 +724,18 @@ function send_notifcations() {
 		mysql_data_seek($users, $i);
 		$row = mysql_fetch_object($users);
 		$user_email = $row->user_email;
-        $user_lat = $row->gp_google_geo_latitude;
-        $user_long = $row->gp_google_geo_longitude;
-		echo $user_email;
+		
+		$meta_key = $row->meta_key;
+        switch ($meta_key) {	
+            case 'gp_google_geo_latitude':
+                $user_lat = $row->meta_value;
+                break;
+            case 'gp_google_geo_longitude':
+                $user_long = $row->meta_value;
+                break;
+        }
+        
+        echo $user_email;
 
         $posts_set = get_posts($user_lat, $user_long);
         send_email_notification($user_email, $posts_set);
