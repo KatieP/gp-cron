@@ -101,8 +101,8 @@ function get_single_post ($row) {
 	$post_ID = $row->ID;
 	$post_url = get_post_url($row);
 	$post_image = get_post_image($row);
-
-	$single_post = '<!-- STORY STARTS -->
+        if (!empty($post_title)) {
+	    $single_post = '<!-- STORY STARTS -->
                         <table class="w580" width="580" cellpadding="0" cellspacing="0" border="0">
                             <tbody><tr style="border-collapse:collapse;">
                                 <td class="w580" width="580" style="border-collapse:collapse;">
@@ -124,6 +124,9 @@ function get_single_post ($row) {
                             <tr style="border-collapse:collapse;"><td class="w580" width="580" height="10" style="border-collapse:collapse;"></td></tr>
                         </tbody></table>
                         <!-- STORY ENDS -->';	
+      	} else {
+	    $single_post = '';
+	}
 
 	return $single_post;	
 }
@@ -159,7 +162,8 @@ function get_users() {
 	
 	$sql_user = 'SELECT DISTINCT user_email, display_name, ID
                      FROM   wp_users
-                     WHERE  wp_users.ID = "3"';
+                     WHERE  ID = "3"
+                         OR ID = "2"';
 
 	$db_result = mysql_query($sql_user);
 
