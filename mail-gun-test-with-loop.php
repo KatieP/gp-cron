@@ -142,7 +142,6 @@ function get_database_results() {
 	            AND (post_type = 'gp_news' OR post_type = 'gp_projects' OR post_type = 'gp_advertorial')
        		    AND post_status = 'publish'";
 
-
 	$db_result = mysql_query($sql);
 
 	if (! $db_result){
@@ -161,7 +160,7 @@ function get_users() {
 	$sql_user = 'SELECT user_email, display_name, ID, 
 	                    post_latitude, post_longitude
 				 FROM wp_users
-				 WHERE ID = "2"';
+				 WHERE ID = "3"';
 
 	$db_result = mysql_query($sql_user);
 
@@ -173,7 +172,7 @@ function get_users() {
 }
 
 	
-function get_posts() {
+function get_posts($user_lat, $user_long) {
     
    	$db_result = get_database_results();
 	$i = 0;
@@ -185,8 +184,8 @@ function get_posts() {
 		$post = get_single_post($row);
 		$posts_set .= $post . '<br />';
 		
-		$user_lat = -34; 
-		$user_long = 151; 
+		#$user_lat = -34; 
+		#$user_long = 151; 
 	
 		$unsorted_posts = array();
 			
@@ -730,10 +729,11 @@ function send_notifcations() {
 		mysql_data_seek($users, $i);
 		$row = mysql_fetch_object($users);
 		$user_email = $row->user_email;
-
+        $user_lat = $row->post_latitude;
+        $user_long = $row->post_longitude;
 		echo $user_email;
 
-        $posts_set = get_posts();
+        $posts_set = get_posts($user_lat, $user_long);
         send_email_notification($user_email, $posts_set);
         $i++;
 	}
