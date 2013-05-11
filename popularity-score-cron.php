@@ -154,6 +154,6 @@ function update_social_media_count() {
 }		
 
 update_likecount();
-update_social_media_count();
+#update_social_media_count();
 
 ?>
