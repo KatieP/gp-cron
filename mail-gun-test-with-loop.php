@@ -157,9 +157,9 @@ function get_users() {
 
 	//Get user emails and their location
 	
-	$sql_user = 'SELECT user_email, display_name, ID, 
-	                    post_latitude, post_longitude
-				 FROM wp_users
+	$sql_user = 'SELECT wp_users.user_email, wp_users.display_name, wp_users.ID, 
+	                    wp_usermeta.gp_google_geo_latitude, wp_usermeta.gp_google_geo_longitude
+				 FROM wp_users, wp_usermeta
 				 WHERE ID = "3"';
 
 	$db_result = mysql_query($sql_user);
@@ -729,8 +729,8 @@ function send_notifcations() {
 		mysql_data_seek($users, $i);
 		$row = mysql_fetch_object($users);
 		$user_email = $row->user_email;
-        $user_lat = $row->post_latitude;
-        $user_long = $row->post_longitude;
+        $user_lat = $row->gp_google_geo_latitude;
+        $user_long = $row->gp_google_geo_longitude;
 		echo $user_email;
 
         $posts_set = get_posts($user_lat, $user_long);
