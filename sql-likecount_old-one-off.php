@@ -1,7 +1,7 @@
 <?php
 
-	mysql_connect("127.0.0.1", "s1-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
-	mysql_select_db("s1-wordpress") or die(mysql_error());
+	mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
+	mysql_select_db("s2-wordpress") or die(mysql_error());
 	
 	$sql = "SELECT DISTINCT post_ID
        		FROM wp_postmeta";
