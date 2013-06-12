@@ -47,7 +47,7 @@ function update_likecount() {
 		if ($likecount > $likecount_old) {
 
 			$like_difference = $likecount - $likecount_old;
-			$like_difference_unixtime = pow(($like_difference*3600), 1.2);
+			$like_difference_unixtime = pow(($like_difference*3600), 1.1);
 			$like_difference_unixtime = (int) $like_difference_unixtime;
 
 			mysql_query('UPDATE wp_posts SET popularity_score = popularity_score + '. $like_difference_unixtime .' WHERE ID = "'. $post_ID .'"');
@@ -132,7 +132,7 @@ function update_social_media_count() {
 			
 			if ($social_media_count_diff > 0) {	
 			
-				$social_media_count_unixtime = pow(($social_media_count_diff*2000), 1.1);
+				$social_media_count_unixtime = pow(($social_media_count_diff*2000), 1.05);
 				$social_media_count_unixtime = (int) $social_media_count_unixtime;
 
 				// Compare old and new social media count and update popularity_score
