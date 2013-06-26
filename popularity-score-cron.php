@@ -22,40 +22,36 @@ function update_likecount() {
 	 *          jb@greenpag.es
 	 **/
 
-	mysql_connect("127.0.0.1", "s1-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
-	mysql_select_db("s1-wordpress") or die(mysql_error());
-	
+	mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
+	mysql_select_db("s2-wordpress") or die(mysql_error());
+
 	$sql = 'SELECT wp_postmeta.meta_value, wp_postmeta.post_ID, wp_posts.likecount_old
        		FROM wp_postmeta, wp_posts
        		WHERE wp_postmeta.post_ID=wp_posts.ID
        		AND
        		meta_key = "likecount"';
-       		
-        		
+
 	$db_result = mysql_query($sql);
 	$data_set = mysql_num_rows($db_result);
-		
+
 	$i = 0;
 	while ($i < $data_set) {
-	
+
 		mysql_data_seek($db_result, $i);
 		$row = mysql_fetch_object($db_result);
-		
+
 		$post_ID = $row->post_ID;
 		$likecount = (int) $row->meta_value;
 		$likecount_old = (int) $row->likecount_old;
-				
-				
+
 		if ($likecount > $likecount_old) {
 
 			$like_difference = $likecount - $likecount_old;
-			
-			$like_difference_unixtime = pow(($like_difference*3600), 1.2);
-					
+			$like_difference_unixtime = pow(($like_difference*3600), 1.05);
 			$like_difference_unixtime = (int) $like_difference_unixtime;
-			
-			mysql_query('UPDATE wp_posts SET popularity_score = popularity_score + '. $like_difference_unixtime .' WHERE ID = "'. $post_ID .'"');
 
+			mysql_query('UPDATE wp_posts SET popularity_score = popularity_score + '. $like_difference_unixtime .' WHERE ID = "'. $post_ID .'"');
+			mysql_query('UPDATE wp_posts SET likecount_old = '. $likecount .' WHERE ID = "'. $post_ID .'"');
 		} 
 		$i++;
 	}
@@ -94,8 +90,8 @@ function update_social_media_count() {
 	 **/
 
 	// Get social media count from db
-	mysql_connect("127.0.0.1", "s1-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
-	mysql_select_db("s1-wordpress") or die(mysql_error());
+	mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
+	mysql_select_db("s2-wordpress") or die(mysql_error());
 	
 	$sql = "SELECT post_name, post_type, social_media_count, ID 
        		FROM wp_posts 
@@ -104,7 +100,6 @@ function update_social_media_count() {
       
     $db_result = mysql_query($sql);
 	$data_set = mysql_num_rows($db_result);
-
 
 	$i = 0;
 	while ($i < $data_set) {
@@ -137,7 +132,7 @@ function update_social_media_count() {
 			
 			if ($social_media_count_diff > 0) {	
 			
-				$social_media_count_unixtime = pow(($social_media_count_diff*2000), 1.1);
+				$social_media_count_unixtime = pow(($social_media_count_diff*2000), 1.05);
 				$social_media_count_unixtime = (int) $social_media_count_unixtime;
 
 				// Compare old and new social media count and update popularity_score
@@ -150,7 +145,7 @@ function update_social_media_count() {
 				$sql_update_sm_count = 'UPDATE wp_posts SET social_media_count = '. $social_media_count_new .' WHERE ID = "'. $post_ID .'"';
 
 				mysql_query($sql_update_sm_count);
-
+                echo 'Updated post with id: '. $post_ID . PHP_EOL;
 			}
 		} 
 		
@@ -159,6 +154,6 @@ function update_social_media_count() {
 }		
 
 update_likecount();
-update_social_media_count();
+#update_social_media_count();
 
 ?>

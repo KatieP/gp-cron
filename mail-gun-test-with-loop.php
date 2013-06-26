@@ -101,8 +101,8 @@ function get_single_post ($row) {
 	$post_ID = $row->ID;
 	$post_url = get_post_url($row);
 	$post_image = get_post_image($row);
-
-	$single_post = '<!-- STORY STARTS -->
+        if (!empty($post_title)) {
+	    $single_post = '<!-- STORY STARTS -->
                         <table class="w580" width="580" cellpadding="0" cellspacing="0" border="0">
                             <tbody><tr style="border-collapse:collapse;">
                                 <td class="w580" width="580" style="border-collapse:collapse;">
@@ -124,6 +124,9 @@ function get_single_post ($row) {
                             <tr style="border-collapse:collapse;"><td class="w580" width="580" height="10" style="border-collapse:collapse;"></td></tr>
                         </tbody></table>
                         <!-- STORY ENDS -->';	
+      	} else {
+	    $single_post = '';
+	}
 
 	return $single_post;	
 }
@@ -142,7 +145,6 @@ function get_database_results() {
 	            AND (post_type = 'gp_news' OR post_type = 'gp_projects' OR post_type = 'gp_advertorial')
        		    AND post_status = 'publish'";
 
-
 	$db_result = mysql_query($sql);
 
 	if (! $db_result){
@@ -158,10 +160,10 @@ function get_users() {
 
 	//Get user emails and their location
 	
-	$sql_user = 'SELECT user_email, display_name, ID, 
-	                    post_latitude, post_longitude
-				 FROM wp_users
-				 WHERE ID = "2"';
+	$sql_user = 'SELECT DISTINCT user_email, display_name, ID
+                     FROM   wp_users
+                     WHERE  ID = "3"
+                         OR ID = "2"';
 
 	$db_result = mysql_query($sql_user);
 
@@ -172,8 +174,26 @@ function get_users() {
 	return $db_result;
 }
 
+function get_user_lat_long($user_id) {
+	mysql_connect("127.0.0.1", "s1-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
+        mysql_select_db("s1-wordpress") or die(mysql_error());
+
+	$sql = 'SELECT  meta_key, meta_value
+                FROM    wp_usermeta
+                WHERE   user_id = "'. $user_id .'"
+                    AND (meta_key = "gp_google_geo_latitude"
+                         OR meta_key = "gp_google_geo_longitude")';
+
+        $db_result = mysql_query($sql);
+
+        if (! $db_result){
+           echo('Database error: ' . mysql_error());
+        }
+                
+        return $db_result;
+}
 	
-function get_posts() {
+function get_posts($user_lat, $user_long) {
     
    	$db_result = get_database_results();
 	$i = 0;
@@ -185,8 +205,8 @@ function get_posts() {
 		$post = get_single_post($row);
 		$posts_set .= $post . '<br />';
 		
-		$user_lat = -34; 
-		$user_long = 151; 
+		#$user_lat = -34; 
+		#$user_long = 151; 
 	
 		$unsorted_posts = array();
 			
@@ -200,13 +220,6 @@ function get_posts() {
 		echo '$popularity_score_thisuser:<br /><br />';
 		var_dump($popularity_score_thisuser);
 		echo '<hr />';
-		#$unsorted_single_post = array(
-		#							'post' => $row,
-		#							'rank' => $popularity_score_thisuser
-		#						);
-		#$unsorted_single_post[] = $row;
-		#$unsorted_single_post[] = $current_user_popularity_score;
-		#$unsorted_posts[] = $unsorted_single_post;
 		$row->popularity_score_thisuser = $popularity_score_thisuser;
 		$unsorted_posts[$popularity_score_thisuser] = $row;
 		echo '<hr />';
@@ -721,22 +734,53 @@ $(document).ready(function () {
 function send_notifcations() {
 
     $users = get_users();
+    $i = 0;
+    $data_set = mysql_num_rows($users);    
 
-	$i = 0;
-	$data_set = mysql_num_rows($users);    
-
-	while ($i < $data_set) {
+    while ($i < $data_set) {
 		
-		mysql_data_seek($users, $i);
-		$row = mysql_fetch_object($users);
-		$user_email = $row->user_email;
+        mysql_data_seek($users, $i);
+	$row = mysql_fetch_object($users);
+        $user_id = $row->ID;
+	$user_email = $row->user_email;
+	$meta_key = $row->meta_key;
 
-		echo $user_email;
+        
+        
+	echo '$row: ';
+	var_dump($row);
 
-        $posts_set = get_posts();
+        echo '$user_email: '.$user_email;
+        
+	$user_lat_long = get_user_lat_long($user_id);
+
+        $j = 0;
+        $lat_long_set = mysql_num_rows($user_lat_long);    
+
+        while ($j < $lat_long_set) {
+                
+                mysql_data_seek($user_lat_long, $j);
+                $row = mysql_fetch_object($user_lat_long);
+                $meta_key = $row->meta_key;
+                $meta_value = $row->meta_value;
+                switch ($meta_key) {    
+                    case 'gp_google_geo_latitude':
+                        $user_lat = $meta_value;
+                        break;
+                    case 'gp_google_geo_longitude':
+                        $user_long = $meta_value;
+                        break;
+                }
+                $j++;
+        }
+
+        echo '$user_lat: '.$user_lat;
+        echo '$user_long: '.$user_long;
+
+        $posts_set = get_posts($user_lat, $user_long);
         send_email_notification($user_email, $posts_set);
         $i++;
-	}
+    }
 
 }
 
