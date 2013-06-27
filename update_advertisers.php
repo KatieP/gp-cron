@@ -28,10 +28,10 @@
 // meta_key = charigfy_ID 		-> 	meta_value = number;
 // Meta_key = chargify_product_ID 	-> 	meta_value = number;
 
-// Biome wp=259	 ch=1733583
-// New Leaf Corporate wp=1505  ch=1787860
-// 15 Trees wp=1936	ch=2045804
-// Climate Friendly  wp=1551  ch=1828803
+// Biome 				wp=259	 	ch=1733583 	sub=1758911
+// New Leaf Corporate 	wp=1505  	ch=1787860 	sub=1815521
+// 15 Trees 			wp=1936		ch=2045804 	sub=2081871
+// Climate Friendly  	wp=1551  	ch=1828803 	sub=1859829
 
 
 		
@@ -42,7 +42,10 @@ SET meta_key="budget", meta_value="active", user_id = "2"'
 SET meta_key="productID", meta_value="27023", user_id = "2"'
 					
 'INSERT INTO wp_usermeta					 
-SET meta_key="chargifyID", meta_value="27023", user_id = "2"'			
+SET meta_key="chargifyID", meta_value="27023", user_id = "2"'	
+
+'INSERT INTO wp_usermeta					 
+SET meta_key="subscriptionID", meta_value="27023", user_id = "2"'			
 
 'INSERT INTO wp_usermeta 
 SET meta_key="advertiser_status", meta_value="active"
