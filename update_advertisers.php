@@ -5,8 +5,8 @@
 		// reg_advertiser -> 1
 		// advertiser_status -> active, used_up, paused
 		
-		meta_key = 'reg_advertiser' meta_value = 1
-		('reg_advertiser'->1)
+		// meta_key = 'reg_advertiser' meta_value = 1
+		// ('reg_advertiser'->1)
 		
 		mysql_query('INSERT INTO wp_usermeta 
 					SET meta_key="advertiser_status", meta_value="active", user_ID = "' . $user_ID . '"
@@ -36,19 +36,19 @@
 
 		
 'INSERT INTO wp_usermeta 
-SET meta_key="budget", meta_value="active", user_id = "2"'
+SET meta_key="budget", meta_value="active", user_id = "2"';
 
 'INSERT INTO wp_usermeta					 
-SET meta_key="productID", meta_value="27023", user_id = "2"'
+SET meta_key="productID", meta_value="27023", user_id = "2"';
 					
 'INSERT INTO wp_usermeta					 
-SET meta_key="chargifyID", meta_value="27023", user_id = "2"'	
+SET meta_key="chargifyID", meta_value="27023", user_id = "2"';
 
 'INSERT INTO wp_usermeta					 
-SET meta_key="subscriptionID", meta_value="27023", user_id = "2"'			
+SET meta_key="subscriptionID", meta_value="27023", user_id = "2"';			
 
 'INSERT INTO wp_usermeta 
 SET meta_key="advertiser_status", meta_value="active"
-WHERE meta_value = "reg_advertiser"'
+WHERE meta_value = "reg_advertiser"';
 
 ?>
