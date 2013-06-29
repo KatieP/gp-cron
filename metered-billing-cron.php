@@ -85,14 +85,14 @@ $i = 0;
 while ($i < $data_set) { 
 
 	mysql_data_seek($db_result, $i);
-	$row = mysql_fetch_object($db_result);
+	$user_row = mysql_fetch_object($db_result);
 	
 	# Get all product posts authored by user and store in $pageposts
 	$sql_posts = 'SELECT DISTINCT wp_posts.* 
 				  FROM wp_posts 
 				  WHERE post_status = "publish" 
     			  	and wp_posts.post_type = "gp_advertorial" 
-    			  	and wp_posts.post_author = "'. $row->user_id .'";';
+    			  	and wp_posts.post_author = "'. $user_row->user_id .'";';
 	
 	echo $sql_posts;
 	echo PHP_EOL;
@@ -105,13 +105,230 @@ while ($i < $data_set) {
 	
 	# Get all clicks for this users product posts
 	# this variable needs to hold the total number of click that user will be billed for 
-	$billable_clicks = 0;
-	$j = 0;
+	$billable_clicks  = 0;
+	$clicks_this_week = 0;
+	$j =                0;
     
 	while ($j < $num_posts) { 	
-	 	    
+	    
         mysql_data_seek($posts_results, $j);
 	    $post_row = mysql_fetch_object($posts_results);
+	    
+	    $now =                       time();
+	    $yesterday_date_stamp =      ( $now - (24 * 60 * 60) );
+		$yesterday_date       =      date('Y-m-d', $yesterday_date_stamp);
+		echo '$yesterday_date: ';
+	    var_dump($yesterday_date);
+	    echo PHP_EOL;
+
+		$today_date =                date('Y-m-d'); 		            //Todays Date
+	    echo '$today_date: ';
+		var_dump($today_date);
+	    echo PHP_EOL;
+	    
+        $sumClick_past_day =   get_clicks_for_post($post_row, $user_row, $analytics, $yesterday_date, $today_date);
+	    
+        	    // Get time advertiser signed up to chargify
+	    $sql_adv_time = 'SELECT meta_value 
+                         FROM wp_usermeta 
+                         WHERE user_id = "'. $user_row->user_id .'"
+                             AND meta_key = "adv_signup_time";';
+	
+	    echo $sql_adv_time;
+	    echo PHP_EOL;    
+
+	    $signup_time_results = mysql_query($sql_adv_time);
+        mysql_data_seek($signup_time_results, 0);
+	    $signup_time_row = mysql_fetch_object($signup_time_results);	    
+	    
+	    $advertiser_signup_time = $signup_time_row->meta_value;
+	    
+	    var_dump($advertiser_signup_time);
+	    echo PHP_EOL;
+	    
+	    // Get difference between last week anniversary of sign up
+	    $one_week = (7 * 24 * 60 * 60);
+	    var_dump($one_week);
+	    echo PHP_EOL;
+
+	    $now =                      time();
+	    $total_time_signedup =      $now - $advertiser_signup_time;
+	    $this_billing_week =        $total_time_signedup % $one_week;
+	    $start_this_billing_week =  $now - $this_billing_week;
+
+	    echo '$start_this_billing_week: ';
+	    var_dump($start_this_billing_week);
+	    echo PHP_EOL;
+	    
+	    $start_date_billing_week =  date('Y-m-d', $start_this_billing_week);
+	    
+		#$one_hour_ago_stamp =       ( $now - (60 * 60) );
+	    #var_dump($one_hour_ago_stamp);
+	    #echo PHP_EOL;
+		
+	    #$one_hour_ago =             date('H', $one_hour_ago_stamp);
+	    #var_dump($one_hour_ago);
+	    #echo PHP_EOL;	    
+	    
+	    #$this_hour =                date('H', $now);
+	    #var_dump($this_hour);
+	    #echo PHP_EOL;
+        
+	    $sumClick_this_week =  get_clicks_for_post($post_row, $user_row, $analytics, $start_date_billing_week, $today_date);
+        
+        $billable_clicks   = $billable_clicks  + $sumClick_past_day;
+		$clicks_this_week  = $clicks_this_week + $sumClick_this_week;
+		 
+		echo '$billable_clicks: ';
+        var_dump ($billable_clicks);
+        echo PHP_EOL;
+        
+        echo '$clicks_this_week: ';
+        var_dump ($clicks_this_week);
+        echo PHP_EOL;
+                
+    	$j++;
+	}	
+		
+	# Should have the following data available by now:
+	# -> user_id (wp), 
+	# -> subscription_id (chargify - unique subscription code for customer's product), 
+	# -> component_id (chargify - code for click price)
+	# -> billable_clicks (quantity - from google analytics work done above - int)
+
+	
+	// Get chargify subscription id
+	$sql_subscription_id  = 'SELECT meta_value 
+                             FROM   wp_usermeta 
+                             WHERE  user_id = "'. $user_row->user_id .'"
+                                 AND meta_key = "subscription_id";';
+	
+	echo $sql_subscription_id;
+	echo PHP_EOL; 
+
+    $sql_subscription_id_results = mysql_query($sql_subscription_id);
+    mysql_data_seek($sql_subscription_id_results, 0);
+	$subscription_id_row = mysql_fetch_object($sql_subscription_id_results);	
+	$subscription_id = $subscription_id_row->meta_value;
+    
+	var_dump($subscription_id);
+    echo PHP_EOL;
+    
+    
+    // Get chargify component id
+	$sql_subscription_id  = 'SELECT meta_value 
+                             FROM   wp_usermeta 
+                             WHERE  user_id = "'. $user_row->user_id .'"
+                                 AND meta_key = "subscription_id";';
+	
+	echo $sql_subscription_id;
+	echo PHP_EOL; 
+
+    $sql_subscription_id_results = mysql_query($sql_subscription_id);
+    mysql_data_seek($sql_subscription_id_results, 0);
+	$subscription_id_row = mysql_fetch_object($sql_subscription_id_results);	
+	$subscription_id = $subscription_id_row->meta_value;
+    
+	var_dump($subscription_id);
+    echo PHP_EOL;
+
+    // Get chargify component id
+	$sql_product_id  = 'SELECT meta_value 
+                        FROM   wp_usermeta 
+                        WHERE  user_id = "'. $user_row->user_id .'"
+                             AND meta_key = "product_id";';
+	
+	echo $sql_product_id;
+	echo PHP_EOL; 
+
+    $sql_product_id_results = mysql_query($sql_product_id);
+    mysql_data_seek($sql_product_id_results, 0);
+	$product_id_row = mysql_fetch_object($sql_product_id_results);	
+	$product_id = $product_id_row->meta_value;
+    
+	var_dump($product_id);
+    echo PHP_EOL;    
+    
+    $component_id = '';
+    
+    switch ($product_id)   {
+        case '3313295':
+            // $12 per week plan
+            $component_id = '3207';
+            $cap = (int) (12.00 / 1.9);
+            break;
+        case '27029':
+            // $39 per week plan
+            $component_id = '3207';
+            $cap = (int) (39.00 / 1.9);
+            break;
+        case '27028':
+            // $99 per week plan
+            $component_id = '3207';
+            $cap = (int) (99.00 / 1.9);
+            break; 
+        case '3313296':
+            // $249 per week plan
+            $component_id = '20016';
+            $cap = (int) (249.00 / 1.8);
+            break; 
+        case '3313297':
+            // $499 per week plan
+            $component_id = '20017';
+            $cap = (int) (449.00 / 1.7);
+            break;                                                
+    }    					
+    
+    var_dump($component_id);
+    echo PHP_EOL;
+
+    echo '$cap: ';
+    var_dump($cap);
+    echo PHP_EOL;
+    
+    $quantity = $billable_clicks;
+    
+    echo '$quantity: ';			
+    var_dump($quantity);
+    echo PHP_EOL;
+
+    //Check is under cap
+
+    # get number of clicks for this week so far for this user from db
+    
+
+    
+    $weekly_clicks =   '';  
+
+    # get max number of clicks for this user from db, determined by plan they are on
+    $cap = '';
+
+	if ($weekly_clicks < $cap) {
+
+	    # set post_status for all product posts for this user to 'publish'
+	    ;
+
+	} else {
+
+        # set post_status for all product posts for this user to 'draft'
+        ;
+
+    }
+    
+    //Send to chargify metering	
+    //Send a post request with Json data to this URL
+    
+    $chargify_url = 'https://greenpages.chargify.com/subscriptions/' . $subscription_id . '/components/' . $component_id . '/usages.json';
+    
+    # send billing data to url above using curl 
+    	
+    // curl -v -H "Content-Type: application/json" -X POST 
+    // -d ' "usage":{ "id": $subscription_id, "quantity":$quantity }' $chargify_url
+	
+	$i++;	
+}	
+
+function get_clicks_for_post($post_row, $user_row, $analytics, $start_range, $end_range) {
 	    
 	    #var_dump($post_row);
 		
@@ -125,148 +342,75 @@ while ($i < $data_set) {
 				
 		$post_url_end = '/' . $post_type_map . '/' . $post_url_ext . '/';
 		var_dump($post_url_end);
-	    echo PHP_EOL;
-
-		#$post_date = get_the_time('Y-m-d'); 				            //Post Date
-		#$post_date = $post_row->post_date;
-		$one_hour_ago = time() - (60 * 60);
-	    var_dump($one_hour_ago);
-	    echo PHP_EOL;
+	    echo PHP_EOL;	 	    
 		
-		#$today_date = date('Y-m-d'); 						            //Todays Date
-	    
-  		#$analytics->setDateRange($post_date, $today_date); 	        //Set date in GA $analytics->setMonth(date('$post_date'), date('$new_date'));
-				
-  		#print_r($analytics->getVisitors()); 				            //get array of visitors by day
-  	
-  		#$pageViewURL = ($analytics->getPageviewsURL($post_url_end));	//Page views for specific URL
-  		#echo $pageViewURL . ' $pageViewURL';
-  		#var_dump ($pageViewURL);
-
-  		$sumURL = 0;
-  			
-  		#foreach ($pageViewURL as $data) {
-    	#	$sumURL = $sumURL + $data;
-    	#	$total_sumURL = $total_sumURL + $data;
-  		#}
-  		#echo ' <br />*** ' . $sumURL . ' ***<br /> ';			
-			
-  		#$pageViewType = ($analytics->getPageviewsURL('/' . $post_type_map . '/'));	//Page views for the section landing page, e.g. the news page
-  			
-  		#$sumType = 0;
-  		#foreach ($pageViewType as $data) {
-    	#	$sumType = $sumType + $data;
-  		#}
+  		$analytics->setDateRange($start_range, $end_range);	        //Set date in GA $analytics->setMonth(date('$post_date'), date('$new_date'));
   				
   		#$keywords = $analytics->getData( array(
-        #                                  	'dimensions' => 'ga:keyword',
-        #                               	 	'metrics' => 'ga:visits',
-        #                                   	'sort' => 'ga:keyword'
+        #                                  	    'dimensions' => 'ga:keyword',
+        #                               	 	'metrics' =>    'ga:visits',
+        #                                   	'sort' =>       'ga:keyword'
         #                                   	)
-        #                               	);	
+        #                               );	
           	
        	#SET UP POST ID AND AUTHOR ID DATA, POST DATE, GET LINK CLICKS DATA FROM GA 
-       	#$post_date_au = get_the_time('j-m-y');
-		#$post_id = $post->ID;
-		#$click_track_tag = '/yoast-ga/' . $post_id . '/' . $profile_author_id . '/outbound-article/';
-		#$clickURL = ($analytics->getPageviewsURL($click_track_tag));
-  		#$sumClick = 0;
-		#foreach ($clickURL as $data) {
-    	#	$sumClick = $sumClick + $data;
-  		#}
+		$profile_author_id = $user_row->user_id;
+		$post_id =           $post_row->ID;
+		$click_track_tag =   '/yoast-ga/' . $post_id . '/' . $profile_author_id . '/outbound-article/';
+		
+		$clickURL = ($analytics->getPageviewsURL($click_track_tag));
+  		$sumClick = 0;
+		foreach ($clickURL as $data) {
+    		$sumClick = $sumClick + $data;
+  		}
+		var_dump($sumClick);
+        echo PHP_EOL;   
+        
+		$post_url =   '/eco-friendly-products';
+		
+		#$custom = get_post_custom($post->ID);
+		#$product_url = $custom["gp_advertorial_product_url"][0];	
+
+	    // Get url product button is linked to
+	    $sql_product_url = 'SELECT meta_value 
+                            FROM wp_postmeta 
+                            WHERE post_id = "'. $post_id .'"
+                                AND meta_key = "gp_advertorial_product_url";';
+	
+	    echo $sql_product_url;
+	    echo PHP_EOL;    
+
+	    $product_url_results = mysql_query($sql_product_url);
+        mysql_data_seek($product_url_results, 0);
+	    $product_url_row = mysql_fetch_object($product_url_results);	
+		$product_url = $product_url_row->meta_value;
+		
+		var_dump($product_url);
+	    echo PHP_EOL; 
+		
+		if ( !empty($product_url) ) {		# IF 'BUY IT' BUTTON ACTIVATED, GET CLICKS
 			
-		#switch (get_post_type()) {		# CHECK POST TYPE AND ASSIGN APPROPRIATE TITLE, URL, COST AND GET BUTTON CLICKS DATA
-		   
-		#	case 'gp_advertorial':
-		#		$post_title = 'Products';
-		#		$post_url = '/eco-friendly-products';
-		#		$post_price = '$89.00';
-		#  		$custom = get_post_custom($post->ID);
-		#		$product_url = $custom["gp_advertorial_product_url"][0];	
-		#		if ( !empty($product_url) ) {		# IF 'BUY IT' BUTTON ACTIVATED, GET CLICKS
-		#			$click_track_tag_product_button = '/outbound/product-button/' . $post_id . '/' . $profile_author_id . '/' . $product_url . '/'; 
-  		#			$clickURL_product_button = ($analytics->getPageviewsURL($click_track_tag_product_button));
-  		#			foreach ($clickURL_product_button as $data) {
-    	#				$sumClick = $sumClick + $data;
-  		#			}
-		#		}
-				# GET PAGE IMPRESSIONS FOR OLD PRODUCT POSTS FROM BEFORE WE CHANGED URL AND ADD TO TOTAL
-		#	 	$old_post_url_end = '/new-stuff/' . $post_url_ext . '/';
-		#		$old_PageViewURL = ($analytics->getPageviewsURL($old_post_url_end));	//Page views for specific old URL
-  		#		foreach ($old_PageViewURL as $data) {
-    	#			$sumURL = $sumURL + $data;
-    	#			$total_sumURL = $total_sumURL + $data;
-  		#		}
-	    #  		break;
-		#	case 'gp_competitions':
-		#		$post_title = 'Competitions';
-		#		$post_url = '/competitions';
-		#		$post_price = '$250.00';
-	    #   		break;
-	   	#	case 'gp_events':
-	   	#		$post_title = 'Events';
-	   	#		$post_url = '/events';
-	   	#		$post_price = 'N/A';
-	    #		break;
-	    #	case 'gp_news':
-		#	   	$post_title = 'News';
-	   	#		$post_url = '/news';
-	   	#		$post_price = 'N/A';		   			
-	    # 		break;
-	    # 	case 'gp_projects':
-		#    	$post_title = 'Projects';
-		#    	$post_url = '/projects';
-		#    	$post_price = 'N/A';
-		#        break;
-		#}
+		    $click_track_tag_product_button = '/outbound/product-button/' . $post_id . '/' . $profile_author_id . '/' . $product_url . '/'; 
+        	var_dump($click_track_tag_product_button);
+            echo PHP_EOL; 
+	         
+			$clickURL_product_button = ($analytics->getPageviewsURL($click_track_tag_product_button));
+  			var_dump($clickURL_product_button);
+            echo PHP_EOL; 
+            
+  			foreach ($clickURL_product_button as $data) {
+    			$sumClick = $sumClick + $data;
+  			}
+		}
+		var_dump ($sumClick);
+        echo PHP_EOL;   
 			
 	  	#if ($sumClick == 0) {			#IF NO CLICKS YET, DISPLAY 'Unavailable'
     	#	$sumClick = 'Unavailable';
     	#}
+        
+        return $sumClick;
+}
 
-    	$j++;
-	}	
-		
-		# Should have the following data available by now:
-		# -> user_id (wp), 
-		# -> subscription_id (chargify - unique subscription code for customer's product), 
-		# -> component_id (chargify - code for click price)
-		# -> billable_clicks (quantity - from google analytics work done above - int)
-		
-        $subscription_id = '';
-        $component_id =    '';        					
-		$quantity =        $billable_clicks;			
-					
-        //Check is under cap
-    
-        # get number of clicks for this week so far for this user from db
-        $weekly_clicks = '';  
 
-        # get max number of clicks for this user from db, determined by plan they are on
-        $cap = '';
-    
-	    if ($weekly_clicks < $cap) {
-
-	        # set post_status for all product posts for this user to 'publish'
-	        ;
-	
-    	} else {
-    
-    	    # set post_status for all product posts for this user to 'draft'
-    	    ;
-    	    
-    	}
-    
-        //Send to chargify metering	
-    	//Send a post request with Json data to this URL
-    
-    	$chargify_url = 'https://greenpages.chargify.com/subscriptions/' . $subscription_id . '/components/' . $component_id . '/usages.json';
-    
-    	# send billing data to url above using curl 
-    	
-    	// curl -v -H "Content-Type: application/json" -X POST 
-    	// -d ' "usage":{ "id": $subscription_id, "quantity":$quantity }' $chargify_url
-	
-	$i++;	
-}	
 ?>
