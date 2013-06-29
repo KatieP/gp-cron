@@ -105,9 +105,9 @@ while ($i < $data_set) {
 	
 	# Get all clicks for this users product posts
 	# this variable needs to hold the total number of click that user will be billed for 
-	$billable_clicks  = 0;
-	$clicks_this_week = 0;
-	$j =                0;
+	$billable_clicks  =  0;
+	$clicks_this_week =  0;
+	$j =                 0;
     
 	while ($j < $num_posts) { 	
 	    
@@ -213,26 +213,8 @@ while ($i < $data_set) {
     
 	var_dump($subscription_id);
     echo PHP_EOL;
-    
-    
-    // Get chargify component id
-	$sql_subscription_id  = 'SELECT meta_value 
-                             FROM   wp_usermeta 
-                             WHERE  user_id = "'. $user_row->user_id .'"
-                                 AND meta_key = "subscription_id";';
-	
-	echo $sql_subscription_id;
-	echo PHP_EOL; 
 
-    $sql_subscription_id_results = mysql_query($sql_subscription_id);
-    mysql_data_seek($sql_subscription_id_results, 0);
-	$subscription_id_row = mysql_fetch_object($sql_subscription_id_results);	
-	$subscription_id = $subscription_id_row->meta_value;
-    
-	var_dump($subscription_id);
-    echo PHP_EOL;
-
-    // Get chargify component id
+    // Get chargify product id
 	$sql_product_id  = 'SELECT meta_value 
                         FROM   wp_usermeta 
                         WHERE  user_id = "'. $user_row->user_id .'"
@@ -247,7 +229,7 @@ while ($i < $data_set) {
 	$product_id = $product_id_row->meta_value;
     
 	var_dump($product_id);
-    echo PHP_EOL;    
+    echo PHP_EOL;
     
     $component_id = '';
     
@@ -292,39 +274,123 @@ while ($i < $data_set) {
     var_dump($quantity);
     echo PHP_EOL;
 
-    //Check is under cap
-
-    # get number of clicks for this week so far for this user from db
+    // Send to chargify metering	
+    // Send a post request with Json data to this URL
     
+	if (!empty($component_id)) {
 
+        //Check is under cap
+    	if ($clicks_this_week < $cap) {
     
-    $weekly_clicks =   '';  
-
-    # get max number of clicks for this user from db, determined by plan they are on
-    $cap = '';
-
-	if ($weekly_clicks < $cap) {
-
-	    # set post_status for all product posts for this user to 'publish'
-	    ;
-
-	} else {
-
-        # set post_status for all product posts for this user to 'draft'
-        ;
-
-    }
+    	    $k = 0;
+        
+    	    while ($k < $num_posts) { 	
+    	    
+                mysql_data_seek($posts_results, $k);
+    	        $post_row = mysql_fetch_object($posts_results);	    
     
-    //Send to chargify metering	
-    //Send a post request with Json data to this URL
+    	        # set post_status to 'publish'
+                $post_status_sql =   'UPDATE wp_posts 
+    								  SET post_status = replace(post_status, "pending", "publish") 
+    								  WHERE post_id ="'. $post_row->ID .'"
+    	    						      AND post_status = "publish";';
     
-    $chargify_url = 'https://greenpages.chargify.com/subscriptions/' . $subscription_id . '/components/' . $component_id . '/usages.json';
+                mysql_query($post_status_sql);
+                
+                echo 'Set post '. $post_row->ID .' to publish';
+                echo PHP_EOL;
+                
+                $k++;
+    	    
+    	    }
+    	        
+    	    # set budget_status to 'active'
+    	    $budget_status_sql = 'UPDATE wp_usermeta 
+    							  SET meta_value = replace(meta_value, "paused", "active") 
+    							  WHERE meta_key = "budget_status" 
+    	    					      AND user_id ="'. $user_row->user_id .'" ;';
     
-    # send billing data to url above using curl 
+    	    # run budget_status query on db    
+            mysql_query($budget_status_sql);
+            echo 'Set budget_status for user '. $user_row->user_id .' to active';      	    
+    	    echo PHP_EOL;
+    	    
+    	} else {
+    
+    	    $k = 0;
+        
+    	    while ($k < $num_posts) { 	
+    	    
+                mysql_data_seek($posts_results, $k);
+    	        $post_row = mysql_fetch_object($posts_results);	  
+    	        
+    	        # set post_status to 'publish'
+                $post_status_sql =   'UPDATE wp_posts 
+    								  SET post_status = replace(post_status, "pending", "publish") 
+    								  WHERE post_id ="'. $post_row->ID .'"
+    	    						      AND post_status = "pending";';
+    
+                echo 'Set post '. $post_row->ID .' to pending';
+                echo PHP_EOL;
+                
+                mysql_query($post_status_sql);
+                $k++;
+                
+    	    }
+    	    
+            # set budget_status to 'paused'
+    	    $budget_status_sql = 'UPDATE wp_usermeta 
+    							  SET meta_value = replace(meta_value, "active", "paused") 
+    							  WHERE meta_key = "budget_status" 
+    	    					      AND user_id ="'. $user_row->user_id .'" ;';  
+    
+    	    # run budget_status and post_status queries on db    
+            mysql_query($budget_status_sql);
+            echo 'Set budget_status for user '. $user_row->user_id .' to paused';
+            echo PHP_EOL;
+    
+    	}
+	    
+    	echo PHP_EOL; 
+        echo '_______________________________________________________';
+        echo PHP_EOL;
+        echo '_______________________________________________________';
+        echo PHP_EOL; 
+        echo PHP_EOL;        
     	
-    // curl -v -H "Content-Type: application/json" -X POST 
-    // -d ' "usage":{ "id": $subscription_id, "quantity":$quantity }' $chargify_url
-	
+	    $chargify_url = 'https://greenpages.chargify.com/subscriptions/' . $subscription_id . '/components/' . $component_id . '/usages.json';
+        echo '$chargify_url: '. $chargify_url;
+        echo PHP_EOL;
+        
+        $usage = ' "usage":{ "id": '. $subscription_id .', "quantity": '. $quantity .' }';
+        echo '$usage: '. $usage;
+        echo PHP_EOL;
+        # send billing data to url above using curl 
+
+        if ($quantity != 0) {
+            echo 'Send data to chargify!';   
+            echo PHP_EOL;
+
+            // curl -v -H "Content-Type: application/json" -X POST 
+            // -d ' "usage":{ "id": $subscription_id, "quantity":$quantity }' $chargify_url     
+                        
+        } else {
+            echo 'No clicks, do not send data to chargify!';
+            echo PHP_EOL;            
+        }
+
+    	echo PHP_EOL; 
+        echo '_______________________________________________________';
+        echo PHP_EOL;
+        echo '_______________________________________________________';
+        echo PHP_EOL; 
+        echo PHP_EOL;     
+                
+	} else {
+	    echo 'No $component_id found, no data sent to chargify.';
+	    echo PHP_EOL;
+	}
+    	
 	$i++;	
 }	
 
@@ -345,13 +411,6 @@ function get_clicks_for_post($post_row, $user_row, $analytics, $start_range, $en
 	    echo PHP_EOL;	 	    
 		
   		$analytics->setDateRange($start_range, $end_range);	        //Set date in GA $analytics->setMonth(date('$post_date'), date('$new_date'));
-  				
-  		#$keywords = $analytics->getData( array(
-        #                                  	    'dimensions' => 'ga:keyword',
-        #                               	 	'metrics' =>    'ga:visits',
-        #                                   	'sort' =>       'ga:keyword'
-        #                                   	)
-        #                               );	
           	
        	#SET UP POST ID AND AUTHOR ID DATA, POST DATE, GET LINK CLICKS DATA FROM GA 
 		$profile_author_id = $user_row->user_id;
