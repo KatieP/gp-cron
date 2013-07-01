@@ -77,7 +77,86 @@ $db_result = mysql_query($sql);
 $data_set = mysql_num_rows($db_result);
 echo $data_set;
 echo PHP_EOL;
+
+// 3a. Define functions to get clicks
+
+function get_clicks_for_post($post_row, $user_row, $analytics, $start_range, $end_range) {
+	    
+	    #var_dump($post_row);
+		
+		$post_url_ext = $post_row->post_name; //Need to get post_name for URL. Gets ful URl, but we only need /url extention for Google API
+        var_dump($post_url_ext);
+	    echo PHP_EOL;
+		
+		$post_type_map = 'eco-friendly-products';
+        var_dump($post_type_map);
+	    echo PHP_EOL;		
+				
+		$post_url_end = '/' . $post_type_map . '/' . $post_url_ext . '/';
+		var_dump($post_url_end);
+	    echo PHP_EOL;	 	    
+		
+  		$analytics->setDateRange($start_range, $end_range);	        //Set date in GA $analytics->setMonth(date('$post_date'), date('$new_date'));
+          	
+       	#SET UP POST ID AND AUTHOR ID DATA, POST DATE, GET LINK CLICKS DATA FROM GA 
+		$profile_author_id = $user_row->user_id;
+		$post_id =           $post_row->ID;
+		$click_track_tag =   '/yoast-ga/' . $post_id . '/' . $profile_author_id . '/outbound-article/';
+		
+		$clickURL = ($analytics->getPageviewsURL($click_track_tag));
+  		$sumClick = 0;
+		foreach ($clickURL as $data) {
+    		$sumClick = $sumClick + $data;
+  		}
+		var_dump($sumClick);
+        echo PHP_EOL;   
+        
+		$post_url =   '/eco-friendly-products';
+		
+		#$custom = get_post_custom($post->ID);
+		#$product_url = $custom["gp_advertorial_product_url"][0];	
+
+	    // Get url product button is linked to
+	    $sql_product_url = 'SELECT meta_value 
+                            FROM wp_postmeta 
+                            WHERE post_id = "'. $post_id .'"
+                                AND meta_key = "gp_advertorial_product_url";';
 	
+	    echo $sql_product_url;
+	    echo PHP_EOL;    
+
+	    $product_url_results = mysql_query($sql_product_url);
+        mysql_data_seek($product_url_results, 0);
+	    $product_url_row = mysql_fetch_object($product_url_results);	
+		$product_url = $product_url_row->meta_value;
+		
+		var_dump($product_url);
+	    echo PHP_EOL; 
+		
+		if ( !empty($product_url) ) {		# IF 'BUY IT' BUTTON ACTIVATED, GET CLICKS
+			
+		    $click_track_tag_product_button = '/outbound/product-button/' . $post_id . '/' . $profile_author_id . '/' . $product_url . '/'; 
+        	var_dump($click_track_tag_product_button);
+            echo PHP_EOL; 
+	         
+			$clickURL_product_button = ($analytics->getPageviewsURL($click_track_tag_product_button));
+  			var_dump($clickURL_product_button);
+            echo PHP_EOL; 
+            
+  			foreach ($clickURL_product_button as $data) {
+    			$sumClick = $sumClick + $data;
+  			}
+		}
+		var_dump ($sumClick);
+        echo PHP_EOL;   
+			
+	  	#if ($sumClick == 0) {			#IF NO CLICKS YET, DISPLAY 'Unavailable'
+    	#	$sumClick = 'Unavailable';
+    	#}
+        
+        return $sumClick;
+}
+
 // 4. Get all posts for each ID. Grab the their analytics for the hour for all posts and sum
 date_default_timezone_set('UTC');
 	
@@ -384,8 +463,8 @@ while ($i < $data_set) {
         echo PHP_EOL;
         echo '_______________________________________________________';
         echo PHP_EOL; 
-        echo PHP_EOL;     
-                
+        echo PHP_EOL;
+
 	} else {
 	    echo 'No $component_id found, no data sent to chargify.';
 	    echo PHP_EOL;
@@ -394,82 +473,6 @@ while ($i < $data_set) {
 	$i++;	
 }	
 
-function get_clicks_for_post($post_row, $user_row, $analytics, $start_range, $end_range) {
-	    
-	    #var_dump($post_row);
-		
-		$post_url_ext = $post_row->post_name; //Need to get post_name for URL. Gets ful URl, but we only need /url extention for Google API
-        var_dump($post_url_ext);
-	    echo PHP_EOL;
-		
-		$post_type_map = 'eco-friendly-products';
-        var_dump($post_type_map);
-	    echo PHP_EOL;		
-				
-		$post_url_end = '/' . $post_type_map . '/' . $post_url_ext . '/';
-		var_dump($post_url_end);
-	    echo PHP_EOL;	 	    
-		
-  		$analytics->setDateRange($start_range, $end_range);	        //Set date in GA $analytics->setMonth(date('$post_date'), date('$new_date'));
-          	
-       	#SET UP POST ID AND AUTHOR ID DATA, POST DATE, GET LINK CLICKS DATA FROM GA 
-		$profile_author_id = $user_row->user_id;
-		$post_id =           $post_row->ID;
-		$click_track_tag =   '/yoast-ga/' . $post_id . '/' . $profile_author_id . '/outbound-article/';
-		
-		$clickURL = ($analytics->getPageviewsURL($click_track_tag));
-  		$sumClick = 0;
-		foreach ($clickURL as $data) {
-    		$sumClick = $sumClick + $data;
-  		}
-		var_dump($sumClick);
-        echo PHP_EOL;   
-        
-		$post_url =   '/eco-friendly-products';
-		
-		#$custom = get_post_custom($post->ID);
-		#$product_url = $custom["gp_advertorial_product_url"][0];	
-
-	    // Get url product button is linked to
-	    $sql_product_url = 'SELECT meta_value 
-                            FROM wp_postmeta 
-                            WHERE post_id = "'. $post_id .'"
-                                AND meta_key = "gp_advertorial_product_url";';
-	
-	    echo $sql_product_url;
-	    echo PHP_EOL;    
-
-	    $product_url_results = mysql_query($sql_product_url);
-        mysql_data_seek($product_url_results, 0);
-	    $product_url_row = mysql_fetch_object($product_url_results);	
-		$product_url = $product_url_row->meta_value;
-		
-		var_dump($product_url);
-	    echo PHP_EOL; 
-		
-		if ( !empty($product_url) ) {		# IF 'BUY IT' BUTTON ACTIVATED, GET CLICKS
-			
-		    $click_track_tag_product_button = '/outbound/product-button/' . $post_id . '/' . $profile_author_id . '/' . $product_url . '/'; 
-        	var_dump($click_track_tag_product_button);
-            echo PHP_EOL; 
-	         
-			$clickURL_product_button = ($analytics->getPageviewsURL($click_track_tag_product_button));
-  			var_dump($clickURL_product_button);
-            echo PHP_EOL; 
-            
-  			foreach ($clickURL_product_button as $data) {
-    			$sumClick = $sumClick + $data;
-  			}
-		}
-		var_dump ($sumClick);
-        echo PHP_EOL;   
-			
-	  	#if ($sumClick == 0) {			#IF NO CLICKS YET, DISPLAY 'Unavailable'
-    	#	$sumClick = 'Unavailable';
-    	#}
-        
-        return $sumClick;
-}
-
+exit();
 
 ?>
