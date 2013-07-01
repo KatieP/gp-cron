@@ -343,21 +343,21 @@ while ($i < $data_set) {
     var_dump($component_id);
     echo PHP_EOL;
 
-    echo '$cap: ';
-    var_dump($cap);
-    echo PHP_EOL;
-    
-    $quantity = $billable_clicks;
-    
-    echo '$quantity: ';			
-    var_dump($quantity);
-    echo PHP_EOL;
-
     // Send to chargify metering	
     // Send a post request with Json data to this URL
     
 	if (!empty($component_id)) {
 
+	        echo '$cap: ';
+            var_dump($cap);
+            echo PHP_EOL;
+            
+            $quantity = $billable_clicks;
+            
+            echo '$quantity: ';			
+            var_dump($quantity);
+            echo PHP_EOL;
+	    
         //Check is under cap
     	if ($clicks_this_week < $cap) {
     
