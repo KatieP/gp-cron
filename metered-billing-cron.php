@@ -27,18 +27,60 @@
 #15. When cap is reached, posts go to draft status
 #16. When new billing cycle commences, posts turn on again
 
-
 //-----------------------------------//
 
-//1.Connect to MYSQL database
-#mysql_connect("127.0.0.1", "s1-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
+echo PHP_EOL; 
+echo '_______________________________________________________';
+echo PHP_EOL;
+echo '_______________________________________________________';
+echo PHP_EOL; 
+echo PHP_EOL;     
+echo PHP_EOL;
+echo 'Script begins';
+echo PHP_EOL;
+echo PHP_EOL; 
+echo '_______________________________________________________';
+echo PHP_EOL;
+echo '_______________________________________________________';
+echo PHP_EOL; 
+echo PHP_EOL;
 
+//1.Connect to MYSQL database
+
+// mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
 mysql_connect("127.0.0.1", "root", "") or die(mysql_error());
+
+echo PHP_EOL; 
+echo '_______________________________________________________';
+echo PHP_EOL;
+echo PHP_EOL;     
+echo PHP_EOL;
+echo 'Select databse';
+echo PHP_EOL;
+echo PHP_EOL; 
+echo '_______________________________________________________';
+echo PHP_EOL; 
+echo PHP_EOL;
+
+//mysql_select_db("s2-wordpress") or die(mysql_error());
 mysql_select_db("s1-wordpress") or die(mysql_error());
 
 //2.Sign into Google Analytics
+echo PHP_EOL; 
+echo '_______________________________________________________';
+echo PHP_EOL;
+echo PHP_EOL;     
+echo PHP_EOL;
+echo 'Sign in to Google Analytics';
+echo PHP_EOL;
+echo PHP_EOL; 
+echo '_______________________________________________________';
+echo PHP_EOL;
+echo PHP_EOL;
+
 #require '../ga/analytics.class.php';
-require '../greenpag.es/gp-au-theme/ga/analytics.class.php';
+#require '../greenpag.es/gp-au-theme/ga/analytics.class.php';
+require '../gp-theme/gp-au-theme/ga/analytics.class.php';
 $analytics = new analytics('greenpagesadserving@gmail.com', 'greenpages01'); //sign in and grab profile			
 $analytics->setProfileById('ga:42443499'); 			//$analytics->setProfileByName('Stage 1 - Green Pages');
 
@@ -64,13 +106,24 @@ $analytics->setProfileById('ga:42443499'); 			//$analytics->setProfileByName('St
 //3. Find active advertisers to bill: 
 //   Get all authors (advertisers)IDs, chargifyIDs and productIDs where reg_advertiser=1, budget=active
 
+echo PHP_EOL; 
+echo '_______________________________________________________';
+echo PHP_EOL;
+echo PHP_EOL;     
+echo PHP_EOL;
+echo 'Get user ids with click budget_status user meta set';
+echo PHP_EOL;
+echo PHP_EOL; 
+echo '_______________________________________________________';
+echo PHP_EOL;
+echo PHP_EOL;
 
 # Get user id's with active click budgets
 $sql = 'SELECT DISTINCT m1.user_id,
-            m1.meta_value as budget
+            m1.meta_key as budget
 		FROM wp_usermeta m1
-		    JOIN wp_usermeta m2 on (m1.user_id = m2.user_id and m2.meta_key = "budget")
-		WHERE m1.meta_value = "active"';
+		    JOIN wp_usermeta m2 on (m1.user_id = m2.user_id and m2.meta_key = "budget_status")
+		WHERE m1.meta_key = "budget_status"';
 
 $db_result = mysql_query($sql);
 
@@ -85,16 +138,16 @@ function get_clicks_for_post($post_row, $user_row, $analytics, $start_range, $en
 	    #var_dump($post_row);
 		
 		$post_url_ext = $post_row->post_name; //Need to get post_name for URL. Gets ful URl, but we only need /url extention for Google API
-        var_dump($post_url_ext);
-	    echo PHP_EOL;
+        #var_dump($post_url_ext);
+	    #echo PHP_EOL;
 		
 		$post_type_map = 'eco-friendly-products';
-        var_dump($post_type_map);
-	    echo PHP_EOL;		
+        #var_dump($post_type_map);
+	    #echo PHP_EOL;		
 				
 		$post_url_end = '/' . $post_type_map . '/' . $post_url_ext . '/';
-		var_dump($post_url_end);
-	    echo PHP_EOL;	 	    
+		#var_dump($post_url_end);
+	    #echo PHP_EOL;	 	    
 		
   		$analytics->setDateRange($start_range, $end_range);	        //Set date in GA $analytics->setMonth(date('$post_date'), date('$new_date'));
           	
@@ -108,13 +161,10 @@ function get_clicks_for_post($post_row, $user_row, $analytics, $start_range, $en
 		foreach ($clickURL as $data) {
     		$sumClick = $sumClick + $data;
   		}
-		var_dump($sumClick);
-        echo PHP_EOL;   
+		#var_dump($sumClick);
+        #echo PHP_EOL;   
         
 		$post_url =   '/eco-friendly-products';
-		
-		#$custom = get_post_custom($post->ID);
-		#$product_url = $custom["gp_advertorial_product_url"][0];	
 
 	    // Get url product button is linked to
 	    $sql_product_url = 'SELECT meta_value 
@@ -122,33 +172,33 @@ function get_clicks_for_post($post_row, $user_row, $analytics, $start_range, $en
                             WHERE post_id = "'. $post_id .'"
                                 AND meta_key = "gp_advertorial_product_url";';
 	
-	    echo $sql_product_url;
-	    echo PHP_EOL;    
+	    #echo $sql_product_url;
+	    #echo PHP_EOL;    
 
 	    $product_url_results = mysql_query($sql_product_url);
         mysql_data_seek($product_url_results, 0);
 	    $product_url_row = mysql_fetch_object($product_url_results);	
 		$product_url = $product_url_row->meta_value;
 		
-		var_dump($product_url);
-	    echo PHP_EOL; 
+		#var_dump($product_url);
+	    #echo PHP_EOL; 
 		
 		if ( !empty($product_url) ) {		# IF 'BUY IT' BUTTON ACTIVATED, GET CLICKS
 			
 		    $click_track_tag_product_button = '/outbound/product-button/' . $post_id . '/' . $profile_author_id . '/' . $product_url . '/'; 
-        	var_dump($click_track_tag_product_button);
-            echo PHP_EOL; 
+        	#var_dump($click_track_tag_product_button);
+            #echo PHP_EOL; 
 	         
 			$clickURL_product_button = ($analytics->getPageviewsURL($click_track_tag_product_button));
-  			var_dump($clickURL_product_button);
-            echo PHP_EOL; 
+  			#var_dump($clickURL_product_button);
+            #echo PHP_EOL; 
             
   			foreach ($clickURL_product_button as $data) {
     			$sumClick = $sumClick + $data;
   			}
 		}
-		var_dump ($sumClick);
-        echo PHP_EOL;   
+		#var_dump ($sumClick);
+        #echo PHP_EOL;   
 			
 	  	#if ($sumClick == 0) {			#IF NO CLICKS YET, DISPLAY 'Unavailable'
     	#	$sumClick = 'Unavailable';
@@ -158,6 +208,19 @@ function get_clicks_for_post($post_row, $user_row, $analytics, $start_range, $en
 }
 
 // 4. Get all posts for each ID. Grab the their analytics for the hour for all posts and sum
+
+echo PHP_EOL; 
+echo '_______________________________________________________';
+echo PHP_EOL;
+echo PHP_EOL;     
+echo PHP_EOL;
+echo 'Get posts, grab analytics and sum clicks';
+echo PHP_EOL;
+echo PHP_EOL; 
+echo '_______________________________________________________';
+echo PHP_EOL;
+echo PHP_EOL;
+
 date_default_timezone_set('UTC');
 	
 $i = 0;
@@ -173,14 +236,14 @@ while ($i < $data_set) {
     			  	and wp_posts.post_type = "gp_advertorial" 
     			  	and wp_posts.post_author = "'. $user_row->user_id .'";';
 	
-	echo $sql_posts;
-	echo PHP_EOL;
+	#echo $sql_posts;
+	#echo PHP_EOL;
 	
 	$posts_results = mysql_query($sql_posts);
 	$num_posts     = mysql_num_rows($posts_results);
 	
-	var_dump($num_posts);
-	echo PHP_EOL;
+	#var_dump($num_posts);
+	#echo PHP_EOL;
 	
 	# Get all clicks for this users product posts
 	# this variable needs to hold the total number of click that user will be billed for 
@@ -196,14 +259,14 @@ while ($i < $data_set) {
 	    $now =                       time();
 	    $yesterday_date_stamp =      ( $now - (24 * 60 * 60) );
 		$yesterday_date       =      date('Y-m-d', $yesterday_date_stamp);
-		echo '$yesterday_date: ';
-	    var_dump($yesterday_date);
-	    echo PHP_EOL;
+		#echo '$yesterday_date: ';
+	    #var_dump($yesterday_date);
+	    #echo PHP_EOL;
 
 		$today_date =                date('Y-m-d'); 		            //Todays Date
-	    echo '$today_date: ';
-		var_dump($today_date);
-	    echo PHP_EOL;
+	    #echo '$today_date: ';
+		#var_dump($today_date);
+	    #echo PHP_EOL;
 	    
         $sumClick_past_day =   get_clicks_for_post($post_row, $user_row, $analytics, $yesterday_date, $today_date);
 	    
@@ -213,8 +276,8 @@ while ($i < $data_set) {
                          WHERE user_id = "'. $user_row->user_id .'"
                              AND meta_key = "adv_signup_time";';
 	
-	    echo $sql_adv_time;
-	    echo PHP_EOL;    
+	    #echo $sql_adv_time;
+	    #echo PHP_EOL;    
 
 	    $signup_time_results = mysql_query($sql_adv_time);
         mysql_data_seek($signup_time_results, 0);
@@ -222,22 +285,22 @@ while ($i < $data_set) {
 	    
 	    $advertiser_signup_time = $signup_time_row->meta_value;
 	    
-	    var_dump($advertiser_signup_time);
-	    echo PHP_EOL;
+	    #var_dump($advertiser_signup_time);
+	    #echo PHP_EOL;
 	    
 	    // Get difference between last week anniversary of sign up
 	    $one_week = (7 * 24 * 60 * 60);
-	    var_dump($one_week);
-	    echo PHP_EOL;
+	    #var_dump($one_week);
+	    #echo PHP_EOL;
 
 	    $now =                      time();
 	    $total_time_signedup =      $now - $advertiser_signup_time;
 	    $this_billing_week =        $total_time_signedup % $one_week;
 	    $start_this_billing_week =  $now - $this_billing_week;
 
-	    echo '$start_this_billing_week: ';
-	    var_dump($start_this_billing_week);
-	    echo PHP_EOL;
+	    #echo '$start_this_billing_week: ';
+	    #var_dump($start_this_billing_week);
+	    #echo PHP_EOL;
 	    
 	    $start_date_billing_week =  date('Y-m-d', $start_this_billing_week);
 	    
@@ -282,14 +345,15 @@ while ($i < $data_set) {
                              WHERE  user_id = "'. $user_row->user_id .'"
                                  AND meta_key = "subscription_id";';
 	
-	echo $sql_subscription_id;
-	echo PHP_EOL; 
+	#echo $sql_subscription_id;
+	#echo PHP_EOL; 
 
-    $sql_subscription_id_results = mysql_query($sql_subscription_id);
+    $sql_subscription_id_results = mysql_query($sql_subscription_id);    
     mysql_data_seek($sql_subscription_id_results, 0);
 	$subscription_id_row = mysql_fetch_object($sql_subscription_id_results);	
 	$subscription_id = $subscription_id_row->meta_value;
     
+	echo '$subscription_id: ';
 	var_dump($subscription_id);
     echo PHP_EOL;
 
@@ -299,14 +363,15 @@ while ($i < $data_set) {
                         WHERE  user_id = "'. $user_row->user_id .'"
                              AND meta_key = "product_id";';
 	
-	echo $sql_product_id;
-	echo PHP_EOL; 
+	#echo $sql_product_id;
+	#echo PHP_EOL; 
 
     $sql_product_id_results = mysql_query($sql_product_id);
     mysql_data_seek($sql_product_id_results, 0);
 	$product_id_row = mysql_fetch_object($sql_product_id_results);	
 	$product_id = $product_id_row->meta_value;
     
+	echo '$product_id: ';
 	var_dump($product_id);
     echo PHP_EOL;
     
@@ -340,6 +405,7 @@ while ($i < $data_set) {
             break;                                                
     }    					
     
+    echo '$component_id: ';
     var_dump($component_id);
     echo PHP_EOL;
 
@@ -348,15 +414,15 @@ while ($i < $data_set) {
     
 	if (!empty($component_id)) {
 
-	        echo '$cap: ';
-            var_dump($cap);
-            echo PHP_EOL;
+	    echo '$cap: ';
+        var_dump($cap);
+        echo PHP_EOL;
             
-            $quantity = $billable_clicks;
+        $quantity = $billable_clicks;
             
-            echo '$quantity: ';			
-            var_dump($quantity);
-            echo PHP_EOL;
+        echo '$quantity: ';			
+        var_dump($quantity);
+        echo PHP_EOL;
 	    
         //Check is under cap
     	if ($clicks_this_week < $cap) {
@@ -441,7 +507,7 @@ while ($i < $data_set) {
         echo '$chargify_url: '. $chargify_url;
         echo PHP_EOL;
         
-        $usage = ' "usage":{ "id": '. $subscription_id .', "quantity": '. $quantity .' }';
+        $usage = '"usage":{ "id": '. $subscription_id .', "quantity": '. $quantity .' }';
         echo '$usage: '. $usage;
         echo PHP_EOL;
         # send billing data to url above using curl 
@@ -469,9 +535,27 @@ while ($i < $data_set) {
 	    echo 'No $component_id found, no data sent to chargify.';
 	    echo PHP_EOL;
 	}
-    	
+
+    echo PHP_EOL;
+    echo '_______________________________________________________';
+    echo PHP_EOL; 
+    echo PHP_EOL; 
+    echo PHP_EOL; 	
+	
 	$i++;	
 }	
+
+echo PHP_EOL; 
+echo '_______________________________________________________';
+echo PHP_EOL;
+echo PHP_EOL;     
+echo PHP_EOL;
+echo 'Script ends';
+echo PHP_EOL;
+echo PHP_EOL; 
+echo '_______________________________________________________';
+echo PHP_EOL;
+echo PHP_EOL;
 
 exit();
 
