@@ -120,7 +120,7 @@ echo PHP_EOL;
 
 # Get user id's with active click budgets
 $sql = 'SELECT DISTINCT m1.user_id,
-            m1.meta_key as budget
+            m1.meta_value as budget_status
 		FROM wp_usermeta m1
 		    JOIN wp_usermeta m2 on (m1.user_id = m2.user_id and m2.meta_key = "budget_status")
 		WHERE m1.meta_key = "budget_status"';
@@ -243,7 +243,7 @@ while ($i < $data_set) {
     var_dump($reg_advertiser_row);
     echo PHP_EOL;	
 	
-    if ($reg_advertiser_row->meta_value == "1") {
+    if ( ( $reg_advertiser_row->meta_value == "1" ) && ( $user_row->budget_status == 'active' ) ) {
     
     	echo PHP_EOL; 
         echo '_______________________________________________________';
