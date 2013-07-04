@@ -537,12 +537,26 @@ while ($i < $data_set) {
             echo PHP_EOL; 
             echo PHP_EOL;        
         	
-            $chargify_api_key = '3FAaEvUO_ksasbblajon';
-    	    $chargify_url = 'https://'. $chargify_api_key .':x@greenpages.chargify.com/subscriptions/' . $subscription_id . '/components/' . $component_id . '/usages.json';
+            $chargify_key = '3FAaEvUO_ksasbblajon';
+            $chargify_auth = $chargify_key .':x@';
+            $chargify_auth_url = 'https://'. $chargify_auth .'greenpages.chargify.com/subscriptions/';
+            echo '$chargify_auth_url: '. $chargify_auth_url;
+            echo PHP_EOL;
+            
+    	    $chargify_url = 'https://greenpages.chargify.com/subscriptions/' . $subscription_id . '/components/' . $component_id . '/usages.json';
             echo '$chargify_url: '. $chargify_url;
             echo PHP_EOL;
             
-            $usage = '{ "usage":{ "id": '. $subscription_id .', "quantity": '. $quantity .' } }';
+            $usage = '
+                     """
+                     { 
+                         "usage":{ 
+                             "quantity": '. $quantity .' 
+    	                 } 
+    	             }
+    	             """
+    	             ';
+            
             echo '$usage: '. $usage;
             echo PHP_EOL;
             # send billing data to url above using curl 
