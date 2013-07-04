@@ -47,8 +47,8 @@ echo PHP_EOL;
 
 //1.Connect to MYSQL database
 
-#mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
-mysql_connect("127.0.0.1", "root", "") or die(mysql_error());
+mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
+#mysql_connect("127.0.0.1", "root", "") or die(mysql_error());
 
 echo PHP_EOL; 
 echo '_______________________________________________________';
@@ -62,8 +62,8 @@ echo '_______________________________________________________';
 echo PHP_EOL; 
 echo PHP_EOL;
 
-#mysql_select_db("s2-wordpress") or die(mysql_error());
-mysql_select_db("s1-wordpress") or die(mysql_error());
+mysql_select_db("s2-wordpress") or die(mysql_error());
+#mysql_select_db("s1-wordpress") or die(mysql_error());
 
 //2.Sign into Google Analytics
 echo PHP_EOL; 
