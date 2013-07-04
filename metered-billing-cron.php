@@ -537,7 +537,8 @@ while ($i < $data_set) {
             echo PHP_EOL; 
             echo PHP_EOL;        
         	
-    	    $chargify_url = 'https://greenpages.chargify.com/subscriptions/' . $subscription_id . '/components/' . $component_id . '/usages.json';
+            $chargify_api_key = '3FAaEvUO_ksasbblajon';
+    	    $chargify_url = 'https://'. $chargify_api_key .':x@greenpages.chargify.com/subscriptions/' . $subscription_id . '/components/' . $component_id . '/usages.json';
             echo '$chargify_url: '. $chargify_url;
             echo PHP_EOL;
             
@@ -552,18 +553,20 @@ while ($i < $data_set) {
                 echo PHP_EOL;
     
                 // Chargify api key: 3FAaEvUO_ksasbblajon
+                // curl -i https://<api-key>:x@subdomain.chargify.com/customers.xml
+                // http://docs.chargify.com/api-authentication
                 
                 $ch = curl_init();
                 
                 $array = array();
-                array_push($array, 'Content-Type: application/json;','Accept: application/json;', 'charset=utf-8');
+                array_push($array, 'Content-Type: application/json; Accept: application/json; charset=utf-8');
 
                 curl_setopt($ch, CURLOPT_HTTPHEADER, $array);
-                #curl_setopt($ch, CURLOPT_URL, $chargify_url);
-                #curl_setopt($ch, CURLOPT_POST, 1);
-                #curl_setopt($ch, CURLOPT_POSTFIELDS, $usage);
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                curl_setopt($ch, CURLOPT_URL, $chargify_url);
+                curl_setopt($ch, CURLOPT_POST, 1);
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $usage);
+                #curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                #curl_setopt($ch, CURLOPT_POSTFIELDS, $usage);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 $result = curl_exec($ch);
                 echo $result;   
