@@ -541,7 +541,7 @@ while ($i < $data_set) {
             echo '$chargify_url: '. $chargify_url;
             echo PHP_EOL;
             
-            $usage = '"usage":{ "id": '. $subscription_id .', "quantity": '. $quantity .' }';
+            $usage = '{ "usage":{ "id": '. $subscription_id .', "quantity": '. $quantity .' } }';
             echo '$usage: '. $usage;
             echo PHP_EOL;
             # send billing data to url above using curl 
