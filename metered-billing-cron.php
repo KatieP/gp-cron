@@ -547,15 +547,31 @@ while ($i < $data_set) {
             # send billing data to url above using curl 
     
             if ($quantity != 0) {
-                echo 'Send data to chargify!';   
+                
+                echo 'Sending data to chargify ...';   
                 echo PHP_EOL;
     
-                // curl -v -H "Content-Type: application/json" -X POST 
-                // -d ' "usage":{ "id": $subscription_id, "quantity":$quantity }' $chargify_url     
+                $ch = curl_init();
+                
+                $array = array();
+                array_push($array, 'Content-Type: application/json; charset=utf-8');
+                
+                curl_setopt($ch, CURLOPT_HTTPHEADER, $array);
+                curl_setopt($ch, CURLOPT_URL, $chargify_url);
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $usage);
+                
+                curl_exec($ch);
+                curl_close($ch);    
                             
+                echo 'Data sent to chargify successfully ...';   
+                echo PHP_EOL;
+                
             } else {
+                
                 echo 'No clicks, do not send data to chargify!';
                 echo PHP_EOL;            
+            
             }
     
         	echo PHP_EOL; 
@@ -566,8 +582,10 @@ while ($i < $data_set) {
             echo PHP_EOL;
     
     	} else {
+
     	    echo 'No $component_id found, no data sent to chargify.';
     	    echo PHP_EOL;
+    	
     	}
     
         echo PHP_EOL;
@@ -575,7 +593,9 @@ while ($i < $data_set) {
         echo PHP_EOL; 
         echo PHP_EOL; 
         echo PHP_EOL; 	
+    
     } else {
+
         echo 'User: '. $user_row->user_id .' $reg_advertiser: '. $reg_advertiser_row->meta_value .' and $budget_status: '. $user_row->budget_status;
         echo PHP_EOL;
         
