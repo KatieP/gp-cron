@@ -548,13 +548,11 @@ while ($i < $data_set) {
             echo PHP_EOL;
             
             $usage = '
-                     """
                      { 
                          "usage":{ 
                              "quantity": '. $quantity .' 
     	                 } 
     	             }
-    	             """
     	             ';
             
             echo '$usage: '. $usage;
@@ -570,7 +568,7 @@ while ($i < $data_set) {
                 // curl -i https://<api-key>:x@subdomain.chargify.com/customers.xml
                 // http://docs.chargify.com/api-authentication
                 
-                $ch = curl_init();
+                $ch = curl_init($chargify_auth_url);
                 
                 $array = array();
                 array_push($array, 'Content-Type: application/json; Accept: application/json; charset=utf-8');
