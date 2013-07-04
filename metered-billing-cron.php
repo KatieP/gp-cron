@@ -243,7 +243,7 @@ while ($i < $data_set) {
     var_dump($reg_advertiser_row);
     echo PHP_EOL;	
 	
-    if ( ( $reg_advertiser_row->meta_value == "1" ) && ( $user_row->budget_status == 'active' ) ) {
+    if ( $reg_advertiser_row->meta_value == "1" ) {
     
     	echo PHP_EOL; 
         echo '_______________________________________________________';
