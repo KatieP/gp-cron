@@ -551,20 +551,27 @@ while ($i < $data_set) {
                 echo 'Sending data to chargify ...';   
                 echo PHP_EOL;
     
+                // Chargify api key: 3FAaEvUO_ksasbblajon
+                
                 $ch = curl_init();
                 
                 $array = array();
-                array_push($array, 'Content-Type: application/json; charset=utf-8');
-                
+                array_push($array, 'Content-Type: application/json;','Accept: application/json;', 'charset=utf-8');
+
                 curl_setopt($ch, CURLOPT_HTTPHEADER, $array);
-                curl_setopt($ch, CURLOPT_URL, $chargify_url);
-                curl_setopt($ch, CURLOPT_POST, 1);
+                #curl_setopt($ch, CURLOPT_URL, $chargify_url);
+                #curl_setopt($ch, CURLOPT_POST, 1);
+                #curl_setopt($ch, CURLOPT_POSTFIELDS, $usage);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $usage);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $result = curl_exec($ch);
+                echo $result;   
+                echo PHP_EOL;
                 
-                curl_exec($ch);
                 curl_close($ch);    
                             
-                echo 'Data sent to chargify successfully ...';   
+                echo 'Data sent might have been sent to chargify? ...';   
                 echo PHP_EOL;
                 
             } else {
