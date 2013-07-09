@@ -789,4 +789,6 @@ send_notifcations();
 echo '<br /> ends <br />';
 echo '<br /> It didn\'t break! <br />';
 
+exit();
+
 ?>
