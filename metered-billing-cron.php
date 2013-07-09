@@ -34,10 +34,7 @@ echo '_______________________________________________________';
 echo PHP_EOL;
 echo '_______________________________________________________';
 echo PHP_EOL; 
-echo PHP_EOL;     
-echo PHP_EOL;
-echo 'Script begins';
-echo PHP_EOL;
+echo 'Begins';
 echo PHP_EOL; 
 echo '_______________________________________________________';
 echo PHP_EOL;
@@ -53,14 +50,10 @@ mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_erro
 echo PHP_EOL; 
 echo '_______________________________________________________';
 echo PHP_EOL;
-echo PHP_EOL;     
-echo PHP_EOL;
 echo 'Select databse';
 echo PHP_EOL;
-echo PHP_EOL; 
 echo '_______________________________________________________';
 echo PHP_EOL; 
-echo PHP_EOL;
 
 mysql_select_db("s2-wordpress") or die(mysql_error());
 #mysql_select_db("s1-wordpress") or die(mysql_error());
@@ -69,13 +62,9 @@ mysql_select_db("s2-wordpress") or die(mysql_error());
 echo PHP_EOL; 
 echo '_______________________________________________________';
 echo PHP_EOL;
-echo PHP_EOL;     
-echo PHP_EOL;
 echo 'Sign in to Google Analytics';
 echo PHP_EOL;
-echo PHP_EOL; 
 echo '_______________________________________________________';
-echo PHP_EOL;
 echo PHP_EOL;
 
 #require '../ga/analytics.class.php';
@@ -109,13 +98,9 @@ $analytics->setProfileById('ga:42443499'); 			//$analytics->setProfileByName('St
 echo PHP_EOL; 
 echo '_______________________________________________________';
 echo PHP_EOL;
-echo PHP_EOL;     
-echo PHP_EOL;
 echo 'Get user ids with click budget_status user meta set';
-echo PHP_EOL;
 echo PHP_EOL; 
 echo '_______________________________________________________';
-echo PHP_EOL;
 echo PHP_EOL;
 
 # Get user id's with active click budgets
@@ -128,26 +113,18 @@ $sql = 'SELECT DISTINCT m1.user_id,
 $db_result = mysql_query($sql);
 
 $data_set = mysql_num_rows($db_result);
-echo $data_set;
+echo 'Users with budget_status set: '. $data_set;
 echo PHP_EOL;
 
 // 3a. Define functions to get clicks
 
 function get_clicks_for_post($post_row, $user_row, $analytics, $start_range, $end_range) {
-	    
-	    #var_dump($post_row);
 		
 		$post_url_ext = $post_row->post_name; //Need to get post_name for URL. Gets ful URl, but we only need /url extention for Google API
-        #var_dump($post_url_ext);
-	    #echo PHP_EOL;
 		
 		$post_type_map = 'eco-friendly-products';
-        #var_dump($post_type_map);
-	    #echo PHP_EOL;		
 				
 		$post_url_end = '/' . $post_type_map . '/' . $post_url_ext . '/';
-		#var_dump($post_url_end);
-	    #echo PHP_EOL;	 	    
 		
   		$analytics->setDateRange($start_range, $end_range);	        //Set date in GA $analytics->setMonth(date('$post_date'), date('$new_date'));
           	
@@ -161,8 +138,6 @@ function get_clicks_for_post($post_row, $user_row, $analytics, $start_range, $en
 		foreach ($clickURL as $data) {
     		$sumClick = $sumClick + $data;
   		}
-		#var_dump($sumClick);
-        #echo PHP_EOL;   
         
 		$post_url =   '/eco-friendly-products';
 
@@ -222,11 +197,6 @@ while ($i < $data_set) {
 	mysql_data_seek($reg_advertiser_results, 0);
 	$reg_advertiser_row = mysql_fetch_object($reg_advertiser_results);
 	
-    echo '$reg_advertiser_row:';
-    echo PHP_EOL;
-    var_dump($reg_advertiser_row);
-    echo PHP_EOL;	
-	
     if ( $reg_advertiser_row->meta_value == "1" ) {
     
     	echo PHP_EOL; 
@@ -239,11 +209,6 @@ while ($i < $data_set) {
         echo PHP_EOL; 
         echo '_______________________________________________________';
         echo PHP_EOL;
-        echo PHP_EOL;
-    
-        echo '$user_row:';
-        echo PHP_EOL;
-        var_dump($user_row);
         echo PHP_EOL;
         
     	# Get all product posts authored by user and store in $pageposts
@@ -359,10 +324,6 @@ while ($i < $data_set) {
     	$product_id_row = mysql_fetch_object($sql_product_id_results);	
     	$product_id = $product_id_row->meta_value;
         
-    	echo '$product_id: ';
-    	var_dump($product_id);
-        echo PHP_EOL;
-        
         $component_id = '';
         
         switch ($product_id)   {
@@ -392,10 +353,6 @@ while ($i < $data_set) {
                 $cap = (int) (449.00 / 1.7);
                 break;                                                
         }    					
-        
-        echo '$component_id: ';
-        var_dump($component_id);
-        echo PHP_EOL;
     
         // Send to chargify metering	
         // Send a post request with Json data to this URL
@@ -486,15 +443,10 @@ while ($i < $data_set) {
     	    
         	echo PHP_EOL; 
             echo '_______________________________________________________';
-            echo PHP_EOL;
-            echo '_______________________________________________________';
-            echo PHP_EOL; 
             echo PHP_EOL;        
         	
             $chargify_key = '3FAaEvUO_ksasbblajon';
             $chargify_auth = $chargify_key .':x';
-            $chargify_auth_url = 'https://'. $chargify_auth .'green-pages.chargify.com/subscriptions/';
-            echo '$chargify_auth_url: '. $chargify_auth_url;
             echo PHP_EOL;
             
     	    $chargify_url = 'https://green-pages.chargify.com/subscriptions/' . $subscription_id . '/components/' . $component_id . '/usages.json';
@@ -554,22 +506,13 @@ while ($i < $data_set) {
         	echo PHP_EOL; 
             echo '_______________________________________________________';
             echo PHP_EOL;
-            echo '_______________________________________________________';
-            echo PHP_EOL; 
-            echo PHP_EOL;
     
     	} else {
 
     	    echo 'No $component_id found, no data sent to chargify.';
     	    echo PHP_EOL;
     	
-    	}
-    
-        echo PHP_EOL;
-        echo '_______________________________________________________';
-        echo PHP_EOL; 
-        echo PHP_EOL; 
-        echo PHP_EOL; 	
+    	}       
     
     } else {
 
@@ -578,19 +521,21 @@ while ($i < $data_set) {
         
     }
     
+    echo PHP_EOL;
+    echo '_______________________________________________________';
+    echo PHP_EOL; 
+    echo '_______________________________________________________';
+    echo PHP_EOL;      
+    
 	$i++;	
 }	
 
 echo PHP_EOL; 
 echo '_______________________________________________________';
 echo PHP_EOL;
-echo PHP_EOL;     
-echo PHP_EOL;
-echo 'Script ends';
-echo PHP_EOL;
+echo 'Ends';
 echo PHP_EOL; 
 echo '_______________________________________________________';
-echo PHP_EOL;
 echo PHP_EOL;
 
 exit();
