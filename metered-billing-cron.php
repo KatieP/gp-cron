@@ -171,38 +171,22 @@ function get_clicks_for_post($post_row, $user_row, $analytics, $start_range, $en
                             FROM wp_postmeta 
                             WHERE post_id = "'. $post_id .'"
                                 AND meta_key = "gp_advertorial_product_url";';
-	
-	    #echo $sql_product_url;
-	    #echo PHP_EOL;    
 
 	    $product_url_results = mysql_query($sql_product_url);
         mysql_data_seek($product_url_results, 0);
 	    $product_url_row = mysql_fetch_object($product_url_results);	
 		$product_url = $product_url_row->meta_value;
 		
-		#var_dump($product_url);
-	    #echo PHP_EOL; 
-		
 		if ( !empty($product_url) ) {		# IF 'BUY IT' BUTTON ACTIVATED, GET CLICKS
 			
 		    $click_track_tag_product_button = '/outbound/product-button/' . $post_id . '/' . $profile_author_id . '/' . $product_url . '/'; 
-        	#var_dump($click_track_tag_product_button);
-            #echo PHP_EOL; 
 	         
 			$clickURL_product_button = ($analytics->getPageviewsURL($click_track_tag_product_button));
-  			#var_dump($clickURL_product_button);
-            #echo PHP_EOL; 
             
   			foreach ($clickURL_product_button as $data) {
     			$sumClick = $sumClick + $data;
   			}
 		}
-		#var_dump ($sumClick);
-        #echo PHP_EOL;   
-			
-	  	#if ($sumClick == 0) {			#IF NO CLICKS YET, DISPLAY 'Unavailable'
-    	#	$sumClick = 'Unavailable';
-    	#}
         
         return $sumClick;
 }
@@ -269,14 +253,8 @@ while ($i < $data_set) {
         			  	and wp_posts.post_type = "gp_advertorial" 
         			  	and wp_posts.post_author = "'. $user_row->user_id .'";';
     	
-    	#echo $sql_posts;
-    	#echo PHP_EOL;
-    	
     	$posts_results = mysql_query($sql_posts);
     	$num_posts     = mysql_num_rows($posts_results);
-    	
-    	#var_dump($num_posts);
-    	#echo PHP_EOL;
     	
     	# Get all clicks for this users product posts
     	# this variable needs to hold the total number of click that user will be billed for 
@@ -292,25 +270,16 @@ while ($i < $data_set) {
     	    $now =                       time();
     	    $yesterday_date_stamp =      ( $now - (24 * 60 * 60) );
     		$yesterday_date       =      date('Y-m-d', $yesterday_date_stamp);
-    		#echo '$yesterday_date: ';
-    	    #var_dump($yesterday_date);
-    	    #echo PHP_EOL;
     
     		$today_date =                date('Y-m-d'); 		            //Todays Date
-    	    #echo '$today_date: ';
-    		#var_dump($today_date);
-    	    #echo PHP_EOL;
     	    
             $sumClick_past_day =   get_clicks_for_post($post_row, $user_row, $analytics, $yesterday_date, $today_date);
     	    
-            	    // Get time advertiser signed up to chargify
+            // Get time advertiser signed up to chargify
     	    $sql_adv_time = 'SELECT meta_value 
                              FROM wp_usermeta 
                              WHERE user_id = "'. $user_row->user_id .'"
                                  AND meta_key = "adv_signup_time";';
-    	
-    	    #echo $sql_adv_time;
-    	    #echo PHP_EOL;    
     
     	    $signup_time_results = mysql_query($sql_adv_time);
             mysql_data_seek($signup_time_results, 0);
@@ -318,22 +287,13 @@ while ($i < $data_set) {
     	    
     	    $advertiser_signup_time = $signup_time_row->meta_value;
     	    
-    	    #var_dump($advertiser_signup_time);
-    	    #echo PHP_EOL;
-    	    
     	    // Get difference between last week anniversary of sign up
     	    $one_week = (7 * 24 * 60 * 60);
-    	    #var_dump($one_week);
-    	    #echo PHP_EOL;
     
     	    $now =                      time();
     	    $total_time_signedup =      $now - $advertiser_signup_time;
     	    $this_billing_week =        $total_time_signedup % $one_week;
     	    $start_this_billing_week =  $now - $this_billing_week;
-    
-    	    #echo '$start_this_billing_week: ';
-    	    #var_dump($start_this_billing_week);
-    	    #echo PHP_EOL;
     	    
     	    $start_date_billing_week =  date('Y-m-d', $start_this_billing_week);
     	    
@@ -378,9 +338,6 @@ while ($i < $data_set) {
                                  FROM   wp_usermeta 
                                  WHERE  user_id = "'. $user_row->user_id .'"
                                      AND meta_key = "subscription_id";';
-    	
-    	#echo $sql_subscription_id;
-    	#echo PHP_EOL; 
     
         $sql_subscription_id_results = mysql_query($sql_subscription_id);    
         mysql_data_seek($sql_subscription_id_results, 0);
@@ -396,9 +353,6 @@ while ($i < $data_set) {
                             FROM   wp_usermeta 
                             WHERE  user_id = "'. $user_row->user_id .'"
                                  AND meta_key = "product_id";';
-    	
-    	#echo $sql_product_id;
-    	#echo PHP_EOL; 
     
         $sql_product_id_results = mysql_query($sql_product_id);
         mysql_data_seek($sql_product_id_results, 0);
@@ -565,7 +519,6 @@ while ($i < $data_set) {
                 echo PHP_EOL;
     
                 // Chargify api key: 3FAaEvUO_ksasbblajon
-                // curl -i https://<api-key>:x@subdomain.chargify.com/customers.xml
                 // http://docs.chargify.com/api-authentication
                 
                 $ch = curl_init($chargify_auth_url);
