@@ -447,6 +447,7 @@ while ($i < $data_set) {
         	
             $chargify_key = '3FAaEvUO_ksasbblajon';
             $chargify_auth = $chargify_key .':x';
+            $chargify_auth_url = 'https://'. $chargify_auth .'green-pages.chargify.com/subscriptions/';
             echo PHP_EOL;
             
     	    $chargify_url = 'https://green-pages.chargify.com/subscriptions/' . $subscription_id . '/components/' . $component_id . '/usages.json';
