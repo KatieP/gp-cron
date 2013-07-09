@@ -451,8 +451,8 @@ while ($i < $data_set) {
     	    echo '$cap: ';
             var_dump($cap);
             echo PHP_EOL;
-                
-            $quantity = $billable_clicks;
+            
+            $quantity = ( ( $billable_clicks + $clicks_this_week ) <= $cap ) ? $billable_clicks : ($cap - $clicks_this_week);
                 
             echo '$quantity: ';			
             var_dump($quantity);
