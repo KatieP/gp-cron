@@ -588,7 +588,7 @@ while ($i < $data_set) {
 
                 curl_close($ch);    
                             
-                echo 'Data sent might have been sent to chargify? ...';   
+                echo 'Data successfully sent to chargify and usage recorded!';   
                 echo PHP_EOL;
                 
             } else {
