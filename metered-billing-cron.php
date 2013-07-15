@@ -5,9 +5,9 @@
 // Chargify bills the client once per week.
 
 // This job also checks the status of the advertiser as 'used_up': budget filled until next time period or 'active': 
-// budget remaining or 'paused': and saves as user_meta
+// budget remaining or 'cancelled': and saves as user_meta
 
-// All product posts for advertisers who have moved to 'used_up' or 'paused' have their product posts set to draft status.
+// All product posts for advertisers who have moved to 'used_up' or 'cancelled' have their product posts set to draft status.
 
 // All product posts for advertisers who have moved from 'used_up' to 'active' when their 
 // next billing cycle commences have their posts moved from draft to published.
@@ -15,7 +15,6 @@
 // The system must know when clicks reach max to turn posts off, then to turn on again.
 
 
-#8.  Activate 'billing' section on 'advertisers' tab on user profile.
 #9.  Show plan, rate and amount billed on advertiser/billing tab: Invoices, billing history, account pause, upgrade-downgrade.
 #10. Write cron (hourly) to add metered amount of clicks to chargify subscription.
 #11. Each chargify subscription period (weekly) add the dollar amount and clicks on a table in billing tab
@@ -428,15 +427,15 @@ while ($i < $data_set) {
                     
         	    }
         	    
-                # set budget_status to 'paused'
+                # set budget_status to 'used_up'
         	    $budget_status_sql = 'UPDATE wp_usermeta 
-        							  SET meta_value = replace(meta_value, "active", "paused") 
+        							  SET meta_value = replace(meta_value, "active", "used_up") 
         							  WHERE meta_key = "budget_status" 
         	    					      AND user_id ="'. $user_row->user_id .'" ;';  
         
         	    # run budget_status and post_status queries on db    
                 mysql_query($budget_status_sql);
-                echo 'Set budget_status for user '. $user_row->user_id .' to paused';
+                echo 'Set budget_status for user '. $user_row->user_id .' to used_up';
                 echo PHP_EOL;
         
         	}
