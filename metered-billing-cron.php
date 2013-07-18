@@ -215,7 +215,8 @@ while ($i < $data_set) {
     	# Get all product posts authored by user and store in $pageposts
     	$sql_posts = 'SELECT DISTINCT wp_posts.* 
     				  FROM wp_posts 
-    				  WHERE post_status = "publish" 
+    				  WHERE ( post_status = "publish"
+    				          or post_status = "pending" ) 
         			  	and wp_posts.post_type = "gp_advertorial" 
         			  	and wp_posts.post_author = "'. $user_row->user_id .'";';
     	
