@@ -66,9 +66,11 @@ echo PHP_EOL;
 echo '_______________________________________________________';
 echo PHP_EOL;
 
-#require '../ga/analytics.class.php';
-#require '../greenpag.es/gp-au-theme/ga/analytics.class.php';
+//require '../ga/analytics.class.php';
+//require '../greenpag.es/gp-au-theme/ga/analytics.class.php';
 require '../gp-theme/gp-au-theme/ga/analytics.class.php';
+//require 'var/www/production/www.greenpag.es/wordpress/wp-content/themes/gp-au-theme/ga/analytics.class.php';
+
 $analytics = new analytics('greenpagesadserving@gmail.com', 'greenpages01'); //sign in and grab profile			
 $analytics->setProfileById('ga:42443499'); 			//$analytics->setProfileByName('Stage 1 - Green Pages');
 
