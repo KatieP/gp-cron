@@ -384,7 +384,7 @@ while ($i < $data_set) {
                     $post_status_sql =   'UPDATE wp_posts 
         								  SET post_status = replace(post_status, "pending", "publish") 
         								  WHERE post_id ="'. $post_row->ID .'"
-        	    						      AND post_status = "publish";';
+        	    						      AND post_status = "pending";';
         
                     mysql_query($post_status_sql);
                     
@@ -397,7 +397,7 @@ while ($i < $data_set) {
         	        
         	    # set budget_status to 'active'
         	    $budget_status_sql = 'UPDATE wp_usermeta 
-        							  SET meta_value = replace(meta_value, "paused", "active") 
+        							  SET meta_value = replace(meta_value, "cancelled", "active") 
         							  WHERE meta_key = "budget_status" 
         	    					      AND user_id ="'. $user_row->user_id .'" ;';
         
@@ -417,11 +417,11 @@ while ($i < $data_set) {
         	        
         	        # set post_status to 'publish'
                     $post_status_sql =   'UPDATE wp_posts 
-        								  SET post_status = replace(post_status, "pending", "publish") 
+        								  SET post_status = replace(post_status, "publish", "pending") 
         								  WHERE post_id ="'. $post_row->ID .'"
         	    						      AND post_status = "pending";';
         
-                    echo 'Set post '. $post_row->ID .' to pending';
+                    echo 'Set post '. $post_row->ID .' to publish';
                     echo PHP_EOL;
                     
                     mysql_query($post_status_sql);
