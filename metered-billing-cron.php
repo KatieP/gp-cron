@@ -68,8 +68,8 @@ echo PHP_EOL;
 
 //require '../ga/analytics.class.php';
 //require '../greenpag.es/gp-au-theme/ga/analytics.class.php';
-require '../gp-theme/gp-au-theme/ga/analytics.class.php';
-//require '/var/www/production/www.greenpag.es/wordpress/wp-content/themes/gp-au-theme/ga/analytics.class.php';
+//require '../gp-theme/gp-au-theme/ga/analytics.class.php';
+require '/var/www/production/www.greenpag.es/wordpress/wp-content/themes/gp-au-theme/ga/analytics.class.php';
 
 $analytics = new analytics('greenpagesadserving@gmail.com', 'greenpages01'); //sign in and grab profile			
 $analytics->setProfileById('ga:42443499'); 			//$analytics->setProfileByName('Stage 1 - Green Pages');
@@ -388,7 +388,11 @@ while ($i < $data_set) {
         								  SET post_status = replace(post_status, "pending", "publish") 
         								  WHERE post_id ="'. $post_row->ID .'"
         	    						      AND post_status = "pending";';
-        
+
+                    echo '$post_status_sql: ';			
+                    var_dump($post_status_sql);
+                    echo PHP_EOL;
+                    
                     mysql_query($post_status_sql);
                     
                     echo 'Set post '. $post_row->ID .' to publish';
