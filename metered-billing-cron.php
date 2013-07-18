@@ -15,16 +15,16 @@
 // The system must know when clicks reach max to turn posts off, then to turn on again.
 
 
-#9.  Show plan, rate and amount billed on advertiser/billing tab: Invoices, billing history, account pause, upgrade-downgrade.
-#10. Write cron (hourly) to add metered amount of clicks to chargify subscription.
-#11. Each chargify subscription period (weekly) add the dollar amount and clicks on a table in billing tab
-#12. Add option on billing for advertiser to upgrade, downgrade or pause their subscription
-#13. Make weekly advertiser email that shows clicks and billing. Has prompt - reaching max cap? Increase your cap and 
-//   get more customers for your business Not reaching cap? Create another editorial - let us know what makes your product 
-//   interesting. Link to form. Add link to 'how to write a great post'.
-#14. Advertiser post is shown around site as 'related posts'.
-#15. When cap is reached, posts go to draft status
-#16. When new billing cycle commences, posts turn on again
+//9.  Show plan, rate and amount billed on advertiser/billing tab: Invoices, billing history, account pause, upgrade-downgrade.
+//10. Write cron (hourly) to add metered amount of clicks to chargify subscription.
+//11. Each chargify subscription period (weekly) add the dollar amount and clicks on a table in billing tab
+//12. Add option on billing for advertiser to upgrade, downgrade or pause their subscription
+//13. Make weekly advertiser email that shows clicks and billing. Has prompt - reaching max cap? Increase your cap and 
+//    get more customers for your business Not reaching cap? Create another editorial - let us know what makes your product 
+//    interesting. Link to form. Add link to 'how to write a great post'.
+//14. Advertiser post is shown around site as 'related posts'.
+//15. When cap is reached, posts go to draft status
+//16. When new billing cycle commences, posts turn on again
 
 //-----------------------------------//
 
@@ -69,7 +69,7 @@ echo PHP_EOL;
 //require '../ga/analytics.class.php';
 //require '../greenpag.es/gp-au-theme/ga/analytics.class.php';
 require '../gp-theme/gp-au-theme/ga/analytics.class.php';
-//require 'var/www/production/www.greenpag.es/wordpress/wp-content/themes/gp-au-theme/ga/analytics.class.php';
+//require '/var/www/production/www.greenpag.es/wordpress/wp-content/themes/gp-au-theme/ga/analytics.class.php';
 
 $analytics = new analytics('greenpagesadserving@gmail.com', 'greenpages01'); //sign in and grab profile			
 $analytics->setProfileById('ga:42443499'); 			//$analytics->setProfileByName('Stage 1 - Green Pages');
@@ -290,15 +290,13 @@ while ($i < $data_set) {
                     
         	$j++;
     	}	
-    
-    	
+
     	# Should have the following data available by now:
     	# -> user_id (wp), 
     	# -> subscription_id (chargify - unique subscription code for customer's product), 
     	# -> component_id (chargify - code for click price)
     	# -> billable_clicks (quantity - from google analytics work done above - int)
-    
-    	
+
     	// Get chargify subscription id
     	$sql_subscription_id  = 'SELECT meta_value 
                                  FROM   wp_usermeta 
@@ -369,7 +367,11 @@ while ($i < $data_set) {
             echo '$quantity: ';			
             var_dump($quantity);
             echo PHP_EOL;
-    	    
+
+            echo '$clicks_this_week: ';			
+            var_dump($clicks_this_week);
+            echo PHP_EOL;
+            
             //Check is under cap
         	if ($clicks_this_week < $cap) {
         
