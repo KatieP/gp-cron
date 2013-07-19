@@ -137,8 +137,7 @@ function update_social_media_count() {
 
 				// Compare old and new social media count and update popularity_score
 				$sql_update_pop_score = 'UPDATE wp_posts SET popularity_score = popularity_score + '. $social_media_count_unixtime .' WHERE ID = "'. $post_ID .'"';	
-				mysql_query($sql_update_pop_score);
-    							
+				mysql_query($sql_update_pop_score);    							
 
 				// Update wp_posts with new social media score
 				$social_media_count_new = (string) $social_media_count_new;

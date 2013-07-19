@@ -422,11 +422,11 @@ while ($i < $data_set) {
                     mysql_data_seek($posts_results, $k);
         	        $post_row = mysql_fetch_object($posts_results);	  
         	        
-        	        # set post_status to 'publish'
+        	        # set post_status to 'pending'
                     $post_status_sql =   'UPDATE wp_posts 
         								  SET post_status = replace(post_status, "publish", "pending") 
         								  WHERE ID ="'. $post_row->ID .'"
-        	    						      AND post_status = "pending";';
+        	    						      AND post_status = "publish";';
         
                     echo 'Set post '. $post_row->ID .' to publish';
                     echo PHP_EOL;

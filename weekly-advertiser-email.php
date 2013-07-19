@@ -73,14 +73,15 @@ function process_advertisers() {
 
 function get_user_analytics () {
 
-	//Set analaytics variables
-	$week_impressions = '';
+	// Set analaytics variables
+	$week_impressions =  '';
+	$week_clicks =       '';
+	$week_bill =         '';
 	
-	$week_clicks =      '';
+	// Construct useful string and return
+	$analytics_string =  '';
+	return $analytics_string;
 
-	$week_bill =        '';
-	
-	// return;
 }
 
 function get_email_message($user_name, $budget_status) {
