@@ -57,7 +57,6 @@ function update_likecount() {
 	}
 }
 
-
 function get_facebook_likes($url) {
 
    	$json_string = file_get_contents('http://graph.facebook.com/?ids=' . $url);
@@ -117,8 +116,7 @@ function update_social_media_count() {
         	                    "projects" => "projects");
 	   	$post_name = $row->post_name;
 	   	 					
-    	$url = 'http://www.thegreenpages.com.au/' . $post_type_map[$post_type] . "/" . $post_name;
-		
+    	$url = 'http://www.greenpag.es/' . $post_type_map[$post_type] . "/" . $post_name;
 		
 		// Get likes and tweets from facebook and twitter
 		$fb_likes = get_facebook_likes($url);
@@ -136,12 +134,14 @@ function update_social_media_count() {
 				$social_media_count_unixtime = (int) $social_media_count_unixtime;
 
 				// Compare old and new social media count and update popularity_score
-				$sql_update_pop_score = 'UPDATE wp_posts SET popularity_score = popularity_score + '. $social_media_count_unixtime .' WHERE ID = "'. $post_ID .'"';	
+				$sql_update_pop_score = 'UPDATE wp_posts SET popularity_score = popularity_score + '. $social_media_count_unixtime .' 
+				                         WHERE ID = "'. $post_ID .'"';	
 				mysql_query($sql_update_pop_score);    							
 
 				// Update wp_posts with new social media score
 				$social_media_count_new = (string) $social_media_count_new;
-				$sql_update_sm_count = 'UPDATE wp_posts SET social_media_count = '. $social_media_count_new .' WHERE ID = "'. $post_ID .'"';
+				$sql_update_sm_count = 'UPDATE wp_posts SET social_media_count = '. $social_media_count_new .' 
+				                        WHERE ID = "'. $post_ID .'"';
 
 				mysql_query($sql_update_sm_count);
                 echo 'Updated post with id: '. $post_ID . PHP_EOL;
@@ -153,7 +153,7 @@ function update_social_media_count() {
 }		
 
 update_likecount();
-#update_social_media_count();
+update_social_media_count();
 
 exit();
 
