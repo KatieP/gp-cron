@@ -440,7 +440,7 @@ while ($i < $data_set) {
         	    $budget_status_sql = 'UPDATE wp_usermeta 
         							  SET meta_value = replace(meta_value, "active", "used_up") 
         							  WHERE meta_key = "budget_status" 
-        	    					      AND user_id ="'. $user_row->user_id .'" ;';  
+        	    					      AND user_id ="'. $user_row->user_id .'" ;';
         
         	    # run budget_status and post_status queries on db    
                 mysql_query($budget_status_sql);

@@ -54,8 +54,7 @@ function process_advertisers() {
 
         $sql = "SELECT user_email, user_name, display_name
                 FROM wp_users
-                WHERE ID = '. $user_id .';
-                ";
+                WHERE ID = '. $user_id .';";
 
         $reg_advertiser_results = mysql_query($sql);
         mysql_data_seek( $reg_advertiser_results, 0);
@@ -66,20 +65,30 @@ function process_advertisers() {
         $user_email = $reg_advertiser_row->user_email;
         
         // Do most of the work here, construct strings, compse and send email etc
-        // I might want to reuse $user_email
-        
+
+        $signup_day = gmdate("l", $adv_signup_time);
+        $today = date('l'); //Day of week in lower case string
+
+        if ($signup_day == $today) {
+            send_email_notification($user_email, $intro_sentence);
+        }
+    
+        $i++;
     }
 }
 
-function get_user_analytics () {
+function get_user_analytics($member_display_name) {
 
 	// Set analaytics variables
 	$week_impressions =  '';
 	$week_clicks =       '';
 	$week_bill =         '';
-	
+
 	// Construct useful string and return
-	$analytics_string =  '';
+	$analytics_string =  'Hi '. $member_display_name .'! This week '. $week_impressions .' people viewed your post 
+                          and '. $week_clicks .' people clicked through to your website. <br /><br />
+                          That means your bill this week was '. $week_bill;
+	
 	return $analytics_string;
 
 }
@@ -124,8 +133,7 @@ function send_email_notification($user_email, $intro_sentence) {
                                                 'text' => 'Some text',
                                                 'html' => '<htlm>
                                                               '. $intro_sentence .'
-                                                           </html>' ) 
-                                               );
+                                                           </html>' ) );
     $result = curl_exec($ch); 
     curl_close($ch);
 
@@ -133,22 +141,22 @@ function send_email_notification($user_email, $intro_sentence) {
 
 }
 
-
-// get_advertiser_row();
-
-$intro_sentence = 'Hi '. $member_display_name .'! This week '. $week_impressions .' people viewed your post 
-                   and '. $week_clicks .' people clicked through to your website. <br /><br />
-                   That means your bill this week was '. $week_bill .'';
-
 // echo 'Here are some examples of some successful posts that helped get our customers more clients';
-
 // if today is the day chargify bills by day of the week. If day of signup == day of the week.
 
-$signup_day = gmdate("l", $adv_signup_time);
-$today = date('l'); //Day of week in lower case string
+echo PHP_EOL; 
+echo '_______________________________________________________';
+echo PHP_EOL;
+echo '_______________________________________________________';
+echo PHP_EOL; 
+echo 'Ends';
+echo PHP_EOL; 
+echo '_______________________________________________________';
+echo PHP_EOL;
+echo '_______________________________________________________';
+echo PHP_EOL; 
+echo PHP_EOL;
 
-if ($signup_day == $today) {
-    send_email_notification($user_email, $intro_sentence);
-}
+exit();
 
 ?>
