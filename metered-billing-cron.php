@@ -386,7 +386,7 @@ while ($i < $data_set) {
         	        # set post_status to 'publish'
                     $post_status_sql =   'UPDATE wp_posts 
         								  SET post_status = replace(post_status, "pending", "publish") 
-        								  WHERE post_id ="'. $post_row->ID .'"
+        								  WHERE ID ="'. $post_row->ID .'"
         	    						      AND post_status = "pending";';
 
                     echo '$post_status_sql: ';			
@@ -425,7 +425,7 @@ while ($i < $data_set) {
         	        # set post_status to 'publish'
                     $post_status_sql =   'UPDATE wp_posts 
         								  SET post_status = replace(post_status, "publish", "pending") 
-        								  WHERE post_id ="'. $post_row->ID .'"
+        								  WHERE ID ="'. $post_row->ID .'"
         	    						      AND post_status = "pending";';
         
                     echo 'Set post '. $post_row->ID .' to publish';
