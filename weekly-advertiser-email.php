@@ -37,7 +37,7 @@ function get_advertisers_from_db() {
 	return $db_result;   
 }
 
-function get_advertiser_row() {
+function process_advertisers() {
 
 	$users = get_advertisers_from_db();
 	$i = 0;
@@ -52,7 +52,7 @@ function get_advertiser_row() {
         $adv_signup_time = $row->adv_signup_time;
         $budget_status = $row->budget_status;
 
-        $sql = "SELECT ID, user_email, user_name, display_name
+        $sql = "SELECT user_email, user_name, display_name
                 FROM wp_users
                 WHERE ID = '. $user_id .';
                 ";
@@ -61,11 +61,13 @@ function get_advertiser_row() {
         mysql_data_seek( $reg_advertiser_results, 0);
         $reg_advertiser_row = mysql_fetch_object($reg_advertiser_results);
 
-
         $member_display_name = $reg_advertiser_row->display_name;
         $user_name = $reg_advertiser_row->user_name;
-        // I want to reuse $user_email
         $user_email = $reg_advertiser_row->user_email;
+        
+        // Do most of the work here, construct strings, compse and send email etc
+        // I might want to reuse $user_email
+        
     }
 }
 
@@ -74,9 +76,9 @@ function get_user_analytics () {
 	//Set analaytics variables
 	$week_impressions = '';
 	
-	$week_clicks = '';
+	$week_clicks =      '';
 
-	$week_bill = '';
+	$week_bill =        '';
 	
 	// return;
 }
@@ -131,9 +133,11 @@ function send_email_notification($user_email, $intro_sentence) {
 }
 
 
-get_advertiser_row();
+// get_advertiser_row();
 
-$intro_sentence = 'Hi '. $member_display_name .'! This week '. $week_impressions .' people viewed your post and '. $week_clicks .' people clicked through to your website. <br /><br />That\'s means your bill this week was '. $week_bill .'';
+$intro_sentence = 'Hi '. $member_display_name .'! This week '. $week_impressions .' people viewed your post 
+                   and '. $week_clicks .' people clicked through to your website. <br /><br />
+                   That means your bill this week was '. $week_bill .'';
 
 // echo 'Here are some examples of some successful posts that helped get our customers more clients';
 
