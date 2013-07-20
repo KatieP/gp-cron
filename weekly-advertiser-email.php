@@ -58,7 +58,7 @@ function get_adv_signup_time($user_id) {
     	echo('Database error: ' . mysql_error());
 	}
 
-	return $adv_signup_time;   
+	return $adv_signup_time;
 
 }
 
@@ -70,7 +70,7 @@ function get_budget_status($user_id) {
 	$sql = 'SELECT meta_value
         	FROM   wp_usermeta
         	WHERE  user_ID = "'. $user_id .'"
-        	    AND meta_key = "adv_signup_time";';
+        	    AND meta_key = "budget_status";';
 
 	$budget_status = mysql_query($sql);
 
@@ -98,6 +98,7 @@ function process_advertisers() {
         $budget_status =    get_budget_status($user_id);
 
         if ($budget_status != 'cancelled') {
+
             $sql = "SELECT user_email, user_nicename, display_name
                     FROM wp_users
                     WHERE ID = '. $user_id .';";
@@ -116,6 +117,7 @@ function process_advertisers() {
             if ($signup_day == $today) {
                 send_email_notification($user_email, $intro_sentence);
             }
+        
         }
         $i++;
     }
