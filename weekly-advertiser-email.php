@@ -15,7 +15,7 @@ echo '_______________________________________________________';
 echo PHP_EOL;
 echo '_______________________________________________________';
 echo PHP_EOL; 
-echo 'Begins';
+echo 'Weekly Advertiser Email Cron Begins';
 echo PHP_EOL; 
 echo '_______________________________________________________';
 echo PHP_EOL;
@@ -23,29 +23,32 @@ echo '_______________________________________________________';
 echo PHP_EOL; 
 echo PHP_EOL;
 
+function connect_to_db() {
+	mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());	
+	mysql_select_db("s2-wordpress") or die(mysql_error());    
+}
+
 function get_advertiser_ids() {
     
-	mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());	
-	mysql_select_db("s2-wordpress") or die(mysql_error());
+    connect_to_db();
 
 	$sql = "SELECT DISTINCT user_ID
         	FROM wp_usermeta
         	WHERE meta_key = 'reg_advertiser';";
 
-	$db_result = mysql_query($sql);
+	$advertiser_ids = mysql_query($sql);
 
-	if (!$db_result) {
+	if (!$advertiser_ids) {
     	echo('Database error: ' . mysql_error());
 	}
 
-	return $db_result;   
+	return $advertiser_ids;   
 
 }
 
 function get_adv_signup_time($user_id) {
 
-    mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());	
-	mysql_select_db("s2-wordpress") or die(mysql_error());
+    connect_to_db();
 
 	$sql = 'SELECT meta_value
         	FROM   wp_usermeta
@@ -64,8 +67,7 @@ function get_adv_signup_time($user_id) {
 
 function get_budget_status($user_id) {
 
-    mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());	
-	mysql_select_db("s2-wordpress") or die(mysql_error());
+    connect_to_db();
 
 	$sql = 'SELECT meta_value
         	FROM   wp_usermeta
@@ -94,11 +96,12 @@ function process_advertisers() {
         
         $row =              mysql_fetch_object($users);
         $user_id =          $row->user_ID;
-        $adv_signup_time =  get_adv_signup_time($user_id);
         $budget_status =    get_budget_status($user_id);
 
         if ($budget_status != 'cancelled') {
 
+            $adv_signup_time =      get_adv_signup_time($user_id);
+            
             $sql = "SELECT user_email, user_nicename, display_name
                     FROM wp_users
                     WHERE ID = '. $user_id .';";
@@ -115,6 +118,7 @@ function process_advertisers() {
             $today =                date('l'); //Day of week in lower case string
     
             if ($signup_day == $today) {
+                $intro_sentence =   get_intro_sentence($member_display_name);
                 send_email_notification($user_email, $intro_sentence);
             }
         
@@ -123,7 +127,7 @@ function process_advertisers() {
     }
 }
 
-function get_user_analytics($member_display_name) {
+function get_intro_sentence($member_display_name) {
 
 	// Set analaytics variables
 	$week_impressions =  '';
@@ -195,7 +199,7 @@ echo '_______________________________________________________';
 echo PHP_EOL;
 echo '_______________________________________________________';
 echo PHP_EOL;
-echo 'Ends';
+echo 'Weekly Advertiser Email Cron Ends';
 echo PHP_EOL;
 echo '_______________________________________________________';
 echo PHP_EOL;
