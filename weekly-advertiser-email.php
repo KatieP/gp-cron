@@ -23,6 +23,8 @@ echo '_______________________________________________________';
 echo PHP_EOL; 
 echo PHP_EOL;
 
+require '/var/www/production/www.greenpag.es/wordpress/wp-content/themes/gp-au-theme/ga/analytics.class.php';
+
 function connect_to_db() {
 	mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());	
 	mysql_select_db("s2-wordpress") or die(mysql_error());    
@@ -50,18 +52,24 @@ function get_adv_signup_time($user_id) {
 
     connect_to_db();
 
-	$sql = 'SELECT meta_value
-        	FROM   wp_usermeta
-        	WHERE  user_ID = "'. $user_id .'"
-        	    AND meta_key = "adv_signup_time";';
-
-	$adv_signup_time = mysql_query($sql);
-
-	if (!$adv_sign_up_time) {
+    // Get time advertiser signed up to chargify
+    $sql_adv_time = 'SELECT meta_value 
+                     FROM wp_usermeta 
+                     WHERE user_id = "'. $user_id .'"
+                         AND meta_key = "adv_signup_time";';
+    
+    $signup_time_results = mysql_query($sql_adv_time);
+    
+	if (!$signup_time_results) {
     	echo('Database error: ' . mysql_error());
+    	return;
 	}
+    
+    mysql_data_seek($signup_time_results, 0);
+    $signup_time_row = mysql_fetch_object($signup_time_results);	    
+    $advertiser_signup_time = $signup_time_row->meta_value;
 
-	return $adv_signup_time;
+	return $advertiser_signup_time;
 
 }
 
@@ -74,14 +82,117 @@ function get_budget_status($user_id) {
         	WHERE  user_ID = "'. $user_id .'"
         	    AND meta_key = "budget_status";';
 
-	$budget_status = mysql_query($sql);
-
-	if (!$budget_status) {
+	$budget_status_results = mysql_query($sql);
+    
+	if (!$budget_status_results) {
     	echo('Database error: ' . mysql_error());
+    	return;
 	}
 
+    mysql_data_seek($budget_status_results, 0);
+    $budget_status_row =  mysql_fetch_object($budget_status_results);	    
+    $budget_status =      $budget_status_row->meta_value;	
 	return $budget_status;   
 
+}
+
+function get_product_id($user_id) {
+
+    // Get chargify product id
+    
+    connect_to_db();
+    
+    $sql_product_id  = 'SELECT meta_value 
+                        FROM   wp_usermeta 
+                        WHERE  user_id = "'. $user_id .'"
+                             AND meta_key = "product_id";';
+    
+    $sql_product_id_results = mysql_query($sql_product_id);
+
+	if (!$sql_product_id_results) {
+    	echo('Database error: ' . mysql_error());
+    	return;
+	}
+    
+    mysql_data_seek($sql_product_id_results, 0);
+    $product_id_row =  mysql_fetch_object($sql_product_id_results);	
+    $product_id =      $product_id_row->meta_value;
+    
+    return $product_id;
+}
+
+function get_cost_per_click($product_id) {
+    switch ($product_id)   {
+        case '3313295':
+            // $12 per week plan
+            $cpc = 1.9;
+            break;
+        case '27029':
+            // $39 per week plan
+            $cpc = 1.9;
+            break;
+        case '27028':
+            // $99 per week plan
+            $cpc = 1.9;
+            break; 
+        case '3313296':
+            // $249 per week plan
+            $cpc = 1.8;
+            break; 
+        case '3313297':
+            // $499 per week plan
+            $cpc = 1.7;
+            break;                                                
+    }
+    return $cpc;   
+}
+
+function get_clicks_for_post($post_row, $user_id, $analytics, $start_range, $end_range) {
+		
+	$post_url_ext = $post_row->post_name; //Need to get post_name for URL. Gets ful URl, but we only need /url extention for Google API
+		
+	$post_type_map = 'eco-friendly-products';
+				
+	$post_url_end = '/' . $post_type_map . '/' . $post_url_ext . '/';
+		
+	$analytics->setDateRange($start_range, $end_range);	        //Set date in GA $analytics->setMonth(date('$post_date'), date('$new_date'));
+          	
+   	#SET UP POST ID AND AUTHOR ID DATA, POST DATE, GET LINK CLICKS DATA FROM GA 
+	$profile_author_id = $user_id;
+	$post_id =           $post_row->ID;
+	$click_track_tag =   '/yoast-ga/' . $post_id . '/' . $profile_author_id . '/outbound-article/';
+		
+	$clickURL = ($analytics->getPageviewsURL($click_track_tag));
+	$sumClick = 0;
+	foreach ($clickURL as $data) {
+   		$sumClick = $sumClick + $data;
+	}
+        
+	$post_url =   '/eco-friendly-products';
+
+    // Get url product button is linked to
+    $sql_product_url = 'SELECT meta_value 
+                        FROM wp_postmeta 
+                        WHERE post_id = "'. $post_id .'"
+                            AND meta_key = "gp_advertorial_product_url";';
+
+    $product_url_results = mysql_query($sql_product_url);
+    mysql_data_seek($product_url_results, 0);
+    $product_url_row = mysql_fetch_object($product_url_results);	
+	$product_url = $product_url_row->meta_value;
+		
+	if ( !empty($product_url) ) {		# IF 'BUY IT' BUTTON ACTIVATED, GET CLICKS
+			
+	    $click_track_tag_product_button = '/outbound/product-button/' . $post_id . '/' . $profile_author_id . '/' . $product_url . '/'; 
+	         
+		$clickURL_product_button = ($analytics->getPageviewsURL($click_track_tag_product_button));
+            
+		foreach ($clickURL_product_button as $data) {
+   			$sumClick = $sumClick + $data;
+		}
+	}
+        
+    return $sumClick;
 }
 
 function process_advertisers() {
@@ -114,12 +225,13 @@ function process_advertisers() {
             $user_nicename =        $reg_advertiser_row->user_nicename;
             $user_email =           $reg_advertiser_row->user_email;
             
-            $signup_day =           gmdate("l", $adv_signup_time);
+            $signup_day =           gmdate('l', $adv_signup_time);
             $today =                date('l'); //Day of week in lower case string
     
             if ($signup_day == $today) {
-                $intro_sentence =   get_intro_sentence($member_display_name);
-                send_email_notification($user_email, $intro_sentence);
+                $intro_sentence =   get_intro_sentence($user_id, $member_display_name);
+                $email_body =       get_email_body($user_nicename, $budget_status);
+                send_email_notification($user_email, $intro_sentence, $email_body);
             }
         
         }
@@ -127,43 +239,98 @@ function process_advertisers() {
     }
 }
 
-function get_intro_sentence($member_display_name) {
+function get_intro_sentence($user_id, $member_display_name) {
+
+    $analytics = new analytics('greenpagesadserving@gmail.com', 'greenpages01'); //sign in and grab profile			
+    $analytics->setProfileById('ga:42443499');    
+
+    # Get all product posts authored by user and store in $posts_results
+    $sql_posts = 'SELECT DISTINCT wp_posts.* 
+    			  FROM wp_posts 
+    			  WHERE ( post_status = "publish"
+        		          or post_status = "pending" ) 
+       			  	and wp_posts.post_type = "gp_advertorial" 
+       			  	and wp_posts.post_author = "'. $user_id .'";';
+
+    $posts_results = mysql_query($sql_posts);
+    $num_posts     = mysql_num_rows($posts_results);
+
+    # Get all clicks for this users product posts
+    # this variable needs to hold the total number of clicks that user will be billed for 
+
+    $clicks_this_week =  0;
+    $j =                 0;
+
+    while ($j < $num_posts) { 	
+
+        mysql_data_seek($posts_results, $j);
+
+    	$post_row =                 mysql_fetch_object($posts_results);
+    	$now =                      time();
+    	$today_date =               date('Y-m-d'); 		            //Todays Date
+        $advertiser_signup_time =   get_adv_signup_time($user_id);
+
+    	// Get difference between last week anniversary of sign up
+    	$one_week =                 (7 * 24 * 60 * 60);
+    	$now =                      time();
+    	$total_time_signedup =      $now - $advertiser_signup_time;
+    	$this_billing_week =        $total_time_signedup % $one_week;
+    	$start_this_billing_week =  $now - $this_billing_week;    
+    	$start_date_billing_week =  date('Y-m-d', $start_this_billing_week);
+    	$sumClick_this_week =       get_clicks_for_post($post_row, $user_id, $analytics, $start_date_billing_week, $today_date);
+
+    	$clicks_this_week  =        $clicks_this_week + $sumClick_this_week;
+
+        echo '$billable_clicks: ';
+        var_dump ($billable_clicks);
+        echo PHP_EOL;
+
+        echo '$clicks_this_week: ';
+        var_dump ($clicks_this_week);
+        echo PHP_EOL;
+
+       	$j++;
+    }    
+
+    // Get cost per click and calculate bill
+    $product_id =        get_product_id($user_id);
+    $cpc =               (float) get_cost_per_click($product_id);
 
 	// Set analaytics variables
-	$week_impressions =  '';
-	$week_clicks =       '';
-	$week_bill =         '';
+	// $week_impressions =  '';
+	$week_bill =         ( (int) $clicks_this_week ) * $cpc;
+	$pretty_week_bill =  number_format($week_bill, 2);
 
 	// Construct useful string and return
-	$analytics_string =  'Hi '. $member_display_name .'! This week '. $week_impressions .' people viewed your post 
-                          and '. $week_clicks .' people clicked through to your website. <br /><br />
-                          That means your bill this week was '. $week_bill;
-	
-	return $analytics_string;
+	$intro_sentence =    '<p>Hi '. $member_display_name .'! This week '. $week_impressions .' people viewed your post 
+                          and '. $clicks_this_week .' people clicked through to your website from greenpag.es.</p> <br /><br />
+                          <p>That means your bill this week was $'. $pretty_week_bill . '</p>';
+
+	return $intro_sentence;
 
 }
 
-function get_email_message($user_nicename, $budget_status) {
+function get_email_body($user_nicename, $budget_status) {
 
     switch ($budget_status) {
         case 'used_up' :
-            $email_message =  'Wow your posts are popular! You\'re budget was reached this week and your product posts were 
-                               hidden until the next billing cycle. <br /><br />
-                	           Want to get more clicks? 
-                	           <a href="http://www.greenpag.es/profile/ '. $user_nicename .'/#tab:advertise">Increase your weekly budget now.</a>';
+            $email_message =  '<p>Wow your posts are popular! You\'re budget was reached this week and your product posts were 
+                               hidden until the next billing cycle.</p> <br /><br />
+                	           <p>Want to get more clicks?</p> 
+                	           <p><a href="http://www.greenpag.es/profile/ '. $user_nicename .'/#tab:advertise">Increase your weekly budget now.</a></p>';
             break;
         case 'active' :
-            $email_message =  'Hey, you\'ve still got come budget left :) <br /><br />
-                               Want to get more clicks? <a href="http://www.greenpag.es/forms/create-product-post">Create another product post now!</a>
-                               There\'s no limit to how many product posts you can create,
-                               so go ahead, let the greenpages members know how excellent your business is!';
+            $email_message =  '<p>Hey, you\'ve still got come budget left :)</p> <br /><br />
+                               <p>Want to get more clicks? <a href="http://www.greenpag.es/forms/create-product-post">Create another product post now!</a></p>
+                               <p>There\'s no limit to how many product posts you can create,
+                               so go ahead, let the greenpages members know how excellent your business is!</p>';
             break;
 	}
 	
-	return $email_message;
+	return $email_body;
 }
 
-function send_email_notification($user_email, $intro_sentence) {
+function send_email_notification($user_email, $intro_sentence, $email_body) {
     /**
      * Send email via mailgun
      **/
@@ -181,8 +348,9 @@ function send_email_notification($user_email, $intro_sentence) {
                                                 //'cc' => 'info@thegreenpages.com.au',
                                                 'subject' => 'How many clicks did you receive this week from greenpag.es?',
                                                 'text' => 'Some text',
-                                                'html' => '<htlm>
+                                                'html' => '<html>
                                                               '. $intro_sentence .'
+                                                              '. $email_body .'
                                                            </html>' ) );
     $result = curl_exec($ch); 
     curl_close($ch);

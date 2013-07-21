@@ -212,7 +212,7 @@ while ($i < $data_set) {
         echo PHP_EOL;
         echo PHP_EOL;
         
-    	# Get all product posts authored by user and store in $pageposts
+    	# Get all product posts authored by user and store in $posts_results
     	$sql_posts = 'SELECT DISTINCT wp_posts.* 
     				  FROM wp_posts 
     				  WHERE ( post_status = "publish"
@@ -232,7 +232,7 @@ while ($i < $data_set) {
     	while ($j < $num_posts) { 	
     	    
             mysql_data_seek($posts_results, $j);
-    	    $post_row = mysql_fetch_object($posts_results);
+    	    $post_row =                  mysql_fetch_object($posts_results);
     	    
     	    $now =                       time();
     	    $yesterday_date_stamp =      ( $now - (24 * 60 * 60) );
@@ -240,7 +240,7 @@ while ($i < $data_set) {
     
     		$today_date =                date('Y-m-d'); 		            //Todays Date
     	    
-            $sumClick_past_day =   get_clicks_for_post($post_row, $user_row, $analytics, $yesterday_date, $today_date);
+            $sumClick_past_day =         get_clicks_for_post($post_row, $user_row, $analytics, $yesterday_date, $today_date);
     	    
             // Get time advertiser signed up to chargify
     	    $sql_adv_time = 'SELECT meta_value 
@@ -248,14 +248,14 @@ while ($i < $data_set) {
                              WHERE user_id = "'. $user_row->user_id .'"
                                  AND meta_key = "adv_signup_time";';
     
-    	    $signup_time_results = mysql_query($sql_adv_time);
+    	    $signup_time_results =      mysql_query($sql_adv_time);
             mysql_data_seek($signup_time_results, 0);
-    	    $signup_time_row = mysql_fetch_object($signup_time_results);	    
-    	    
-    	    $advertiser_signup_time = $signup_time_row->meta_value;
+
+            $signup_time_row =          mysql_fetch_object($signup_time_results);    	    
+    	    $advertiser_signup_time =   $signup_time_row->meta_value;
     	    
     	    // Get difference between last week anniversary of sign up
-    	    $one_week = (7 * 24 * 60 * 60);
+    	    $one_week =                 (7 * 24 * 60 * 60);
     
     	    $now =                      time();
     	    $total_time_signedup =      $now - $advertiser_signup_time;
@@ -453,9 +453,9 @@ while ($i < $data_set) {
             echo '_______________________________________________________';
             echo PHP_EOL;        
         	
-            $chargify_key = '3FAaEvUO_ksasbblajon';
-            $chargify_auth = $chargify_key .':x';
-            $chargify_auth_url = 'https://'. $chargify_auth .'green-pages.chargify.com/subscriptions/';
+            $chargify_key =       '3FAaEvUO_ksasbblajon';
+            $chargify_auth =      $chargify_key .':x';
+            $chargify_auth_url =  'https://'. $chargify_auth .'green-pages.chargify.com/subscriptions/';
             echo PHP_EOL;
             
     	    $chargify_url = 'https://green-pages.chargify.com/subscriptions/' . $subscription_id . '/components/' . $component_id . '/usages.json';
