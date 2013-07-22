@@ -69,7 +69,7 @@ function get_budget_status($user_id) {
     
 	if (!$budget_status_results) {
     	echo('Database error: ' . mysql_error());
-    	return;
+    	return '';
 	}
 
     mysql_data_seek($budget_status_results, 0);
@@ -245,7 +245,7 @@ function email_current_advertisers() {
         $product_id =       get_product_id($user_id);
         $component_id =     get_component_id($product_id);
 
-        if ($budget_status != 'cancelled') {
+        if ( ( $budget_status == 'active' ) || ( $budget_status == 'used_up' ) ) {
 
             if ( !empty($component_id) ) {
             
