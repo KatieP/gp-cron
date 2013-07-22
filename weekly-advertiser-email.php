@@ -25,7 +25,7 @@ echo PHP_EOL;
 
 require '/var/www/production/www.greenpag.es/wordpress/wp-content/themes/gp-au-theme/ga/analytics.class.php';
 
-mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());	
+$db_connection = mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());	
 mysql_select_db("s2-wordpress") or die(mysql_error()); 
 date_default_timezone_set('UTC');
 
@@ -428,6 +428,7 @@ echo '_______________________________________________________';
 echo PHP_EOL;
 echo PHP_EOL;
 
+mysql_close($db_connection);
 exit();
 
 ?>

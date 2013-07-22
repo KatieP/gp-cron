@@ -19,6 +19,9 @@
 
 //Connect to database s1-wordpress
 
+$db_connection = mysql_connect("127.0.0.1", "s1-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
+mysql_select_db("s1-wordpress") or die(mysql_error());
+
 echo '<p>starts</p>';
 	
 function get_post_url($row) {
@@ -132,8 +135,6 @@ function get_single_post($row) {
 }
 	
 function get_database_results() {
-	mysql_connect("127.0.0.1", "s1-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
-	mysql_select_db("s1-wordpress") or die(mysql_error());
 
 	//$stories = array();
 	//Says >1 weeks because testing db is old
@@ -787,6 +788,7 @@ send_notifcations();
 echo '<br /> ends <br />';
 echo '<br /> It didn\'t break! <br />';
 
+mysql_close($db_connection);
 exit();
 
 ?>

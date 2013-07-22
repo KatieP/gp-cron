@@ -8,6 +8,8 @@
 
 // SOCIAL MEDIA -> UNIX TIME
 
+$db_connection = mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
+mysql_select_db("s2-wordpress") or die(mysql_error());
 
 function update_likecount() {
 	/**
@@ -21,9 +23,6 @@ function update_likecount() {
 	 *			katie.patrick@greenpag.es
 	 *          jb@greenpag.es
 	 **/
-
-	mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
-	mysql_select_db("s2-wordpress") or die(mysql_error());
 
 	$sql = 'SELECT wp_postmeta.meta_value, wp_postmeta.post_ID, wp_posts.likecount_old
        		FROM wp_postmeta, wp_posts
@@ -155,6 +154,7 @@ function update_social_media_count() {
 update_likecount();
 update_social_media_count();
 
+mysql_close($db_connection);
 exit();
 
 ?>

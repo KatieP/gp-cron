@@ -42,8 +42,7 @@ echo PHP_EOL;
 echo PHP_EOL;
 
 //1.Connect to MYSQL database
-
-mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
+$db_connection = mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
 #mysql_connect("127.0.0.1", "root", "") or die(mysql_error());
 
 echo PHP_EOL; 
@@ -547,6 +546,7 @@ echo PHP_EOL;
 echo '_______________________________________________________';
 echo PHP_EOL;
 
+mysql_close($db_connection);
 exit();
 
 ?>
