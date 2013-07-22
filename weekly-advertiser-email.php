@@ -66,7 +66,9 @@ function get_budget_status($user_id) {
         	    AND meta_key = "budget_status";';
 
 	$budget_status_results = mysql_query($sql);
-    
+
+	var_dump($budget_status_results);
+	
 	if (!$budget_status_results) {
     	echo('Database error: ' . mysql_error());
     	return '';
