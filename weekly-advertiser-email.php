@@ -151,7 +151,6 @@ function get_views_for_post($post_row, $user_id, $analytics, $start_range, $end_
   	$sumURL = 0;
   	foreach ($pageViewURL as $data) {
     	$sumURL = $sumURL + $data;
-    	$total_sumURL = $total_sumURL + $data;
   	}
   	        
     return $sumURL;
@@ -279,6 +278,7 @@ function get_intro_sentence($user_id, $member_display_name) {
     # this variable needs to hold the total number of clicks that user will be billed for 
 
     $clicks_this_week =  0;
+    $views_this_week  =  0;
     $j =                 0;
 
     while ($j < $num_posts) { 	
@@ -330,13 +330,13 @@ function get_email_body($user_nicename, $budget_status) {
     
     switch ($budget_status) {
         case 'used_up' :
-            $email_message =  '<p>Wow your posts are popular! You\'re budget was reached this week and your product posts were 
+            $email_body =     '<p>Wow your posts are popular! You\'re budget was reached this week and your product posts were 
                                hidden until the next billing cycle.</p>
                 	           <p>Want to get more clicks?</p> 
                 	           <p><a href="http://www.greenpag.es/profile/ '. $user_nicename .'/#tab:advertise">Increase your weekly budget now.</a></p>';
             break;
         case 'active' :
-            $email_message =  '<p>Hey, you\'ve still got come budget left :)</p> <br /><br />
+            $email_body =     '<p>Hey, you\'ve still got come budget left :)</p> <br /><br />
                                <p>Want to get more clicks? <a href="http://www.greenpag.es/forms/create-product-post">Create another product post now!</a></p>
                                <p>There\'s no limit to how many product posts you can create,
                                so go ahead, let the greenpages members know how excellent your business is!</p>';
