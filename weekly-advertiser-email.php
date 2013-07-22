@@ -25,14 +25,10 @@ echo PHP_EOL;
 
 require '/var/www/production/www.greenpag.es/wordpress/wp-content/themes/gp-au-theme/ga/analytics.class.php';
 
-function connect_to_db() {
-	mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());	
-	mysql_select_db("s2-wordpress") or die(mysql_error());    
-}
+mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());	
+mysql_select_db("s2-wordpress") or die(mysql_error()); 
 
 function get_advertiser_ids() {
-    
-    connect_to_db();
 
 	$sql = "SELECT DISTINCT user_ID
         	FROM wp_usermeta
@@ -49,8 +45,6 @@ function get_advertiser_ids() {
 }
 
 function get_adv_signup_time($user_id) {
-
-    connect_to_db();
 
     // Get time advertiser signed up to chargify
     $sql_adv_time = 'SELECT meta_value 
@@ -75,8 +69,6 @@ function get_adv_signup_time($user_id) {
 
 function get_budget_status($user_id) {
 
-    connect_to_db();
-
 	$sql = 'SELECT meta_value
         	FROM   wp_usermeta
         	WHERE  user_ID = "'. $user_id .'"
@@ -99,8 +91,6 @@ function get_budget_status($user_id) {
 function get_product_id($user_id) {
 
     // Get chargify product id
-    
-    connect_to_db();
     
     $sql_product_id  = 'SELECT meta_value 
                         FROM   wp_usermeta 
@@ -147,27 +137,44 @@ function get_cost_per_click($product_id) {
     return $cpc;   
 }
 
+function get_views_for_post($post_row, $user_id, $analytics, $start_range, $end_range) {
+		
+	$post_url_ext =   $post_row->post_name; //Need to get post_name for URL. Gets ful URl, but we only need /url extention for Google API
+	$post_type_map =  'eco-friendly-products';
+	$post_url_end =   '/' . $post_type_map . '/' . $post_url_ext . '/';
+
+	$analytics->setDateRange($start_range, $end_range);	        //Set date in GA $analytics->setMonth(date('$post_date'), date('$new_date'));
+
+  	$pageViewURL = ($analytics->getPageviewsURL($post_url_end));	//Page views for specific URL
+
+  	$sumURL = 0;
+  	foreach ($pageViewURL as $data) {
+    	$sumURL = $sumURL + $data;
+    	$total_sumURL = $total_sumURL + $data;
+  	}
+  	        
+    return $sumURL;
+}
+
 function get_clicks_for_post($post_row, $user_id, $analytics, $start_range, $end_range) {
 		
 	$post_url_ext = $post_row->post_name; //Need to get post_name for URL. Gets ful URl, but we only need /url extention for Google API
-		
 	$post_type_map = 'eco-friendly-products';
-				
 	$post_url_end = '/' . $post_type_map . '/' . $post_url_ext . '/';
-		
+
 	$analytics->setDateRange($start_range, $end_range);	        //Set date in GA $analytics->setMonth(date('$post_date'), date('$new_date'));
-          	
+
    	#SET UP POST ID AND AUTHOR ID DATA, POST DATE, GET LINK CLICKS DATA FROM GA 
 	$profile_author_id = $user_id;
 	$post_id =           $post_row->ID;
 	$click_track_tag =   '/yoast-ga/' . $post_id . '/' . $profile_author_id . '/outbound-article/';
-		
+
 	$clickURL = ($analytics->getPageviewsURL($click_track_tag));
 	$sumClick = 0;
 	foreach ($clickURL as $data) {
    		$sumClick = $sumClick + $data;
 	}
-        
+
 	$post_url =   '/eco-friendly-products';
 
     // Get url product button is linked to
@@ -180,11 +187,10 @@ function get_clicks_for_post($post_row, $user_id, $analytics, $start_range, $end
     mysql_data_seek($product_url_results, 0);
     $product_url_row = mysql_fetch_object($product_url_results);	
 	$product_url = $product_url_row->meta_value;
-		
+
 	if ( !empty($product_url) ) {		# IF 'BUY IT' BUTTON ACTIVATED, GET CLICKS
-			
-	    $click_track_tag_product_button = '/outbound/product-button/' . $post_id . '/' . $profile_author_id . '/' . $product_url . '/'; 
-	         
+
+	    $click_track_tag_product_button = '/outbound/product-button/' . $post_id . '/' . $profile_author_id . '/' . $product_url . '/'; 	         
 		$clickURL_product_button = ($analytics->getPageviewsURL($click_track_tag_product_button));
             
 		foreach ($clickURL_product_button as $data) {
@@ -278,16 +284,10 @@ function get_intro_sentence($user_id, $member_display_name) {
     	$start_this_billing_week =  $now - $this_billing_week;    
     	$start_date_billing_week =  date('Y-m-d', $start_this_billing_week);
     	$sumClick_this_week =       get_clicks_for_post($post_row, $user_id, $analytics, $start_date_billing_week, $today_date);
-
+        $sumView_this_week =        get_views_for_post($post_row, $user_id, $analytics, $start_date_billing_week, $today_date);
+    	
     	$clicks_this_week  =        $clicks_this_week + $sumClick_this_week;
-
-        echo '$billable_clicks: ';
-        var_dump ($billable_clicks);
-        echo PHP_EOL;
-
-        echo '$clicks_this_week: ';
-        var_dump ($clicks_this_week);
-        echo PHP_EOL;
+        $views_this_week  =         $views_this_week + $sumView_this_week;
 
        	$j++;
     }    
@@ -297,12 +297,11 @@ function get_intro_sentence($user_id, $member_display_name) {
     $cpc =               (float) get_cost_per_click($product_id);
 
 	// Set analaytics variables
-	// $week_impressions =  '';
 	$week_bill =         ( (int) $clicks_this_week ) * $cpc;
 	$pretty_week_bill =  number_format($week_bill, 2);
 
 	// Construct useful string and return
-	$intro_sentence =    '<p>Hi '. $member_display_name .'! This week '. $week_impressions .' people viewed your post 
+	$intro_sentence =    '<p>Hi '. $member_display_name .'! This week '. $views_this_week .' people viewed your post 
                           and '. $clicks_this_week .' people clicked through to your website from greenpag.es.</p> <br /><br />
                           <p>That means your bill this week was $'. $pretty_week_bill . '</p>';
 
