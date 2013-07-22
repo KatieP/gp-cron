@@ -157,25 +157,20 @@ function get_views_for_post($post_row, $user_id, $analytics, $start_range, $end_
 }
 
 function get_clicks_for_post($post_row, $user_id, $analytics, $start_range, $end_range) {
-		
-	$post_url_ext = $post_row->post_name; //Need to get post_name for URL. Gets ful URl, but we only need /url extention for Google API
-	$post_type_map = 'eco-friendly-products';
-	$post_url_end = '/' . $post_type_map . '/' . $post_url_ext . '/';
 
 	$analytics->setDateRange($start_range, $end_range);	        //Set date in GA $analytics->setMonth(date('$post_date'), date('$new_date'));
 
    	#SET UP POST ID AND AUTHOR ID DATA, POST DATE, GET LINK CLICKS DATA FROM GA 
-	$profile_author_id = $user_id;
-	$post_id =           $post_row->ID;
-	$click_track_tag =   '/yoast-ga/' . $post_id . '/' . $profile_author_id . '/outbound-article/';
+	$profile_author_id =  $user_id;
+	$post_id =            $post_row->ID;
+	$click_track_tag =    '/yoast-ga/' . $post_id . '/' . $profile_author_id . '/outbound-article/';
 
 	$clickURL = ($analytics->getPageviewsURL($click_track_tag));
 	$sumClick = 0;
+
 	foreach ($clickURL as $data) {
    		$sumClick = $sumClick + $data;
 	}
-
-	$post_url =   '/eco-friendly-products';
 
     // Get url product button is linked to
     $sql_product_url = 'SELECT meta_value 
@@ -183,13 +178,12 @@ function get_clicks_for_post($post_row, $user_id, $analytics, $start_range, $end
                         WHERE post_id = "'. $post_id .'"
                             AND meta_key = "gp_advertorial_product_url";';
 
-    $product_url_results = mysql_query($sql_product_url);
+    $product_url_results =  mysql_query($sql_product_url);
     mysql_data_seek($product_url_results, 0);
-    $product_url_row = mysql_fetch_object($product_url_results);	
-	$product_url = $product_url_row->meta_value;
+    $product_url_row =      mysql_fetch_object($product_url_results);	
+	$product_url =          $product_url_row->meta_value;
 
 	if ( !empty($product_url) ) {		# IF 'BUY IT' BUTTON ACTIVATED, GET CLICKS
-
 	    $click_track_tag_product_button = '/outbound/product-button/' . $post_id . '/' . $profile_author_id . '/' . $product_url . '/'; 	         
 		$clickURL_product_button = ($analytics->getPageviewsURL($click_track_tag_product_button));
             
@@ -302,7 +296,7 @@ function get_intro_sentence($user_id, $member_display_name) {
 
 	// Construct useful string and return
 	$intro_sentence =    '<p>Hi '. $member_display_name .'! This week '. $views_this_week .' people viewed your post 
-                          and '. $clicks_this_week .' people clicked through to your website from greenpag.es.</p> <br /><br />
+                          and '. $clicks_this_week .' people clicked through to your website from greenpag.es.</p>
                           <p>That means your bill this week was $'. $pretty_week_bill . '</p>';
 
 	return $intro_sentence;
@@ -314,7 +308,7 @@ function get_email_body($user_nicename, $budget_status) {
     switch ($budget_status) {
         case 'used_up' :
             $email_message =  '<p>Wow your posts are popular! You\'re budget was reached this week and your product posts were 
-                               hidden until the next billing cycle.</p> <br /><br />
+                               hidden until the next billing cycle.</p>
                 	           <p>Want to get more clicks?</p> 
                 	           <p><a href="http://www.greenpag.es/profile/ '. $user_nicename .'/#tab:advertise">Increase your weekly budget now.</a></p>';
             break;
