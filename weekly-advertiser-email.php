@@ -242,11 +242,12 @@ function email_current_advertisers() {
         $row =              mysql_fetch_object($users);
         $user_id =          $row->user_ID;
         $budget_status =    get_budget_status($user_id);
-        $product_id =       get_product_id($user_id);
-        $component_id =     get_component_id($product_id);
 
         if ( ( $budget_status == 'active' ) || ( $budget_status == 'used_up' ) ) {
 
+            $product_id =       get_product_id($user_id);
+            $component_id =     get_component_id($product_id);
+            
             if ( !empty($component_id) ) {
             
                 $adv_signup_time =      get_adv_signup_time($user_id);
