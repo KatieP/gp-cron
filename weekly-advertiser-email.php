@@ -105,6 +105,24 @@ function get_product_id($user_id) {
     return $product_id;
 }
 
+function get_component_id($product_id) {
+    /**
+	 * Return component id mapped to product id
+	 * for Chargify metered billing components
+	 **/
+
+    $component_map = array( '3313295'  => '3207',
+							'27029'    => '3207',
+							'27028'    => '3207',
+							'3313296'  => '20016',
+							'3313297'  => '20017',
+							'27023'    => '' );
+
+    $component_id = $component_map[$product_id];
+
+    return $component_id;
+}
+
 function get_cost_per_click($product_id) {
 
     echo 'get_cost_per_click($product_id)';
@@ -203,10 +221,10 @@ function email_current_advertisers() {
     echo 'email_current_advertisers()';
     echo PHP_EOL;
     
-	$sql = "SELECT DISTINCT user_ID
+	$sql = 'SELECT DISTINCT user_ID
         	FROM wp_usermeta
-        	WHERE meta_key = 'reg_advertiser'
-              and user_ID = '3861';";
+        	WHERE meta_key = "reg_advertiser"
+        	    AND meta_value = "1";';
 
 	$users =     mysql_query($sql);
 
@@ -224,39 +242,42 @@ function email_current_advertisers() {
         $row =              mysql_fetch_object($users);
         $user_id =          $row->user_ID;
         $budget_status =    get_budget_status($user_id);
+        $component_id =     get_component_id($product_id);
 
         if ($budget_status != 'cancelled') {
 
-            $adv_signup_time =      get_adv_signup_time($user_id);
-
-            $sql = 'SELECT user_email, user_nicename, display_name
-                    FROM wp_users
-                    WHERE ID = "'. $user_id .'";';
-
-            $reg_advertiser_results = mysql_query($sql);
-            mysql_data_seek( $reg_advertiser_results, 0 );
-
-            $reg_advertiser_row =   mysql_fetch_object($reg_advertiser_results);
-            $member_display_name =  $reg_advertiser_row->display_name;
-            $user_nicename =        $reg_advertiser_row->user_nicename;
-            $user_email =           $reg_advertiser_row->user_email;
-
-            $signup_day =           gmdate('l', $adv_signup_time);
-            $today =                date('l'); //Day of week in lower case string
-
-            var_dump($signup_day);
-            echo PHP_EOL;
-            var_dump($today);
-            echo PHP_EOL;
-            var_dump($user_email);
-            echo PHP_EOL;
-
-            if ($signup_day == $today) {
-                $intro_sentence =   get_intro_sentence($user_id, $member_display_name);
-                $email_body =       get_email_body($user_nicename, $budget_status);
-                send_email_notification($user_email, $intro_sentence, $email_body);
+            if ( !empty($component_id) ) {
+            
+                $adv_signup_time =      get_adv_signup_time($user_id);
+    
+                $sql = 'SELECT user_email, user_nicename, display_name
+                        FROM wp_users
+                        WHERE ID = "'. $user_id .'";';
+    
+                $reg_advertiser_results = mysql_query($sql);
+                mysql_data_seek( $reg_advertiser_results, 0 );
+    
+                $reg_advertiser_row =   mysql_fetch_object($reg_advertiser_results);
+                $member_display_name =  $reg_advertiser_row->display_name;
+                $user_nicename =        $reg_advertiser_row->user_nicename;
+                $user_email =           $reg_advertiser_row->user_email;
+    
+                $signup_day =           gmdate('l', $adv_signup_time);
+                $today =                date('l'); //Day of week in lower case string
+    
+                var_dump($signup_day);
+                echo PHP_EOL;
+                var_dump($today);
+                echo PHP_EOL;
+                var_dump($user_email);
+                echo PHP_EOL;
+    
+                if ($signup_day == $today) {
+                    $intro_sentence =   get_intro_sentence($user_id, $member_display_name);
+                    $email_body =       get_email_body($user_nicename, $budget_status);
+                    send_email_notification($user_email, $intro_sentence, $email_body);
+                }
             }
-
         }
         $i++;
     }
@@ -343,7 +364,7 @@ function get_email_body($user_nicename, $budget_status) {
                 	           <p><a href="http://www.greenpag.es/profile/ '. $user_nicename .'/#tab:advertise">Increase your weekly budget now.</a></p>';
             break;
         case 'active' :
-            $email_body =     '<p>Hey, you\'ve still got come budget left :)</p> <br /><br />
+            $email_body =     '<p>Hey, you\'ve still got come budget left :)</p>
                                <p>Want to get more clicks? <a href="http://www.greenpag.es/forms/create-product-post">Create another product post now!</a></p>
                                <p>There\'s no limit to how many product posts you can create,
                                so go ahead, let the greenpages members know how excellent your business is!</p>';
@@ -369,9 +390,9 @@ function send_email_notification($user_email, $intro_sentence, $email_body) {
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
     curl_setopt($ch, CURLOPT_URL, 'https://api.mailgun.net/v2/greenpag.es/messages');
     curl_setopt($ch, CURLOPT_POSTFIELDS, array( 'from' => 'hello@greenpag.es',
-                                                'to' => $user_email,
-                                                //'to' => 'info@thegreenpages.com.au',
-                                                //'cc' => 'info@thegreenpages.com.au',
+                                                // 'to' => $user_email,
+                                                'to' => 'jb@greenpag.es',
+                                                // 'cc' => 'hello@greenpag.es',
                                                 'subject' => 'How many clicks did you receive this week from greenpag.es?',
                                                 'text' => 'Some text',
                                                 'html' => '<html>
