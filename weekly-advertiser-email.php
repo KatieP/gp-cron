@@ -369,8 +369,8 @@ function send_email_notification($user_email, $intro_sentence, $email_body) {
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
     curl_setopt($ch, CURLOPT_URL, 'https://api.mailgun.net/v2/greenpag.es/messages');
     curl_setopt($ch, CURLOPT_POSTFIELDS, array( 'from' => 'hello@greenpag.es',
-                                                //'to' => $user_email,
-                                                'to' => 'info@thegreenpages.com.au',
+                                                'to' => $user_email,
+                                                //'to' => 'info@thegreenpages.com.au',
                                                 //'cc' => 'info@thegreenpages.com.au',
                                                 'subject' => 'How many clicks did you receive this week from greenpag.es?',
                                                 'text' => 'Some text',

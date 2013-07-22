@@ -53,29 +53,29 @@ function get_post_image($row) {
 		//If image src is not found, then randomly show a cool image
 
 		$random_images = array(
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random23.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random22.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random21.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random20.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random19.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random18.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random17.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random16.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random15.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random14.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random13.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random12.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random11.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random10.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random9.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random8.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random7.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random6.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random5.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random4.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random3.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random2.jpg",
-			"http://www.thegreenpages.com.au/wp-content/uploads/2013/04/random1.jpg"
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random23.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random22.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random21.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random20.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random19.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random18.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random17.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random16.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random15.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random14.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random13.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random12.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random11.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random10.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random9.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random8.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random7.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random6.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random5.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random4.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random3.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random2.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random1.jpg"
 		);
 
 		$rand_keys = array_rand($random_images, 2);
@@ -94,7 +94,7 @@ function get_post_image($row) {
 	return $image_url_img;
 }
 
-function get_single_post ($row) {
+function get_single_post($row) {
 	//Variables used in content of email	
 	$post_title = $row->post_title;	
 	$post_name = $row->post_name;
@@ -117,7 +117,7 @@ function get_single_post ($row) {
                                     <div align="left" class="article-content" style="font-size:13px;line-height:18px;color:#444444;margin-top:0px;margin-bottom:18px;font-family: Arial, Helvetica, sans-serif;">
                                         <p style="margin-bottom:15px;"><!--BODY TEXT--><!--LEARN MORE LINK TO ARTICLE --><a href="'. $post_url .'" style="color:#01aed8;font-weight:bold;text-decoration:none;">  Learn more</a></p>
 <p style="margin-bottom:15px;">
-	<a href="/t/r-fb-ojylyjt-eidkjkly-xh/?act=wv" likeurl="http://www.thegreenpages.com.au/news/monsanto-protection-act-adopted-in-the-us-greenpeace/" rel="cs_facebox" style="color:#01aed8;font-weight:bold;text-decoration:none;" cs_likeurl="/t/r-fb-ojylyjt-eidkjkly-xh/?act=like"><img src="https://img.createsend1.com/img/social/fblike.png" border="0" title="Like this on Facebook" alt="Facebook Like Button" width="51" height="20" style="height:auto;line-height:100%;outline-style:none;text-decoration:none;display:block;max-width:100%;"></a></p>
+	<a href="/t/r-fb-ojylyjt-eidkjkly-xh/?act=wv" likeurl="http://www.greenpag.es/news/monsanto-protection-act-adopted-in-the-us-greenpeace/" rel="cs_facebox" style="color:#01aed8;font-weight:bold;text-decoration:none;" cs_likeurl="/t/r-fb-ojylyjt-eidkjkly-xh/?act=like"><img src="https://img.createsend1.com/img/social/fblike.png" border="0" title="Like this on Facebook" alt="Facebook Like Button" width="51" height="20" style="height:auto;line-height:100%;outline-style:none;text-decoration:none;display:block;max-width:100%;"></a></p>
                                     </div>
                                 </td>
                             </tr>
@@ -184,13 +184,13 @@ function get_user_lat_long($user_id) {
                     AND (meta_key = "gp_google_geo_latitude"
                          OR meta_key = "gp_google_geo_longitude")';
 
-        $db_result = mysql_query($sql);
+    $db_result = mysql_query($sql);
 
-        if (! $db_result){
-           echo('Database error: ' . mysql_error());
-        }
+    if (! $db_result){
+       echo('Database error: ' . mysql_error());
+    }
                 
-        return $db_result;
+    return $db_result;
 }
 	
 function get_posts($user_lat, $user_long) {
@@ -740,19 +740,17 @@ function send_notifcations() {
     while ($i < $data_set) {
 		
         mysql_data_seek($users, $i);
-	$row = mysql_fetch_object($users);
+	    $row = mysql_fetch_object($users);
         $user_id = $row->ID;
-	$user_email = $row->user_email;
-	$meta_key = $row->meta_key;
+	    $user_email = $row->user_email;
+	    $meta_key = $row->meta_key;
 
-        
-        
-	echo '$row: ';
-	var_dump($row);
+    	echo '$row: ';
+	    var_dump($row);
 
         echo '$user_email: '.$user_email;
         
-	$user_lat_long = get_user_lat_long($user_id);
+	    $user_lat_long = get_user_lat_long($user_id);
 
         $j = 0;
         $lat_long_set = mysql_num_rows($user_lat_long);    
