@@ -244,6 +244,11 @@ function email_current_advertisers() {
             $signup_day =           gmdate('l', $adv_signup_time);
             $today =                date('l'); //Day of week in lower case string
 
+            var_dump($signup_day);
+            echo PHP_EOL;
+            var_dump($today);
+            echo PHP_EOL;
+
             if ($signup_day == $today) {
                 $intro_sentence =   get_intro_sentence($user_id, $member_display_name);
                 $email_body =       get_email_body($user_nicename, $budget_status);
