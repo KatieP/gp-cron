@@ -208,7 +208,7 @@ function email_current_advertisers() {
         	WHERE meta_key = 'reg_advertiser'
               and user_ID = '3861';";
 
-	$users = mysql_query($sql);
+	$users =     mysql_query($sql);
 
 	if (!$users) {
     	echo('Database error: ' . mysql_error());
@@ -216,40 +216,40 @@ function email_current_advertisers() {
 	
 	$data_set =  mysql_num_rows($users);
 	$i =         0;
-	
+
     while ($i < $data_set ) {
 
         mysql_data_seek($users, $i);
-        
+
         $row =              mysql_fetch_object($users);
         $user_id =          $row->user_ID;
         $budget_status =    get_budget_status($user_id);
-         
+
         if ($budget_status != 'cancelled') {
 
             $adv_signup_time =      get_adv_signup_time($user_id);
-            
-            $sql = "SELECT user_email, user_nicename, display_name
+
+            $sql = 'SELECT user_email, user_nicename, display_name
                     FROM wp_users
-                    WHERE ID = '. $user_id .';";
-    
+                    WHERE ID = "'. $user_id .'";';
+
             $reg_advertiser_results = mysql_query($sql);
             mysql_data_seek( $reg_advertiser_results, 0 );
-            
+
             $reg_advertiser_row =   mysql_fetch_object($reg_advertiser_results);
             $member_display_name =  $reg_advertiser_row->display_name;
             $user_nicename =        $reg_advertiser_row->user_nicename;
             $user_email =           $reg_advertiser_row->user_email;
-            
+
             $signup_day =           gmdate('l', $adv_signup_time);
             $today =                date('l'); //Day of week in lower case string
-    
+
             if ($signup_day == $today) {
                 $intro_sentence =   get_intro_sentence($user_id, $member_display_name);
                 $email_body =       get_email_body($user_nicename, $budget_status);
                 send_email_notification($user_email, $intro_sentence, $email_body);
             }
-        
+
         }
         $i++;
     }
