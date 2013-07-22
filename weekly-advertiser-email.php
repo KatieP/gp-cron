@@ -248,6 +248,8 @@ function email_current_advertisers() {
             echo PHP_EOL;
             var_dump($today);
             echo PHP_EOL;
+            var_dump($user_email);
+            echo PHP_EOL;
 
             if ($signup_day == $today) {
                 $intro_sentence =   get_intro_sentence($user_id, $member_display_name);
