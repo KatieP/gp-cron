@@ -31,6 +31,9 @@ date_default_timezone_set('UTC');
 
 function get_adv_signup_time($user_id) {
 
+    echo 'get_adv_signup_time($user_id)';
+    echo PHP_EOL;
+    
     // Get time advertiser signed up to chargify
     $sql_adv_time = 'SELECT meta_value 
                      FROM wp_usermeta 
@@ -54,6 +57,9 @@ function get_adv_signup_time($user_id) {
 
 function get_budget_status($user_id) {
 
+    echo 'get_budget_status($user_id)';
+    echo PHP_EOL;
+        
 	$sql = 'SELECT meta_value
         	FROM   wp_usermeta
         	WHERE  user_ID = "'. $user_id .'"
@@ -76,8 +82,10 @@ function get_budget_status($user_id) {
 
 function get_product_id($user_id) {
 
-    // Get chargify product id
-    
+    echo 'get_product_id($user_id)';
+    echo PHP_EOL;    
+
+    // Get chargify product id    
     $sql_product_id  = 'SELECT meta_value 
                         FROM   wp_usermeta 
                         WHERE  user_id = "'. $user_id .'"
@@ -98,6 +106,10 @@ function get_product_id($user_id) {
 }
 
 function get_cost_per_click($product_id) {
+
+    echo 'get_cost_per_click($product_id)';
+    echo PHP_EOL; 
+        
     switch ($product_id)   {
         case '3313295':
             // $12 per week plan
@@ -124,7 +136,10 @@ function get_cost_per_click($product_id) {
 }
 
 function get_views_for_post($post_row, $user_id, $analytics, $start_range, $end_range) {
-		
+
+    echo 'get_views_for_post($post_row, $user_id, $analytics, $start_range, $end_range)';
+    echo PHP_EOL; 
+    
 	$post_url_ext =   $post_row->post_name; //Need to get post_name for URL. Gets ful URl, but we only need /url extention for Google API
 	$post_type_map =  'eco-friendly-products';
 	$post_url_end =   '/' . $post_type_map . '/' . $post_url_ext . '/';
@@ -144,6 +159,9 @@ function get_views_for_post($post_row, $user_id, $analytics, $start_range, $end_
 
 function get_clicks_for_post($post_row, $user_id, $analytics, $start_range, $end_range) {
 
+    echo 'get_clicks_for_post($post_row, $user_id, $analytics, $start_range, $end_range)';
+    echo PHP_EOL;     
+    
 	$analytics->setDateRange($start_range, $end_range);	        //Set date in GA $analytics->setMonth(date('$post_date'), date('$new_date'));
 
    	#SET UP POST ID AND AUTHOR ID DATA, POST DATE, GET LINK CLICKS DATA FROM GA 
@@ -183,6 +201,9 @@ function get_clicks_for_post($post_row, $user_id, $analytics, $start_range, $end
 
 function email_current_advertisers() {
 
+    echo 'email_current_advertisers()';
+    echo PHP_EOL;
+    
 	$sql = "SELECT DISTINCT user_ID
         	FROM wp_usermeta
         	WHERE meta_key = 'reg_advertiser'
@@ -204,7 +225,7 @@ function email_current_advertisers() {
         $row =              mysql_fetch_object($users);
         $user_id =          $row->user_ID;
         $budget_status =    get_budget_status($user_id);
-
+         
         if ($budget_status != 'cancelled') {
 
             $adv_signup_time =      get_adv_signup_time($user_id);
@@ -237,6 +258,9 @@ function email_current_advertisers() {
 
 function get_intro_sentence($user_id, $member_display_name) {
 
+    echo 'get_intro_sentence($user_id, $member_display_name)';
+    echo PHP_EOL; 
+        
     $analytics = new analytics('greenpagesadserving@gmail.com', 'greenpages01'); //sign in and grab profile			
     $analytics->setProfileById('ga:42443499');    
 
@@ -301,6 +325,9 @@ function get_intro_sentence($user_id, $member_display_name) {
 
 function get_email_body($user_nicename, $budget_status) {
 
+    echo 'get_email_body($user_nicename, $budget_status)';
+    echo PHP_EOL;     
+    
     switch ($budget_status) {
         case 'used_up' :
             $email_message =  '<p>Wow your posts are popular! You\'re budget was reached this week and your product posts were 
@@ -323,6 +350,9 @@ function send_email_notification($user_email, $intro_sentence, $email_body) {
     /**
      * Send email via mailgun
      **/
+
+    echo 'send_email_notification($user_email, $intro_sentence, $email_body)';
+    echo PHP_EOL;      
     
     $ch = curl_init();
 
