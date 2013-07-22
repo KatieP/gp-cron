@@ -32,7 +32,8 @@ function get_advertiser_ids() {
 
 	$sql = "SELECT DISTINCT user_ID
         	FROM wp_usermeta
-        	WHERE meta_key = 'reg_advertiser';";
+        	WHERE meta_key = 'reg_advertiser'
+              and user_ID = '3861';";
 
 	$advertiser_ids = mysql_query($sql);
 
@@ -195,7 +196,7 @@ function get_clicks_for_post($post_row, $user_id, $analytics, $start_range, $end
     return $sumClick;
 }
 
-function process_advertisers() {
+function email_current_advertisers() {
 
 	$users =     get_advertiser_ids();
 	$data_set =  mysql_num_rows($users);
@@ -354,6 +355,8 @@ function send_email_notification($user_email, $intro_sentence, $email_body) {
 
 // echo 'Here are some examples of some successful posts that helped get our customers more clients';
 // if today is the day chargify bills by day of the week. If day of signup == day of the week.
+
+email_current_advertisers();
 
 echo PHP_EOL;
 echo '_______________________________________________________';
