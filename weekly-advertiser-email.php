@@ -188,13 +188,13 @@ function email_current_advertisers() {
         	WHERE meta_key = 'reg_advertiser'
               and user_ID = '3861';";
 
-	$advertiser_ids = mysql_query($sql);
+	$users = mysql_query($sql);
 
-	if (!$advertiser_ids) {
+	if (!$users) {
     	echo('Database error: ' . mysql_error());
 	}
 	
-	$data_set =  mysql_num_rows($advertiser_ids);
+	$data_set =  mysql_num_rows($users);
 	$i =         0;
 	
     while ($i < $data_set ) {
