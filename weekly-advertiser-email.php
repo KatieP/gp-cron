@@ -29,23 +29,6 @@ mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_erro
 mysql_select_db("s2-wordpress") or die(mysql_error()); 
 date_default_timezone_set('UTC');
 
-function get_advertiser_ids() {
-
-	$sql = "SELECT DISTINCT user_ID
-        	FROM wp_usermeta
-        	WHERE meta_key = 'reg_advertiser'
-              and user_ID = '3861';";
-
-	$advertiser_ids = mysql_query($sql);
-
-	if (!$advertiser_ids) {
-    	echo('Database error: ' . mysql_error());
-	}
-
-	return $advertiser_ids;   
-
-}
-
 function get_adv_signup_time($user_id) {
 
     // Get time advertiser signed up to chargify
@@ -86,7 +69,8 @@ function get_budget_status($user_id) {
     mysql_data_seek($budget_status_results, 0);
     $budget_status_row =  mysql_fetch_object($budget_status_results);	    
     $budget_status =      $budget_status_row->meta_value;	
-	return $budget_status;   
+	
+    return $budget_status;   
 
 }
 
@@ -199,8 +183,18 @@ function get_clicks_for_post($post_row, $user_id, $analytics, $start_range, $end
 
 function email_current_advertisers() {
 
-	$users =     get_advertiser_ids();
-	$data_set =  mysql_num_rows($users);
+	$sql = "SELECT DISTINCT user_ID
+        	FROM wp_usermeta
+        	WHERE meta_key = 'reg_advertiser'
+              and user_ID = '3861';";
+
+	$advertiser_ids = mysql_query($sql);
+
+	if (!$advertiser_ids) {
+    	echo('Database error: ' . mysql_error());
+	}
+	
+	$data_set =  mysql_num_rows($advertiser_ids);
 	$i =         0;
 	
     while ($i < $data_set ) {
