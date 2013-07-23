@@ -269,13 +269,6 @@ function email_current_advertisers() {
                 $signup_day =           gmdate('l', $adv_signup_time);
                 $today =                date('l'); //Day of week in lower case string
     
-                var_dump($signup_day);
-                echo PHP_EOL;
-                var_dump($today);
-                echo PHP_EOL;
-                var_dump($user_email);
-                echo PHP_EOL;
-    
                 if ($signup_day == $today) {
                     $intro_sentence =   get_intro_sentence($user_id, $member_display_name);
                     $email_body =       get_email_body($user_nicename, $budget_status);
@@ -347,7 +340,8 @@ function get_intro_sentence($user_id, $member_display_name) {
 	$pretty_week_bill =  number_format($week_bill, 2);
 
 	// Construct useful string and return
-	$intro_sentence =    '<p>Hi '. $member_display_name .'! This week '. $views_this_week .' people viewed your post 
+	$intro_sentence =    '<p>Hi '. $member_display_name .'!</p>
+	                      <p>This week '. $views_this_week .' people viewed your post 
                           and '. $clicks_this_week .' people clicked through to your website from greenpag.es.</p>
                           <p>That means your bill this week was $'. $pretty_week_bill . '</p>';
 
@@ -394,8 +388,8 @@ function send_email_notification($user_email, $intro_sentence, $email_body) {
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
     curl_setopt($ch, CURLOPT_URL, 'https://api.mailgun.net/v2/greenpag.es/messages');
     curl_setopt($ch, CURLOPT_POSTFIELDS, array( 'from' => 'hello@greenpag.es',
-                                                // 'to' => $user_email,
-                                                'to' => 'jb@greenpag.es',
+                                                'to' => $user_email,
+                                                // 'to' => 'jb@greenpag.es',
                                                 // 'cc' => 'hello@greenpag.es',
                                                 'subject' => 'How many clicks did you receive this week from greenpag.es?',
                                                 'text' => 'Some text',
