@@ -210,92 +210,6 @@ while ($i < $data_set) {
         echo '_______________________________________________________';
         echo PHP_EOL;
         echo PHP_EOL;
-        
-    	# Get all product posts authored by user and store in $posts_results
-    	$sql_posts = 'SELECT DISTINCT wp_posts.* 
-    				  FROM wp_posts 
-    				  WHERE ( post_status = "publish"
-    				          or post_status = "pending" ) 
-        			  	and wp_posts.post_type = "gp_advertorial" 
-        			  	and wp_posts.post_author = "'. $user_row->user_id .'";';
-    	
-    	$posts_results = mysql_query($sql_posts);
-    	$num_posts     = mysql_num_rows($posts_results);
-    	
-    	# Get all clicks for this users product posts
-    	# this variable needs to hold the total number of click that user will be billed for 
-    	$billable_clicks  =  0;
-    	$clicks_this_week =  0;
-    	$j =                 0;
-        
-    	while ($j < $num_posts) { 	
-    	    
-            mysql_data_seek($posts_results, $j);
-    	    $post_row =                  mysql_fetch_object($posts_results);
-    	    
-    	    $now =                       time();
-    	    $yesterday_date_stamp =      ( $now - (24 * 60 * 60) );
-    		$yesterday_date       =      date('Y-m-d', $yesterday_date_stamp);
-    
-    		$today_date =                date('Y-m-d'); 		            //Todays Date
-    	    
-            $sumClick_past_day =         get_clicks_for_post($post_row, $user_row, $analytics, $yesterday_date, $today_date);
-    	    
-            // Get time advertiser signed up to chargify
-    	    $sql_adv_time = 'SELECT meta_value 
-                             FROM wp_usermeta 
-                             WHERE user_id = "'. $user_row->user_id .'"
-                                 AND meta_key = "adv_signup_time";';
-    
-    	    $signup_time_results =      mysql_query($sql_adv_time);
-            mysql_data_seek($signup_time_results, 0);
-
-            $signup_time_row =          mysql_fetch_object($signup_time_results);    	    
-    	    $advertiser_signup_time =   $signup_time_row->meta_value;
-    	    
-    	    // Get difference between last week anniversary of sign up
-    	    $one_week =                 (7 * 24 * 60 * 60);
-    
-    	    $now =                      time();
-    	    $total_time_signedup =      $now - $advertiser_signup_time;
-    	    $this_billing_week =        $total_time_signedup % $one_week;
-    	    $start_this_billing_week =  $now - $this_billing_week;
-    	    
-    	    $start_date_billing_week =  date('Y-m-d', $start_this_billing_week);
-    	    
-    		#$one_hour_ago_stamp =       ( $now - (60 * 60) );
-    	    #var_dump($one_hour_ago_stamp);
-    	    #echo PHP_EOL;
-    		
-    	    #$one_hour_ago =             date('H', $one_hour_ago_stamp);
-    	    #var_dump($one_hour_ago);
-    	    #echo PHP_EOL;	    
-    	    
-    	    #$this_hour =                date('H', $now);
-    	    #var_dump($this_hour);
-    	    #echo PHP_EOL;
-            
-    	    $sumClick_this_week =  get_clicks_for_post($post_row, $user_row, $analytics, $start_date_billing_week, $today_date);
-            
-            $billable_clicks   = $billable_clicks  + $sumClick_past_day;
-    		$clicks_this_week  = $clicks_this_week + $sumClick_this_week;
-    		 
-    		echo '$billable_clicks: ';
-            var_dump ($billable_clicks);
-            echo PHP_EOL;
-            
-            echo '$clicks_this_week: ';
-            var_dump ($clicks_this_week);
-            echo PHP_EOL;
-                    
-        	$j++;
-    	}	
-
-    	# Should have the following data available by now:
-    	# -> user_id (wp), 
-    	# -> subscription_id (chargify - unique subscription code for customer's product), 
-    	# -> component_id (chargify - code for click price)
-    	# -> billable_clicks (quantity - from google analytics work done above - int)
 
     	// Get chargify subscription id
     	$sql_subscription_id  = 'SELECT meta_value 
@@ -310,8 +224,8 @@ while ($i < $data_set) {
         
     	echo '$subscription_id: ';
     	var_dump($subscription_id);
-        echo PHP_EOL;
-    
+        echo PHP_EOL;        
+        
         // Get chargify product id
     	$sql_product_id  = 'SELECT meta_value 
                             FROM   wp_usermeta 
@@ -351,13 +265,96 @@ while ($i < $data_set) {
                 $component_id = '20017';
                 $cap = (int) (449.00 / 1.7);
                 break;                                                
-        }    					
-    
-        // Send to chargify metering	
-        // Send a post request with Json data to this URL
+        }
+
+        if (!empty($component_id)) {        
+
+            # Get all product posts authored by user and store in $posts_results
+        	$sql_posts = 'SELECT DISTINCT wp_posts.* 
+        				  FROM wp_posts 
+        				  WHERE ( post_status = "publish"
+        				          or post_status = "pending" ) 
+            			  	and wp_posts.post_type = "gp_advertorial" 
+            			  	and wp_posts.post_author = "'. $user_row->user_id .'";';
+        	
+        	$posts_results = mysql_query($sql_posts);
+        	$num_posts     = mysql_num_rows($posts_results);
+        	
+        	# Get all clicks for this users product posts
+        	# this variable needs to hold the total number of click that user will be billed for 
+        	$billable_clicks  =  0;
+        	$clicks_this_week =  0;
+        	$j =                 0;
+            
+        	while ($j < $num_posts) { 	
+        	    
+                mysql_data_seek($posts_results, $j);
+        	    $post_row =                  mysql_fetch_object($posts_results);
+        	    
+        	    $now =                       time();
+        	    $yesterday_date_stamp =      ( $now - (24 * 60 * 60) );
+        		$yesterday_date       =      date('Y-m-d', $yesterday_date_stamp);
         
-    	if (!empty($component_id)) {
+        		$today_date =                date('Y-m-d'); 		            //Todays Date
+        	    
+                $sumClick_past_day =         get_clicks_for_post($post_row, $user_row, $analytics, $yesterday_date, $today_date);
+        	    
+                // Get time advertiser signed up to chargify
+        	    $sql_adv_time = 'SELECT meta_value 
+                                 FROM wp_usermeta 
+                                 WHERE user_id = "'. $user_row->user_id .'"
+                                     AND meta_key = "adv_signup_time";';
+        
+        	    $signup_time_results =      mysql_query($sql_adv_time);
+                mysql_data_seek($signup_time_results, 0);
     
+                $signup_time_row =          mysql_fetch_object($signup_time_results);    	    
+        	    $advertiser_signup_time =   $signup_time_row->meta_value;
+        	    
+        	    // Get difference between last week anniversary of sign up
+        	    $one_week =                 (7 * 24 * 60 * 60);
+        
+        	    $now =                      time();
+        	    $total_time_signedup =      $now - $advertiser_signup_time;
+        	    $this_billing_week =        $total_time_signedup % $one_week;
+        	    $start_this_billing_week =  $now - $this_billing_week;
+        	    
+        	    $start_date_billing_week =  date('Y-m-d', $start_this_billing_week);
+        	    
+        		#$one_hour_ago_stamp =       ( $now - (60 * 60) );
+        	    #var_dump($one_hour_ago_stamp);
+        	    #echo PHP_EOL;
+        		
+        	    #$one_hour_ago =             date('H', $one_hour_ago_stamp);
+        	    #var_dump($one_hour_ago);
+        	    #echo PHP_EOL;	    
+        	    
+        	    #$this_hour =                date('H', $now);
+        	    #var_dump($this_hour);
+        	    #echo PHP_EOL;
+                
+        	    $sumClick_this_week =  get_clicks_for_post($post_row, $user_row, $analytics, $start_date_billing_week, $today_date);
+                
+                $billable_clicks   = $billable_clicks  + $sumClick_past_day;
+        		$clicks_this_week  = $clicks_this_week + $sumClick_this_week;
+        		 
+        		echo '$billable_clicks: ';
+                var_dump ($billable_clicks);
+                echo PHP_EOL;
+                
+                echo '$clicks_this_week: ';
+                var_dump ($clicks_this_week);
+                echo PHP_EOL;
+                        
+            	$j++;
+        	}	
+    
+        	# Should have the following data available by now:
+        	# -> user_id (wp), 
+        	# -> subscription_id (chargify - unique subscription code for customer's product), 
+        	# -> component_id (chargify - code for click price)
+        	# -> billable_clicks (quantity - from google analytics work done above - int)
+        	
     	    echo '$cap: ';
             var_dump($cap);
             echo PHP_EOL;
