@@ -187,19 +187,6 @@ while ($i < $data_set) {
 	mysql_data_seek($db_result, $i);
 	$user_row = mysql_fetch_object($db_result);
 	
-	echo PHP_EOL; 
-	var_dump($user_row);
-	echo PHP_EOL;
-
-	$sql_reg_advertiser =  'SELECT meta_value
-                    		FROM wp_usermeta
-                    		WHERE meta_key = "reg_advertiser"
-                    		    AND user_id = "'. $user_row->user_id .'";';
-	
-	$reg_advertiser_results = mysql_query($sql_reg_advertiser);
-	mysql_data_seek($reg_advertiser_results, 0);
-	$reg_advertiser_row = mysql_fetch_object($reg_advertiser_results);
-	
     if ( ( $user_row->budget_status == 'active' ) || ( $user_row->budget_status == 'used_up' ) ) {
     
     	echo PHP_EOL; 
@@ -529,7 +516,7 @@ while ($i < $data_set) {
     
     } else {
 
-        echo 'User: '. $user_row->user_id .' $reg_advertiser: '. $reg_advertiser_row->meta_value .' and $budget_status: '. $user_row->budget_status;
+        echo 'User: '. $user_row->user_id .' $budget_status: '. $user_row->budget_status;
         echo PHP_EOL;
         
     }
