@@ -28,6 +28,55 @@
 
 //-----------------------------------//
 
+
+function get_clicks_for_post($post_row, $user_row, $analytics, $start_range, $end_range) {
+		
+		$post_url_ext = $post_row->post_name; //Need to get post_name for URL. Gets ful URl, but we only need /url extention for Google API
+		
+		$post_type_map = 'eco-friendly-products';
+				
+		$post_url_end = '/' . $post_type_map . '/' . $post_url_ext . '/';
+		
+  		$analytics->setDateRange($start_range, $end_range);	        //Set date in GA $analytics->setMonth(date('$post_date'), date('$new_date'));
+          	
+       	#SET UP POST ID AND AUTHOR ID DATA, POST DATE, GET LINK CLICKS DATA FROM GA 
+		$profile_author_id = $user_row->user_id;
+		$post_id =           $post_row->ID;
+		$click_track_tag =   '/yoast-ga/' . $post_id . '/' . $profile_author_id . '/outbound-article/';
+		
+		$clickURL = ($analytics->getPageviewsURL($click_track_tag));
+  		$sumClick = 0;
+		foreach ($clickURL as $data) {
+    		$sumClick = $sumClick + $data;
+  		}
+        
+		$post_url =   '/eco-friendly-products';
+
+	    // Get url product button is linked to
+	    $sql_product_url = 'SELECT meta_value 
+                            FROM wp_postmeta 
+                            WHERE post_id = "'. $post_id .'"
+                                AND meta_key = "gp_advertorial_product_url";';
+
+	    $product_url_results = mysql_query($sql_product_url);
+        mysql_data_seek($product_url_results, 0);
+	    $product_url_row = mysql_fetch_object($product_url_results);	
+		$product_url = $product_url_row->meta_value;
+		
+		if ( !empty($product_url) ) {		# IF 'BUY IT' BUTTON ACTIVATED, GET CLICKS
+			
+		    $click_track_tag_product_button = '/outbound/product-button/' . $post_id . '/' . $profile_author_id . '/' . $product_url . '/'; 
+	         
+			$clickURL_product_button = ($analytics->getPageviewsURL($click_track_tag_product_button));
+            
+  			foreach ($clickURL_product_button as $data) {
+    			$sumClick = $sumClick + $data;
+  			}
+		}
+        
+        return $sumClick;
+}
+
 echo PHP_EOL; 
 echo '_______________________________________________________';
 echo PHP_EOL;
@@ -116,56 +165,6 @@ $data_set = mysql_num_rows($db_result);
 echo 'Users with budget_status set: '. $data_set;
 echo PHP_EOL;
 
-// 3a. Define functions to get clicks
-
-function get_clicks_for_post($post_row, $user_row, $analytics, $start_range, $end_range) {
-		
-		$post_url_ext = $post_row->post_name; //Need to get post_name for URL. Gets ful URl, but we only need /url extention for Google API
-		
-		$post_type_map = 'eco-friendly-products';
-				
-		$post_url_end = '/' . $post_type_map . '/' . $post_url_ext . '/';
-		
-  		$analytics->setDateRange($start_range, $end_range);	        //Set date in GA $analytics->setMonth(date('$post_date'), date('$new_date'));
-          	
-       	#SET UP POST ID AND AUTHOR ID DATA, POST DATE, GET LINK CLICKS DATA FROM GA 
-		$profile_author_id = $user_row->user_id;
-		$post_id =           $post_row->ID;
-		$click_track_tag =   '/yoast-ga/' . $post_id . '/' . $profile_author_id . '/outbound-article/';
-		
-		$clickURL = ($analytics->getPageviewsURL($click_track_tag));
-  		$sumClick = 0;
-		foreach ($clickURL as $data) {
-    		$sumClick = $sumClick + $data;
-  		}
-        
-		$post_url =   '/eco-friendly-products';
-
-	    // Get url product button is linked to
-	    $sql_product_url = 'SELECT meta_value 
-                            FROM wp_postmeta 
-                            WHERE post_id = "'. $post_id .'"
-                                AND meta_key = "gp_advertorial_product_url";';
-
-	    $product_url_results = mysql_query($sql_product_url);
-        mysql_data_seek($product_url_results, 0);
-	    $product_url_row = mysql_fetch_object($product_url_results);	
-		$product_url = $product_url_row->meta_value;
-		
-		if ( !empty($product_url) ) {		# IF 'BUY IT' BUTTON ACTIVATED, GET CLICKS
-			
-		    $click_track_tag_product_button = '/outbound/product-button/' . $post_id . '/' . $profile_author_id . '/' . $product_url . '/'; 
-	         
-			$clickURL_product_button = ($analytics->getPageviewsURL($click_track_tag_product_button));
-            
-  			foreach ($clickURL_product_button as $data) {
-    			$sumClick = $sumClick + $data;
-  			}
-		}
-        
-        return $sumClick;
-}
-
 // 4. Get all posts for each ID. Grab the their analytics for the hour for all posts and sum
 
 echo PHP_EOL; 
@@ -183,10 +182,14 @@ echo PHP_EOL;
 date_default_timezone_set('UTC');
 	
 $i = 0;
-while ($i < $data_set) { 
+while ($i < $data_set) {
     
 	mysql_data_seek($db_result, $i);
 	$user_row = mysql_fetch_object($db_result);
+	
+	echo PHP_EOL; 
+	var_dump($user_row);
+	echo PHP_EOL;
 
 	$sql_reg_advertiser =  'SELECT meta_value
                     		FROM wp_usermeta
@@ -197,7 +200,7 @@ while ($i < $data_set) {
 	mysql_data_seek($reg_advertiser_results, 0);
 	$reg_advertiser_row = mysql_fetch_object($reg_advertiser_results);
 	
-    if ( $reg_advertiser_row->meta_value == "1" ) {
+    if ( ( $user_row->budget_status == 'active' ) || ( $user_row->budget_status == 'used_up' ) ) {
     
     	echo PHP_EOL; 
         echo '_______________________________________________________';
@@ -264,7 +267,12 @@ while ($i < $data_set) {
                 // $499 per week plan
                 $component_id = '20017';
                 $cap = (int) (449.00 / 1.7);
-                break;                                                
+                break;
+            case '27023':
+                // $39 per month old plan
+                $component_id = '';
+                $cap = 0;
+                break;                                                 
         }
 
         if (!empty($component_id)) {        
@@ -400,7 +408,7 @@ while ($i < $data_set) {
         	        
         	    # set budget_status to 'active'
         	    $budget_status_sql = 'UPDATE wp_usermeta 
-        							  SET meta_value = replace(meta_value, "cancelled", "active") 
+        							  SET meta_value = replace(meta_value, "used_up", "active") 
         							  WHERE meta_key = "budget_status" 
         	    					      AND user_id ="'. $user_row->user_id .'" ;';
         
