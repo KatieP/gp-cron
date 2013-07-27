@@ -233,8 +233,9 @@ function email_current_advertisers() {
     
 	$sql = 'SELECT DISTINCT user_ID
         	FROM wp_usermeta
-        	WHERE meta_key = "reg_advertiser"
-        	    AND meta_value = "1";';
+        	WHERE meta_key = "budget_status"
+        	    AND (meta_value = "active"
+        	         OR meta_value = "used_up");';
 
 	$users =     mysql_query($sql);
 
