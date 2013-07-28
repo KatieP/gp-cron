@@ -371,7 +371,7 @@ function get_email_body($user_nicename, $budget_status) {
                 	           <p><a href="http://www.greenpag.es/profile/ '. $user_nicename .'/#tab:advertise">Increase your weekly budget now.</a></p>';
             break;
         case 'active' :
-            $email_body =     '<p>Hey, you\'ve still got come budget left :)</p>
+            $email_body =     '<p>You\'ve still got come budget left :)</p>
                                <p>Want to get more clicks? <a href="http://www.greenpag.es/forms/create-product-post">Create another product post now!</a></p>
                                <p>There\'s no limit to how many product posts you can create,
                                so go ahead, let the greenpages members know how excellent your business is!</p>';
@@ -386,7 +386,7 @@ function send_email_notification($user_email, $intro_sentence, $email_body) {
      * Send email via mailgun
      **/
 
-    echo 'send_email_notification($user_email, $intro_sentence, $email_body)';
+    echo 'send_email_notification($user_email, $intro_sentence, $email_body, $user_nicename)';
     echo PHP_EOL;      
     
     $ch = curl_init();
@@ -408,8 +408,7 @@ function send_email_notification($user_email, $intro_sentence, $email_body) {
                                                               
     <!--  / ---------------------------------------------------------------------------------------------- / -->
                                                               
-                                                              
-     <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head><title></title><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=320, target-densitydpi=device-dpi">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head><title></title><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=320, target-densitydpi=device-dpi">
 <style type="text/css">
 /* Mobile-specific Styles */
 @media only screen and (max-width: 660px) { 
@@ -481,13 +480,13 @@ body, td { font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
 /* Prevent Webkit and Windows Mobile platforms from changing default font sizes on header and footer. */
 .header-content { font-size: 12px; font-weight: bold; color: white; }
 .header-content a { font-weight: bold; color: white; text-decoration: none; }
-#headline p { color: #01aed8; font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; font-size: 36px; text-align: left; margin-top:0px; margin-bottom:30px; }
+#headline p { color: #01aed8; font-family: \'Helvetica Neue, Arial\', Helvetica, Geneva, sans-serif; font-size: 36px; text-align: left; margin-top:0px; margin-bottom:30px; }
 #headline p a { color: #01aed8; text-decoration: none; }
-.article-title { font-size: 18px; line-height:24px; color: #01aed8; font-weight:bold; margin-top:0px; margin-bottom:18px; font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
+.article-title { font-size: 18px; line-height:24px; color: #01aed8; font-weight:bold; margin-top:0px; margin-bottom:18px; font-family: \'Helvetica Neue\', Arial, Helvetica, Geneva, sans-serif; }
 .article-title a { color: #01aed8; text-decoration: none; }
 .article-title.with-meta {margin-bottom: 0;}
 .article-meta { font-size: 13px; line-height: 20px; color: #ccc; font-weight: bold; margin-top: 0;}
-.article-content { font-size: 18px; line-height: 24px; color: #444444; margin-top: 0px; margin-bottom: 18px; font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
+.article-content { font-size: 18px; line-height: 24px; color: #444444; margin-top: 0px; margin-bottom: 18px; font-family: \'Helvetica Neue\', Arial, Helvetica, Geneva, sans-serif; }
 .article-content a { color: #01aed8; font-weight:bold; text-decoration:none; }
 .article-content img { max-width: 100% }
 .article-content ol, .article-content ul { margin-top:0px; margin-bottom:18px; margin-left:19px; padding:0; }
@@ -502,7 +501,9 @@ body, td { font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
 #footer a { color: #E2E2E2; text-decoration: none; font-weight: bold; }
 #permission-reminder { white-space: normal; }
 #street-address { color: #E2E2E2; white-space: normal; }
+                                                             
 </style>
+
 <!--[if gte mso 9]>
 <style _tmplitem="40" >
 .article-content ol, .article-content ul {
@@ -511,6 +512,7 @@ body, td { font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
    list-style-position: inside;
 }
 </style>
+
 <![endif]--></head><body><table width="100%" cellpadding="0" cellspacing="0" border="0" id="background-table">
 	<tbody><tr>
 		<td align="center" bgcolor="#ececec">
@@ -520,6 +522,7 @@ body, td { font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
             	<tr>
                 	<td class="w640" width="640">
                         <table id="top-bar" class="w640" width="640" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff">
+    
     <tbody><tr>
         <td class="w15" width="15"></td>
         <td class="w325" width="350" valign="middle" align="left">
@@ -527,20 +530,22 @@ body, td { font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
                 <tbody><tr><td class="w325" width="350" height="8"></td></tr>
             </tbody></table>
             
-            <div class="header-content"><webversion>&nbsp;&nbsp;<a href="http://www.greenpag.es">Weekly advertiser update from greenpag.es</a></webversion><span class="hide">&nbsp; </span><div>
+            <div class="header-content"><webversion>&nbsp;&nbsp;Weekly advertiser update from greenpag.es</webversion><span class="hide">&nbsp; </span><div>
+            
             
             <table class="w325" width="350" cellpadding="0" cellspacing="0" border="0">
                 <tbody><tr><td class="w325" width="350" height="8"></td></tr>
             </tbody></table>
         </td>
+        
+        
         <td class="w30" width="30"></td>
         <td class="w255" width="255" valign="middle" align="right">
             <table class="w255" width="255" cellpadding="0" cellspacing="0" border="0">
                 <tbody><tr><td class="w255" width="255" height="8"></td></tr>
             </tbody></table>
             <table cellpadding="0" cellspacing="0" border="0">
-    <tbody><tr>
-        
+    <tbody><tr>        
         
         
     </tr>
@@ -607,7 +612,7 @@ body, td { font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
         <tr>
             <td class="w30" width="30"></td>
             <td class="w580" width="360" valign="top">
-            <span class="hide"><p id="permission-reminder" align="left" class="footer-content-left"><span>You\'re receiving this because you are subscribed a pay per click advertising campaign on greenpag.es. </span></p></span>
+            <span class="hide"><p id="permission-reminder" align="left" class="footer-content-left"><span>You\'re receiving this because you are subscribed to a pay per click advertising campaign on greenpag.es. </span></p></span>
             <p align="left" class="footer-content-left"><unsubscribe><a href="http://www.greenpag.es/profile/'. $user_nicename .'#tab:advertise">Go to My Account</a></unsubscribe></p>
             </td>
             <td class="hide w0" width="60"></td>
