@@ -530,7 +530,7 @@ body, td { font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
                 <tbody><tr><td class="w325" width="350" height="8"></td></tr>
             </tbody></table>
             
-            <div class="header-content"><webversion>&nbsp;&nbsp;Weekly advertiser update from greenpag.es</webversion><span class="hide">&nbsp; </span><div>
+            <div class="header-content"><webversion>&nbsp;&nbsp;Weekly advertiser update from greenpages greenpag.es</webversion><span class="hide">&nbsp; </span><div>
             
             
             <table class="w325" width="350" cellpadding="0" cellspacing="0" border="0">
@@ -575,13 +575,13 @@ body, td { font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
     <table class="w640" width="640" cellpadding="0" cellspacing="0" border="0">
         <tbody><tr>
             <td class="w30" width="30"></td>
-            <td class="w580" width="580">
+            <td class="w580" width="540">
                 <repeater>
                     
                     <layout label="Text only">
-                        <table class="w580" width="580" cellpadding="0" cellspacing="0" border="0">
+                        <table class="w580" width="540" cellpadding="0" cellspacing="0" border="0">
                             <tbody><tr>
-                                <td class="w580" width="580">
+                                <td class="w580" width="540">
                                     
                                     <div align="left" class="article-content">
                                     
@@ -591,7 +591,7 @@ body, td { font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
                                     </div>
                                 </td>
                             </tr>
-                            <tr><td class="w580" width="580" height="10"></td></tr>
+                            <tr><td class="w580" width="540" height="10"></td></tr>
                         </tbody></table>
                     </layout>
                  
@@ -613,7 +613,7 @@ body, td { font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
             <td class="w30" width="30"></td>
             <td class="w580" width="360" valign="top">
             <span class="hide"><p id="permission-reminder" align="left" class="footer-content-left"><span>You\'re receiving this because you are subscribed to a pay per click advertising campaign on greenpag.es. </span></p></span>
-            <p align="left" class="footer-content-left"><unsubscribe><a href="http://www.greenpag.es/profile/'. $user_nicename .'#tab:advertise">Go to My Account</a></unsubscribe></p>
+            <p align="left" class="footer-content-left"><unsubscribe><a href="http://www.greenpag.es/profile/'. $user_nicename .'/#tab:advertise">Go to My Account</a></unsubscribe></p>
             </td>
             <td class="hide w0" width="60"></td>
             <td class="hide w0" width="160" valign="top">
