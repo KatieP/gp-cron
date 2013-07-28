@@ -578,7 +578,7 @@ body, td { font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
                         <table class="w580" width="580" cellpadding="0" cellspacing="0" border="0">
                             <tbody><tr>
                                 <td class="w580" width="580">
-                                    <p align="left" class="article-title"><singleline label="Title">'. $intro_sentence .'</singleline></p>
+                                    <p align="left" class="article-content"><singleline label="Title">'. $intro_sentence .'</singleline></p>
                                     <div align="left" class="article-content">
                                         <multiline label="Description">'. $email_body .'</multiline>
                                     </div>
