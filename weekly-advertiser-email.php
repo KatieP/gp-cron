@@ -361,7 +361,11 @@ function get_intro_sentence($user_id, $member_display_name) {
 function get_email_body($user_nicename, $budget_status) {
 
     echo 'get_email_body($user_nicename, $budget_status)';
-    echo PHP_EOL;     
+    echo PHP_EOL; 
+    
+    echo 'USER NICENAME VARDUMP IN GET_EMIL_BODY';
+	var_dump($user_nicename);
+    
     
     switch ($budget_status) {
         case 'used_up' :
@@ -381,10 +385,12 @@ function get_email_body($user_nicename, $budget_status) {
 	return $email_body;
 }
 
-function send_email_notification($user_email, $intro_sentence, $email_body) {
+function send_email_notification($user_email, $intro_sentence, $email_body, $user_nicename) {
     /**
      * Send email via mailgun
      **/
+	echo 'USER NICENAME VARDUMP IN SEND_EMAIL_NOTIFICATION';
+	var_dump($user_nicename);
 
     echo 'send_email_notification($user_email, $intro_sentence, $email_body, $user_nicename)';
     echo PHP_EOL;      
@@ -613,7 +619,7 @@ body, td { font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
             <td class="w30" width="30"></td>
             <td class="w580" width="360" valign="top">
             <span class="hide"><p id="permission-reminder" align="left" class="footer-content-left"><span>You\'re receiving this because you are subscribed to a pay per click advertising campaign on greenpag.es. </span></p></span>
-            <p align="left" class="footer-content-left"><unsubscribe><a href="http://www.greenpag.es/profile/'. $user_nicename .'/#tab:advertise">Go to My Account</a></unsubscribe></p>
+            <p align="left" class="footer-content-left"><unsubscribe><a href="http://www.greenpag.es/profile/'. $user_nicename .'#tab:advertise">Go to My Account</a></unsubscribe></p>
             </td>
             <td class="hide w0" width="60"></td>
             <td class="hide w0" width="160" valign="top">
