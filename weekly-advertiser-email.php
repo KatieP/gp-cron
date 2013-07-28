@@ -397,10 +397,9 @@ function send_email_notification($user_email, $intro_sentence, $email_body) {
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
     curl_setopt($ch, CURLOPT_URL, 'https://api.mailgun.net/v2/greenpag.es/messages');
     curl_setopt($ch, CURLOPT_POSTFIELDS, array( 'from' => 'hello@greenpag.es',
-                                                //'to' => $user_email,
-                                                // 'to' => 'jb@greenpag.es',
-                                                'to' => 'kp@greenpag.es',
-                                                'cc' => 'hello@greenpag.es',
+                                                'to' => $user_email,
+                                                'cc' => 'jb@greenpag.es', 
+                                                            
                                                 'subject' => 'How many clicks did you receive this week from greenpag.es?',
                                                 'text' => 'Some text',
                                                 'html' => '
@@ -578,8 +577,11 @@ body, td { font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
                         <table class="w580" width="580" cellpadding="0" cellspacing="0" border="0">
                             <tbody><tr>
                                 <td class="w580" width="580">
-                                    <p align="left" class="article-content"><singleline label="Title">'. $intro_sentence .'</singleline></p>
+                                    
                                     <div align="left" class="article-content">
+                                    
+                                    	<multiline label="Description">'. $intro_sentence .'</multiline>
+                                    
                                         <multiline label="Description">'. $email_body .'</multiline>
                                     </div>
                                 </td>
