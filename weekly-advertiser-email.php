@@ -480,15 +480,15 @@ code {
 body, td { font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
 .header-content, .footer-content-left, .footer-content-right { -webkit-text-size-adjust: none; -ms-text-size-adjust: none; }
 /* Prevent Webkit and Windows Mobile platforms from changing default font sizes on header and footer. */
-.header-content { font-size: 12px; color: #61c201; }
-.header-content a { font-weight: bold; color: #61c201; text-decoration: none; }
+.header-content { font-size: 12px; font-weight: bold; color: white; }
+.header-content a { font-weight: bold; color: white; text-decoration: none; }
 #headline p { color: #01aed8; font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; font-size: 36px; text-align: left; margin-top:0px; margin-bottom:30px; }
 #headline p a { color: #01aed8; text-decoration: none; }
 .article-title { font-size: 18px; line-height:24px; color: #01aed8; font-weight:bold; margin-top:0px; margin-bottom:18px; font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
 .article-title a { color: #01aed8; text-decoration: none; }
 .article-title.with-meta {margin-bottom: 0;}
 .article-meta { font-size: 13px; line-height: 20px; color: #ccc; font-weight: bold; margin-top: 0;}
-.article-content { font-size: 13px; line-height: 18px; color: #444444; margin-top: 0px; margin-bottom: 18px; font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
+.article-content { font-size: 18px; line-height: 24px; color: #444444; margin-top: 0px; margin-bottom: 18px; font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
 .article-content a { color: #01aed8; font-weight:bold; text-decoration:none; }
 .article-content img { max-width: 100% }
 .article-content ol, .article-content ul { margin-top:0px; margin-bottom:18px; margin-left:19px; padding:0; }
@@ -527,7 +527,9 @@ body, td { font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
             <table class="w325" width="350" cellpadding="0" cellspacing="0" border="0">
                 <tbody><tr><td class="w325" width="350" height="8"></td></tr>
             </tbody></table>
-            <div class="header-content"><webversion>Web Version</webversion><span class="hide">&nbsp;&nbsp;|&nbsp; <preferences lang="en">Update preferences</preferences>&nbsp;&nbsp;|&nbsp; <unsubscribe>Unsubscribe</unsubscribe></span></div>
+            
+            <div class="header-content"><webversion>&nbsp;&nbsp;<a href="http://www.greenpag.es">Weekly advertiser update from greenpag.es</a></webversion><span class="hide">&nbsp; </span><div>
+            
             <table class="w325" width="350" cellpadding="0" cellspacing="0" border="0">
                 <tbody><tr><td class="w325" width="350" height="8"></td></tr>
             </tbody></table>
@@ -604,7 +606,7 @@ body, td { font-family: Helvetica Neue, Arial, Helvetica, Geneva, sans-serif; }
             <td class="w30" width="30"></td>
             <td class="w580" width="360" valign="top">
             <span class="hide"><p id="permission-reminder" align="left" class="footer-content-left"><span>You\'re receiving this because you are subscribed a pay per click advertising campaign on greenpag.es. </span></p></span>
-            <p align="left" class="footer-content-left"><preferences lang="en">Edit your subscription</preferences> | <unsubscribe>Change email preferences</unsubscribe></p>
+            <p align="left" class="footer-content-left"><unsubscribe><a href="http://www.greenpag.es/profile/'. $user_nicename .'#tab:advertise">Go to My Account</a></unsubscribe></p>
             </td>
             <td class="hide w0" width="60"></td>
             <td class="hide w0" width="160" valign="top">
