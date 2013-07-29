@@ -29,13 +29,9 @@ require '/var/www/production/www.greenpag.es/wordpress/wp-content/themes/gp-au-t
 #require '../greenpag.es/gp-au-theme/ga/analytics.class.php';
 #require '../gp-theme/gp-au-theme/ga/analytics.class.php';
 
-
-
 $db_connection = mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());	
 mysql_select_db("s2-wordpress") or die(mysql_error()); 
 date_default_timezone_set('UTC');
-
-
 
 function get_adv_signup_time($user_id) {
 
@@ -278,11 +274,11 @@ function email_current_advertisers() {
                 $signup_day =           gmdate('l', $adv_signup_time);
                 $today =                date('l'); //Day of week in lower case string
     
-                //if ($signup_day == $today) {
+                if ($signup_day == $today) {
                     $intro_sentence =   get_intro_sentence($user_id, $member_display_name);
                     $email_body =       get_email_body($user_nicename, $budget_status);
                     send_email_notification($user_email, $intro_sentence, $email_body);
-                //}
+                }
             }
         }
         $i++;
