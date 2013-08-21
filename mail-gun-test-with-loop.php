@@ -22,7 +22,12 @@
 $db_connection = mysql_connect("127.0.0.1", "s1-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
 mysql_select_db("s1-wordpress") or die(mysql_error());
 
-echo '<p>starts</p>';
+echo '_______________________________________________________';
+echo PHP_EOL; 
+echo 'Begins';
+echo PHP_EOL; 
+echo '_______________________________________________________';
+echo PHP_EOL;
 	
 function get_post_url($row) {
 
@@ -177,17 +182,17 @@ function get_users() {
 
 function get_user_lat_long($user_id) {
 	mysql_connect("127.0.0.1", "s1-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
-        mysql_select_db("s1-wordpress") or die(mysql_error());
+    mysql_select_db("s1-wordpress") or die(mysql_error());
 
 	$sql = 'SELECT  meta_key, meta_value
-                FROM    wp_usermeta
-                WHERE   user_id = "'. $user_id .'"
-                    AND (meta_key = "gp_google_geo_latitude"
-                         OR meta_key = "gp_google_geo_longitude")';
+            FROM    wp_usermeta
+            WHERE   user_id = "'. $user_id .'"
+                AND ( meta_key = "gp_google_geo_latitude" 
+                      OR meta_key = "gp_google_geo_longitude" )';
 
     $db_result = mysql_query($sql);
 
-    if (! $db_result){
+    if (!$db_result){
        echo('Database error: ' . mysql_error());
     }
                 
@@ -785,8 +790,12 @@ function send_notifcations() {
 
 send_notifcations();
 
-echo '<br /> ends <br />';
-echo '<br /> It didn\'t break! <br />';
+echo '_______________________________________________________';
+echo PHP_EOL; 
+echo 'Ends';
+echo PHP_EOL; 
+echo '_______________________________________________________';
+echo PHP_EOL;
 
 mysql_close($db_connection);
 exit();

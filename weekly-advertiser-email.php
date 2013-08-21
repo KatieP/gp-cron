@@ -24,6 +24,7 @@ echo PHP_EOL;
 echo PHP_EOL;
 
 require '/var/www/production/www.greenpag.es/wordpress/wp-content/themes/gp-au-theme/ga/analytics.class.php';
+require '/var/www/production/www.greenpag.es/wordpress/wp-content/themes/gp-au-theme/functions.php';
 
 #require '../ga/analytics.class.php';
 #require '../greenpag.es/gp-au-theme/ga/analytics.class.php';
@@ -111,54 +112,6 @@ function get_product_id($user_id) {
     return $product_id;
 }
 
-function get_component_id($product_id) {
-    /**
-	 * Return component id mapped to product id
-	 * for Chargify metered billing components
-	 **/
-
-    $component_map = array( '3313295'  => '3207',
-							'27029'    => '3207',
-							'27028'    => '3207',
-							'3313296'  => '20016',
-							'3313297'  => '20017',
-							'27023'    => '' );
-
-    $component_id = $component_map[$product_id];
-
-    return $component_id;
-}
-
-function get_cost_per_click($product_id) {
-
-    echo 'get_cost_per_click($product_id)';
-    echo PHP_EOL; 
-        
-    switch ($product_id)   {
-        case '3313295':
-            // $12 per week plan
-            $cpc = 1.9;
-            break;
-        case '27029':
-            // $39 per week plan
-            $cpc = 1.9;
-            break;
-        case '27028':
-            // $99 per week plan
-            $cpc = 1.9;
-            break; 
-        case '3313296':
-            // $249 per week plan
-            $cpc = 1.8;
-            break; 
-        case '3313297':
-            // $499 per week plan
-            $cpc = 1.7;
-            break;                                                
-    }
-    return $cpc;   
-}
-
 function get_views_for_post($post_row, $user_id, $analytics, $start_range, $end_range) {
 
     echo 'get_views_for_post($post_row, $user_id, $analytics, $start_range, $end_range)';
@@ -178,48 +131,6 @@ function get_views_for_post($post_row, $user_id, $analytics, $start_range, $end_
   	}
   	        
     return $sumURL;
-}
-
-function get_clicks_for_post($post_row, $user_id, $analytics, $start_range, $end_range) {
-
-    echo 'get_clicks_for_post($post_row, $user_id, $analytics, $start_range, $end_range)';
-    echo PHP_EOL;     
-    
-	$analytics->setDateRange($start_range, $end_range);	        //Set date in GA $analytics->setMonth(date('$post_date'), date('$new_date'));
-
-   	#SET UP POST ID AND AUTHOR ID DATA, POST DATE, GET LINK CLICKS DATA FROM GA 
-	$profile_author_id =  $user_id;
-	$post_id =            $post_row->ID;
-	$click_track_tag =    '/yoast-ga/' . $post_id . '/' . $profile_author_id . '/outbound-article/';
-
-	$clickURL = ($analytics->getPageviewsURL($click_track_tag));
-	$sumClick = 0;
-
-	foreach ($clickURL as $data) {
-   		$sumClick = $sumClick + $data;
-	}
-
-    // Get url product button is linked to
-    $sql_product_url = 'SELECT meta_value 
-                        FROM wp_postmeta 
-                        WHERE post_id = "'. $post_id .'"
-                            AND meta_key = "gp_advertorial_product_url";';
-
-    $product_url_results =  mysql_query($sql_product_url);
-    mysql_data_seek($product_url_results, 0);
-    $product_url_row =      mysql_fetch_object($product_url_results);	
-	$product_url =          $product_url_row->meta_value;
-
-	if ( !empty($product_url) ) {		# IF 'BUY IT' BUTTON ACTIVATED, GET CLICKS
-	    $click_track_tag_product_button = '/outbound/product-button/' . $post_id . '/' . $profile_author_id . '/' . $product_url . '/'; 	         
-		$clickURL_product_button = ($analytics->getPageviewsURL($click_track_tag_product_button));
-            
-		foreach ($clickURL_product_button as $data) {
-   			$sumClick = $sumClick + $data;
-		}
-	}
-        
-    return $sumClick;
 }
 
 function email_current_advertisers() {

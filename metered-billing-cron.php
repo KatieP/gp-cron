@@ -28,55 +28,6 @@
 
 //-----------------------------------//
 
-
-function get_clicks_for_post($post_row, $user_row, $analytics, $start_range, $end_range) {
-		
-		$post_url_ext = $post_row->post_name; //Need to get post_name for URL. Gets ful URl, but we only need /url extention for Google API
-		
-		$post_type_map = 'eco-friendly-products';
-				
-		$post_url_end = '/' . $post_type_map . '/' . $post_url_ext . '/';
-		
-  		$analytics->setDateRange($start_range, $end_range);	        //Set date in GA $analytics->setMonth(date('$post_date'), date('$new_date'));
-          	
-       	#SET UP POST ID AND AUTHOR ID DATA, POST DATE, GET LINK CLICKS DATA FROM GA 
-		$profile_author_id = $user_row->user_id;
-		$post_id =           $post_row->ID;
-		$click_track_tag =   '/yoast-ga/' . $post_id . '/' . $profile_author_id . '/outbound-article/';
-		
-		$clickURL = ($analytics->getPageviewsURL($click_track_tag));
-  		$sumClick = 0;
-		foreach ($clickURL as $data) {
-    		$sumClick = $sumClick + $data;
-  		}
-        
-		$post_url =   '/eco-friendly-products';
-
-	    // Get url product button is linked to
-	    $sql_product_url = 'SELECT meta_value 
-                            FROM wp_postmeta 
-                            WHERE post_id = "'. $post_id .'"
-                                AND meta_key = "gp_advertorial_product_url";';
-
-	    $product_url_results = mysql_query($sql_product_url);
-        mysql_data_seek($product_url_results, 0);
-	    $product_url_row = mysql_fetch_object($product_url_results);	
-		$product_url = $product_url_row->meta_value;
-		
-		if ( !empty($product_url) ) {		# IF 'BUY IT' BUTTON ACTIVATED, GET CLICKS
-			
-		    $click_track_tag_product_button = '/outbound/product-button/' . $post_id . '/' . $profile_author_id . '/' . $product_url . '/'; 
-	         
-			$clickURL_product_button = ($analytics->getPageviewsURL($click_track_tag_product_button));
-            
-  			foreach ($clickURL_product_button as $data) {
-    			$sumClick = $sumClick + $data;
-  			}
-		}
-        
-        return $sumClick;
-}
-
 echo PHP_EOL; 
 echo '_______________________________________________________';
 echo PHP_EOL;
@@ -118,6 +69,7 @@ echo PHP_EOL;
 //require '../greenpag.es/gp-au-theme/ga/analytics.class.php';
 //require '../gp-theme/gp-au-theme/ga/analytics.class.php';
 require '/var/www/production/www.greenpag.es/wordpress/wp-content/themes/gp-au-theme/ga/analytics.class.php';
+require '/var/www/production/www.greenpag.es/wordpress/wp-content/themes/gp-au-theme/functions.php';
 
 $analytics = new analytics('greenpagesadserving@gmail.com', 'greenpages01'); //sign in and grab profile			
 $analytics->setProfileById('ga:42443499'); 			//$analytics->setProfileByName('Stage 1 - Green Pages');
@@ -186,6 +138,7 @@ while ($i < $data_set) {
     
 	mysql_data_seek($db_result, $i);
 	$user_row = mysql_fetch_object($db_result);
+	$user_id = $user_row->user_id;
 	
     if ( ( $user_row->budget_status == 'active' ) || ( $user_row->budget_status == 'used_up' ) ) {
     
@@ -194,7 +147,7 @@ while ($i < $data_set) {
         echo PHP_EOL;
         echo PHP_EOL;     
         echo PHP_EOL;
-        echo 'User: '. $user_row->user_id;
+        echo 'User: '. $user_id;
         echo PHP_EOL;
         echo PHP_EOL; 
         echo '_______________________________________________________';
@@ -204,7 +157,7 @@ while ($i < $data_set) {
     	// Get chargify subscription id
     	$sql_subscription_id  = 'SELECT meta_value 
                                  FROM   wp_usermeta 
-                                 WHERE  user_id = "'. $user_row->user_id .'"
+                                 WHERE  user_id = "'. $user_id .'"
                                      AND meta_key = "subscription_id";';
     
         $sql_subscription_id_results = mysql_query($sql_subscription_id);    
@@ -219,48 +172,16 @@ while ($i < $data_set) {
         // Get chargify product id
     	$sql_product_id  = 'SELECT meta_value 
                             FROM   wp_usermeta 
-                            WHERE  user_id = "'. $user_row->user_id .'"
+                            WHERE  user_id = "'. $user_id .'"
                                  AND meta_key = "product_id";';
     
         $sql_product_id_results = mysql_query($sql_product_id);
         mysql_data_seek($sql_product_id_results, 0);
     	$product_id_row = mysql_fetch_object($sql_product_id_results);	
-    	$product_id = $product_id_row->meta_value;
-        
-        $component_id = '';
-        
-        switch ($product_id)   {
-            case '3313295':
-                // $12 per week plan
-                $component_id = '3207';
-                $cap = (int) (12.00 / 1.9);
-                break;
-            case '27029':
-                // $39 per week plan
-                $component_id = '3207';
-                $cap = (int) (39.00 / 1.9);
-                break;
-            case '27028':
-                // $99 per week plan
-                $component_id = '3207';
-                $cap = (int) (99.00 / 1.9);
-                break; 
-            case '3313296':
-                // $249 per week plan
-                $component_id = '20016';
-                $cap = (int) (249.00 / 1.8);
-                break; 
-            case '3313297':
-                // $499 per week plan
-                $component_id = '20017';
-                $cap = (int) (449.00 / 1.7);
-                break;
-            case '27023':
-                // $39 per month old plan
-                $component_id = '';
-                $cap = 0;
-                break;                                                 
-        }
+
+    	$product_id =     $product_id_row->meta_value;
+        $component_id =   get_component_id($product_id);
+        $cap =            get_click_cap($product_id);
 
         if (!empty($component_id)) {        
 
@@ -270,7 +191,7 @@ while ($i < $data_set) {
         				  WHERE ( post_status = "publish"
         				          or post_status = "pending" ) 
             			  	and wp_posts.post_type = "gp_advertorial" 
-            			  	and wp_posts.post_author = "'. $user_row->user_id .'";';
+            			  	and wp_posts.post_author = "'. $user_id .'";';
         	
         	$posts_results = mysql_query($sql_posts);
         	$num_posts     = mysql_num_rows($posts_results);
@@ -292,12 +213,12 @@ while ($i < $data_set) {
         
         		$today_date =                date('Y-m-d'); 		            //Todays Date
         	    
-                $sumClick_past_day =         get_clicks_for_post($post_row, $user_row, $analytics, $yesterday_date, $today_date);
+                $sumClick_past_day =         get_clicks_for_post($post_row, $user_id, $analytics, $yesterday_date, $today_date);
         	    
                 // Get time advertiser signed up to chargify
         	    $sql_adv_time = 'SELECT meta_value 
                                  FROM wp_usermeta 
-                                 WHERE user_id = "'. $user_row->user_id .'"
+                                 WHERE user_id = "'. $user_id .'"
                                      AND meta_key = "adv_signup_time";';
         
         	    $signup_time_results =      mysql_query($sql_adv_time);
@@ -328,7 +249,7 @@ while ($i < $data_set) {
         	    #var_dump($this_hour);
         	    #echo PHP_EOL;
                 
-        	    $sumClick_this_week =  get_clicks_for_post($post_row, $user_row, $analytics, $start_date_billing_week, $today_date);
+        	    $sumClick_this_week =  get_clicks_for_post($post_row, $user_id, $analytics, $start_date_billing_week, $today_date);
                 
                 $billable_clicks   = $billable_clicks  + $sumClick_past_day;
         		$clicks_this_week  = $clicks_this_week + $sumClick_this_week;
@@ -397,11 +318,11 @@ while ($i < $data_set) {
         	    $budget_status_sql = 'UPDATE wp_usermeta 
         							  SET meta_value = replace(meta_value, "used_up", "active") 
         							  WHERE meta_key = "budget_status" 
-        	    					      AND user_id ="'. $user_row->user_id .'" ;';
+        	    					      AND user_id ="'. $user_id .'" ;';
         
         	    # run budget_status query on db    
                 mysql_query($budget_status_sql);
-                echo 'Set budget_status for user '. $user_row->user_id .' to active';      	    
+                echo 'Set budget_status for user '. $user_id .' to active';      	    
         	    echo PHP_EOL;
         	    
         	} else {
@@ -431,11 +352,11 @@ while ($i < $data_set) {
         	    $budget_status_sql = 'UPDATE wp_usermeta 
         							  SET meta_value = replace(meta_value, "active", "used_up") 
         							  WHERE meta_key = "budget_status" 
-        	    					      AND user_id ="'. $user_row->user_id .'" ;';
+        	    					      AND user_id ="'. $user_id .'" ;';
         
         	    # run budget_status and post_status queries on db    
                 mysql_query($budget_status_sql);
-                echo 'Set budget_status for user '. $user_row->user_id .' to used_up';
+                echo 'Set budget_status for user '. $user_id .' to used_up';
                 echo PHP_EOL;
         
         	}
@@ -516,7 +437,7 @@ while ($i < $data_set) {
     
     } else {
 
-        echo 'User: '. $user_row->user_id .' $budget_status: '. $user_row->budget_status;
+        echo 'User: '. $user_id .' $budget_status: '. $user_row->budget_status;
         echo PHP_EOL;
         
     }
