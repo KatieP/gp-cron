@@ -122,10 +122,7 @@ echo PHP_EOL;
 echo PHP_EOL; 
 echo '_______________________________________________________';
 echo PHP_EOL;
-echo PHP_EOL;     
-echo PHP_EOL;
 echo 'Get posts, grab analytics and sum clicks';
-echo PHP_EOL;
 echo PHP_EOL; 
 echo '_______________________________________________________';
 echo PHP_EOL;
@@ -141,18 +138,6 @@ while ($i < $data_set) {
 	$user_id = $user_row->user_id;
 	
     if ( ( $user_row->budget_status == 'active' ) || ( $user_row->budget_status == 'used_up' ) ) {
-    
-    	echo PHP_EOL; 
-        echo '_______________________________________________________';
-        echo PHP_EOL;
-        echo PHP_EOL;     
-        echo PHP_EOL;
-        echo 'User: '. $user_id;
-        echo PHP_EOL;
-        echo PHP_EOL; 
-        echo '_______________________________________________________';
-        echo PHP_EOL;
-        echo PHP_EOL;
 
     	// Get chargify subscription id
     	$sql_subscription_id  = 'SELECT meta_value 
@@ -163,11 +148,7 @@ while ($i < $data_set) {
         $sql_subscription_id_results = mysql_query($sql_subscription_id);    
         mysql_data_seek($sql_subscription_id_results, 0);
     	$subscription_id_row = mysql_fetch_object($sql_subscription_id_results);	
-    	$subscription_id = $subscription_id_row->meta_value;
-        
-    	echo '$subscription_id: ';
-    	var_dump($subscription_id);
-        echo PHP_EOL;        
+    	$subscription_id = $subscription_id_row->meta_value;      
         
         // Get chargify product id
     	$sql_product_id  = 'SELECT meta_value 
@@ -183,15 +164,27 @@ while ($i < $data_set) {
         $component_id =   get_component_id($product_id);
         $cap =            get_click_cap($product_id);
 
-        if (!empty($component_id)) {        
+        if (!empty($component_id)) {
+            
+           	echo PHP_EOL; 
+            echo '_______________________________________________________';
+            echo PHP_EOL;
+            echo 'User: '. $user_id;
+            echo PHP_EOL; 
+            echo '_______________________________________________________';
+            echo PHP_EOL;
+            
+            echo '$subscription_id: ';
+    	    var_dump($subscription_id);
+            echo PHP_EOL;  
 
             # Get all product posts authored by user and store in $posts_results
         	$sql_posts = 'SELECT DISTINCT wp_posts.* 
         				  FROM wp_posts 
         				  WHERE ( post_status = "publish"
         				          or post_status = "pending" ) 
-            			  	and wp_posts.post_type = "gp_advertorial" 
-            			  	and wp_posts.post_author = "'. $user_id .'";';
+            			      AND wp_posts.post_type = "gp_advertorial" 
+            			      AND wp_posts.post_author = "'. $user_id .'";';
         	
         	$posts_results = mysql_query($sql_posts);
         	$num_posts     = mysql_num_rows($posts_results);
@@ -263,18 +256,14 @@ while ($i < $data_set) {
                 echo PHP_EOL;
                         
             	$j++;
-        	}	
-    
-        	# Should have the following data available by now:
-        	# -> user_id (wp), 
-        	# -> subscription_id (chargify - unique subscription code for customer's product), 
-        	# -> component_id (chargify - code for click price)
-        	# -> billable_clicks (quantity - from google analytics work done above - int)
+        	}
         	
     	    echo '$cap: ';
             var_dump($cap);
             echo PHP_EOL;
             
+            // Set quantity of clicks from last 24 hrs, this number is sent to chargify 
+            // and added to their usage total for billing, hence the need to enforce their total never exceeds their cap
             $quantity = ( ( $billable_clicks + $clicks_this_week ) <= $cap ) ? $billable_clicks : ($cap - $clicks_this_week);
                 
             echo '$quantity: ';			
