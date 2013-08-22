@@ -56,8 +56,6 @@ function get_post_image($row) {
 	preg_match("/(src.*)(jpg)/", $post_content, $matches);
 
 	$image_url = $matches[0];
-	echo $image_url;
-	echo '<br /><br />';
 
 	// if no match choose random image
 	if ( empty($image_url) ) {
@@ -91,18 +89,11 @@ function get_post_image($row) {
 		);
 
 		$rand_keys = array_rand($random_images, 2);
-		echo '<br />GETTING RANDOM IMAGE<br />';
-		$image_url_img = 'img src = '. $random_images[$rand_keys[0]];
-		echo $image_url_img; 
+		$image_url_img = 'img src = '. $random_images[$rand_keys[0]];		
 	} else {
-		echo 'MATCH FOUND IMAGE IS FROM STORY';
 		$image_url_img = 'img '. $image_url .'"';
-		echo '<br /><br />';
-		echo $image_url_img;
-		echo '<br /><br />';
 	}
 
-	echo '<br /><br />';
 	return $image_url_img;
 }
 
@@ -113,7 +104,8 @@ function get_single_post($row) {
 	$post_ID = $row->ID;
 	$post_url = get_post_url($row);
 	$post_image = get_post_image($row);
-        if (!empty($post_title)) {
+
+	if (!empty($post_title)) {
 	    $single_post = '<!-- STORY STARTS -->
                         <table class="w580" width="580" cellpadding="0" cellspacing="0" border="0">
                             <tbody><tr style="border-collapse:collapse;">
@@ -144,9 +136,6 @@ function get_single_post($row) {
 }
 	
 function get_posts_from_db() {
-
-	//$stories = array();
-	//Says >1 weeks because testing db is old
 
 	$sql = "SELECT post_title, post_content, post_name, post_type, ID, popularity_score 
        		FROM wp_posts 
@@ -214,7 +203,7 @@ function get_user_notification_setting($user_id) {
 
     mysql_data_seek($db_result, 0);
     $notification_setting_row = mysql_fetch_object($db_result);
-    $notification_setting = $notification_setting_row->meta_value;
+    $notification_setting =     $notification_setting_row->meta_value;
     
     return $notification_setting;
 }
@@ -230,7 +219,8 @@ function get_posts($user_lat, $user_long) {
 	$posts_set = '';
 
 	while ($i < $data_set) {
-		mysql_data_seek($db_result, $i);
+
+	    mysql_data_seek($db_result, $i);
 		$row = mysql_fetch_object($db_result);
 		// $post = get_single_post($row);
 		// $posts_set .= $post . '<br />';
@@ -241,7 +231,6 @@ function get_posts($user_lat, $user_long) {
 		$post = get_single_post($row);
 
 		$unsorted_posts[$popularity_score_thisuser] = $post;
-		echo PHP_EOL;
 		$i++;
 
 	}
@@ -256,7 +245,6 @@ function get_posts($user_lat, $user_long) {
 	}
 
 	return $posts_set;
-
 }
 
 //STEP 3: Work out distance of user to post by hypotenuse  
@@ -269,38 +257,13 @@ function user_post_distance($row, $user_lat, $user_long) {
 	$post_latitude = $row->post_latitude;
 	$post_longitude = $row->post_longitude;
 
-	#echo '$post_title:<br />';
-	#echo $post_title;
-	#echo '<hr />';
-	echo '$post_ID:<br />';
-	echo $post_ID;
-	echo '<hr />';
-	echo '$post_latitude:<br />';
-	echo $post_latitude;
-	echo '<hr />';
-	echo '$post_longitude:<br />';
-	echo $post_longitude; 
-	echo '<hr />';
-
-	$a = $post_latitude - $user_lat;
+	$a = $post_latitude -  $user_lat;
 	$b = $post_longitude - $user_long;
-	
-	echo 'a:';
-	echo $a;
-	echo '<br />';
-	
-	echo 'b:';
-	echo $b;
-	echo '<br />';
-	
+
 	$c = sqrt(pow($a,2) + pow($b,2));
-	
-	echo '$c:';
-	echo $c;
-	echo '<br />';
-	echo '<hr />';
-	
+
 	return $c;
+
 }
 
 //STEP 4: Add or subtract hypotenuse as converted to unixtime to popularity_score for previous array
@@ -308,8 +271,6 @@ function user_post_distance($row, $user_lat, $user_long) {
 function page_rank($c, $row) {
 
 	$popularity_score = $row->popularity_score;
-	echo 'Popularity score BEFORE equation<br />';
-	echo $popularity_score;
 
 	if ($c > 2) {
  
@@ -317,29 +278,17 @@ function page_rank($c, $row) {
     	$location_as_unix = (int) $location_as_unix;
     	$popularity_score_thisuser = $popularity_score - $location_as_unix;
     	
-    	echo 'POST IS > 2 // Popularity score<br />';
-    	echo $popularity_score_thisuser;
-    	echo '<hr />';
-
-		echo '<hr /><hr /<hr />';
 		
 	} elseif ($c < 1) {
 	
 		$popularity_score_thisuser = $popularity_score + pow(((1/$c)*3600), 1.2);
 		$popularity_score_thisuser = (int) $popularity_score_thisuser;
 		
-		echo 'POST IS < 1 // Popularity score<br />';
-    	echo '<hr />';
-    	echo $popularity_score_thisuser;
-		echo '<hr /><hr /<hr />';
-	
 	}
 	
 	return $popularity_score_thisuser;
 
 }
-
-
 
 //Send email using mailgun API
 
@@ -773,21 +722,10 @@ function send_notifcations() {
         $user_id = $row->ID;
 	    $user_email = $row->user_email;
 	    $meta_key = $row->meta_key;
-
-	    echo 'User '. $user_id;
-	    echo PHP_EOL;
 	    
 	    $user_notification_setting = get_user_notification_setting($user_id);
 	    
-	    echo '$user_notification_setting: '. $user_notification_setting;
-	    echo PHP_EOL;
-	    
 	    if ($user_notification_setting == 'weekly_email') {
-	    
-        	echo '$row: ';
-    	    var_dump($row);
-    
-            echo '$user_email: '.$user_email;
             
     	    $user_lat_long = get_user_lat_long($user_id);
     
@@ -810,13 +748,11 @@ function send_notifcations() {
                     }
                     $j++;
             }
-    
-            echo '$user_lat: '.$user_lat;
-            echo '$user_long: '.$user_long;
-            
-            $post_type = 'news_products_projects';
+
             $posts_set = get_posts($user_lat, $user_long);
             send_email_notification($user_email, $posts_set);
+            echo 'Email sent to user '. $user_id;
+	        echo PHP_EOL;
 	    }
         
 	    $i++;
