@@ -102,7 +102,7 @@ function get_single_post($row) {
 	//Variables used in content of email	
 	$post_title =    $row->post_title;	
 	$post_name =     $row->post_name;
-	$post_content =  substr($row->post_content, 0, 100); 
+	$post_content =  substr($row->post_content, 0, 170); 
 	$post_ID =       $row->ID;
 	$post_url =      get_post_url($row);
 	$post_image =    get_post_image($row);
@@ -137,6 +137,8 @@ function get_single_post($row) {
 	    $single_post = '';
 	}
 
+	mb_convert_encoding($single_post, 'UTF-8');
+	
 	return $single_post;	
 }
 	
