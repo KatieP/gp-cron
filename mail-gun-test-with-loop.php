@@ -19,11 +19,11 @@
 
 //Connect to database s1-wordpress
 
-//$db_connection = mysql_connect("127.0.0.1", "s1-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
-$db_connection = mysql_connect("127.0.0.1", "root", "") or die(mysql_error());
+$db_connection = mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
+//$db_connection = mysql_connect("127.0.0.1", "root", "") or die(mysql_error());
 
+mysql_select_db("s2-wordpress") or die(mysql_error());
 //mysql_select_db("s1-wordpress") or die(mysql_error());
-mysql_select_db("s1-wordpress") or die(mysql_error());
 
 
 echo '_______________________________________________________';
@@ -160,8 +160,7 @@ function get_users() {
 	
 	$sql_user = 'SELECT DISTINCT user_email, display_name, ID
                      FROM   wp_users
-                     WHERE  ID = "3"
-                         OR ID = "2"';
+                     WHERE  ID = "3"';
 
 	$db_result = mysql_query($sql_user);
 
