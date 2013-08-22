@@ -19,8 +19,12 @@
 
 //Connect to database s1-wordpress
 
-$db_connection = mysql_connect("127.0.0.1", "s1-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
+//$db_connection = mysql_connect("127.0.0.1", "s1-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
+$db_connection = mysql_connect("127.0.0.1", "root", "") or die(mysql_error());
+
+//mysql_select_db("s1-wordpress") or die(mysql_error());
 mysql_select_db("s1-wordpress") or die(mysql_error());
+
 
 echo '_______________________________________________________';
 echo PHP_EOL; 
@@ -139,7 +143,7 @@ function get_single_post($row) {
 	return $single_post;	
 }
 	
-function get_database_results() {
+function get_posts_from_db() {
 
 	//$stories = array();
 	//Says >1 weeks because testing db is old
@@ -161,8 +165,6 @@ function get_database_results() {
 }
 
 function get_users() {
-	mysql_connect("127.0.0.1", "s1-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
-	mysql_select_db("s1-wordpress") or die(mysql_error());
 
 	//Get user emails and their location
 	
@@ -181,8 +183,6 @@ function get_users() {
 }
 
 function get_user_lat_long($user_id) {
-	mysql_connect("127.0.0.1", "s1-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
-    mysql_select_db("s1-wordpress") or die(mysql_error());
 
 	$sql = 'SELECT  meta_key, meta_value
             FROM    wp_usermeta
@@ -198,42 +198,65 @@ function get_user_lat_long($user_id) {
                 
     return $db_result;
 }
-	
+
+function get_user_notification_setting($user_id) {
+
+	$sql = 'SELECT  meta_value
+            FROM    wp_usermeta
+            WHERE   user_id = "'. $user_id .'"
+                AND meta_key = "notification_setting";';
+
+    $db_result = mysql_query($sql);
+    
+    if (!$db_result){
+       echo('Database error: ' . mysql_error());
+    }
+
+    mysql_data_seek($db_result, 0);
+    $notification_setting_row = mysql_fetch_object($db_result);
+    $notification_setting = $notification_setting_row->meta_value;
+    
+    return $notification_setting;
+}
+
 function get_posts($user_lat, $user_long) {
     
-   	$db_result = get_database_results();
-	$i = 0;
+   	$db_result = get_posts_from_db();
+    $data_set =  mysql_num_rows($db_result);
+   	
+	$unsorted_posts = array();	    
+    
+   	$i = 0;
 	$posts_set = '';
-		
-	while ($i < 15) {
+
+	while ($i < $data_set) {
 		mysql_data_seek($db_result, $i);
 		$row = mysql_fetch_object($db_result);
-		$post = get_single_post($row);
-		$posts_set .= $post . '<br />';
-		
-		#$user_lat = -34; 
-		#$user_long = 151; 
-	
-		$unsorted_posts = array();
+		// $post = get_single_post($row);
+		// $posts_set .= $post . '<br />';
 			
 		$c = user_post_distance($row, $user_lat, $user_long);
 		$popularity_score_thisuser = page_rank($c, $row);
 		
-		echo '<hr /><hr /><hr />';
-		echo '$c:<br /><br />';
-		var_dump($c);
-		echo '<hr />';
-		echo '$popularity_score_thisuser:<br /><br />';
-		var_dump($popularity_score_thisuser);
-		echo '<hr />';
-		$row->popularity_score_thisuser = $popularity_score_thisuser;
-		$unsorted_posts[$popularity_score_thisuser] = $row;
-		echo '<hr />';
+		$post = get_single_post($row);
+
+		$unsorted_posts[$popularity_score_thisuser] = $post;
+		echo PHP_EOL;
 		$i++;
 
 	}
+
+	$post = '';
+
+	krsort($unsorted_posts);
+	$sorted_posts = array_slice($unsorted_posts, 0, 15, true);
+
+	foreach ($sorted_posts as $post) {
+    	$posts_set .= $post . '<br />';
+	}
+
 	return $posts_set;
-	
+
 }
 
 //STEP 3: Work out distance of user to post by hypotenuse  
@@ -751,39 +774,52 @@ function send_notifcations() {
 	    $user_email = $row->user_email;
 	    $meta_key = $row->meta_key;
 
-    	echo '$row: ';
-	    var_dump($row);
-
-        echo '$user_email: '.$user_email;
+	    echo 'User '. $user_id;
+	    echo PHP_EOL;
+	    
+	    $user_notification_setting = get_user_notification_setting($user_id);
+	    
+	    echo '$user_notification_setting: '. $user_notification_setting;
+	    echo PHP_EOL;
+	    
+	    if ($user_notification_setting == 'weekly_email') {
+	    
+        	echo '$row: ';
+    	    var_dump($row);
+    
+            echo '$user_email: '.$user_email;
+            
+    	    $user_lat_long = get_user_lat_long($user_id);
+    
+            $j = 0;
+            $lat_long_set = mysql_num_rows($user_lat_long);    
+    
+            while ($j < $lat_long_set) {
+                    
+                    mysql_data_seek($user_lat_long, $j);
+                    $row = mysql_fetch_object($user_lat_long);
+                    $meta_key = $row->meta_key;
+                    $meta_value = $row->meta_value;
+                    switch ($meta_key) {    
+                        case 'gp_google_geo_latitude':
+                            $user_lat = $meta_value;
+                            break;
+                        case 'gp_google_geo_longitude':
+                            $user_long = $meta_value;
+                            break;
+                    }
+                    $j++;
+            }
+    
+            echo '$user_lat: '.$user_lat;
+            echo '$user_long: '.$user_long;
+            
+            $post_type = 'news_products_projects';
+            $posts_set = get_posts($user_lat, $user_long);
+            send_email_notification($user_email, $posts_set);
+	    }
         
-	    $user_lat_long = get_user_lat_long($user_id);
-
-        $j = 0;
-        $lat_long_set = mysql_num_rows($user_lat_long);    
-
-        while ($j < $lat_long_set) {
-                
-                mysql_data_seek($user_lat_long, $j);
-                $row = mysql_fetch_object($user_lat_long);
-                $meta_key = $row->meta_key;
-                $meta_value = $row->meta_value;
-                switch ($meta_key) {    
-                    case 'gp_google_geo_latitude':
-                        $user_lat = $meta_value;
-                        break;
-                    case 'gp_google_geo_longitude':
-                        $user_long = $meta_value;
-                        break;
-                }
-                $j++;
-        }
-
-        echo '$user_lat: '.$user_lat;
-        echo '$user_long: '.$user_long;
-
-        $posts_set = get_posts($user_lat, $user_long);
-        send_email_notification($user_email, $posts_set);
-        $i++;
+	    $i++;
     }
 
 }
