@@ -98,12 +98,24 @@ function get_post_image($row) {
 	return $image_url_img;
 }
 
+function strip_non_utf_chars($string) {
+    /**
+     * Remove non utf-8 characters from a string
+     * returns clean string, thanks stackoverflow!
+     */
+    
+    $clean_string = preg_replace('/[^(\x20-\x7F)]*/', '', $string);
+
+    return $clean_string;
+}
+
 function get_single_post($row) {
 	//Variables used in content of email	
-	$post_title =    $row->post_title;	
+	$post_title =    strip_non_utf_chars($row->post_title);
 	$post_name =     $row->post_name;
 	$raw_content =   strip_tags($row->post_content);
-	$post_content =  substr($raw_content, 0, 180);
+	$content =       strip_non_utf_chars($raw_content);
+	$post_content =  substr($content, 0, 180);
 	$post_ID =       $row->ID;
 	$post_url =      get_post_url($row);
 	$post_image =    get_post_image($row);
