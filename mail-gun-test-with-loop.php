@@ -100,11 +100,12 @@ function get_post_image($row) {
 
 function get_single_post($row) {
 	//Variables used in content of email	
-	$post_title =  $row->post_title;	
-	$post_name =   $row->post_name;
-	$post_ID =     $row->ID;
-	$post_url =    get_post_url($row);
-	$post_image =  get_post_image($row);
+	$post_title =    $row->post_title;	
+	$post_name =     $row->post_name;
+	$post_content =  $row->post_content; 
+	$post_ID =       $row->ID;
+	$post_url =      get_post_url($row);
+	$post_image =    get_post_image($row);
 
 	if (!empty($post_title)) {
 	    $single_post = '<!-- STORY STARTS -->
@@ -120,7 +121,8 @@ function get_single_post($row) {
                                         <tr style="border-collapse:collapse;"><td style="border-collapse:collapse;"></td><td class="w30" width="15" height="5" style="border-collapse:collapse;"></td></tr>
                                     </tbody></table>
                                     <div align="left" class="article-content" style="font-size:13px;line-height:18px;color:#444444;margin-top:0px;margin-bottom:18px;font-family: Arial, Helvetica, sans-serif;">
-                                        <p style="margin-bottom:15px;"><!--BODY TEXT--><!--LEARN MORE LINK TO ARTICLE --><a href="'. $post_url .'" style="color:#01aed8;font-weight:bold;text-decoration:none;">  Learn more</a></p>
+                                    <p>'. substr($post_content, 0, 50) .'</p>    
+                                    <p style="margin-bottom:15px;"><!--BODY TEXT--><!--LEARN MORE LINK TO ARTICLE --><a href="'. $post_url .'" style="color:#01aed8;font-weight:bold;text-decoration:none;">  Learn more</a></p>
 <p style="margin-bottom:15px;">
 	<a href="/t/r-fb-ojylyjt-eidkjkly-xh/?act=wv" likeurl="http://www.greenpag.es/news/monsanto-protection-act-adopted-in-the-us-greenpeace/" rel="cs_facebox" style="color:#01aed8;font-weight:bold;text-decoration:none;" cs_likeurl="/t/r-fb-ojylyjt-eidkjkly-xh/?act=like"><img src="https://img.createsend1.com/img/social/fblike.png" border="0" title="Like this on Facebook" alt="Facebook Like Button" width="51" height="20" style="height:auto;line-height:100%;outline-style:none;text-decoration:none;display:block;max-width:100%;"></a></p>
                                     </div>
@@ -140,8 +142,7 @@ function get_posts_from_db() {
 
 	$sql = "SELECT post_title, post_content, post_name, post_type, ID, popularity_score, post_latitude, post_longitude
        		FROM wp_posts 
-	        WHERE post_modified > DATE_SUB(CURDATE(), 
-       		    INTERVAL 1 WEEK) 
+	        WHERE post_modified > DATE_SUB(CURDATE(), INTERVAL 1 WEEK) 
 	            AND (post_type = 'gp_news' OR post_type = 'gp_projects' OR post_type = 'gp_advertorial')
        		    AND post_status = 'publish'";
 
@@ -157,7 +158,6 @@ function get_posts_from_db() {
 function get_users() {
 
 	//Get user emails and their location
-	
 	$sql_user = 'SELECT DISTINCT user_email, display_name, ID
                      FROM   wp_users
                      WHERE  ID = "3"';
