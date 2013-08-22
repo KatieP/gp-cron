@@ -103,8 +103,7 @@ function get_single_post($row) {
 	$post_title =    $row->post_title;	
 	$post_name =     $row->post_name;
 	$raw_content =   strip_tags($row->post_content);
-	$content =       substr($raw_content, 0, 170); 
-	$post_content =  htmlentities($content, ENT_QUOTES);
+	$post_content =  substr($raw_content, 0, 180);
 	$post_ID =       $row->ID;
 	$post_url =      get_post_url($row);
 	$post_image =    get_post_image($row);
