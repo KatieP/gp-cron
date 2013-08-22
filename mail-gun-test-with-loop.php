@@ -34,10 +34,11 @@ echo '_______________________________________________________';
 echo PHP_EOL;
 	
 function get_post_url($row) {
-
-	//Assigns words that are used in url and makes a full url for the post 
-		
-   	$post_type = $row->post_type;
+    /**
+	 * Assigns words that are used in url and makes a full url for the post 
+	 */
+   	$post_type =     $row->post_type;
+   	$post_name =     $row->post_name;
    	$post_type_map = array( "gp_news" => "news", 
                             "gp_advertorial" => "eco-friendly-products", 
                             "projects" => "projects");
@@ -99,11 +100,11 @@ function get_post_image($row) {
 
 function get_single_post($row) {
 	//Variables used in content of email	
-	$post_title = $row->post_title;	
-	$post_name = $row->post_name;
-	$post_ID = $row->ID;
-	$post_url = get_post_url($row);
-	$post_image = get_post_image($row);
+	$post_title =  $row->post_title;	
+	$post_name =   $row->post_name;
+	$post_ID =     $row->ID;
+	$post_url =    get_post_url($row);
+	$post_image =  get_post_image($row);
 
 	if (!empty($post_title)) {
 	    $single_post = '<!-- STORY STARTS -->
