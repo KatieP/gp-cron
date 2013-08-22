@@ -755,6 +755,7 @@ function send_notifcations() {
             }
 
             $posts_set = get_posts($user_lat, $user_long);
+            mb_convert_encoding($posts_set, 'UTF-8');
             send_email_notification($user_email, $posts_set);
             echo 'Email sent to user '. $user_id;
 	        echo PHP_EOL;
