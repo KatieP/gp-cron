@@ -102,7 +102,7 @@ function get_single_post($row) {
 	//Variables used in content of email	
 	$post_title =    $row->post_title;	
 	$post_name =     $row->post_name;
-	$post_content =  $row->post_content; 
+	$post_content =  substr($row->post_content, 0, 100); 
 	$post_ID =       $row->ID;
 	$post_url =      get_post_url($row);
 	$post_image =    get_post_image($row);
@@ -120,9 +120,11 @@ function get_single_post($row) {
                                         </tr>
                                         <tr style="border-collapse:collapse;"><td style="border-collapse:collapse;"></td><td class="w30" width="15" height="5" style="border-collapse:collapse;"></td></tr>
                                     </tbody></table>
-                                    <div align="left" class="article-content" style="font-size:13px;line-height:18px;color:#444444;margin-top:0px;margin-bottom:18px;font-family: Arial, Helvetica, sans-serif;">
-                                    <p>'. substr($post_content, 0, 50) .'</p>    
-                                    <p style="margin-bottom:15px;"><!--BODY TEXT--><!--LEARN MORE LINK TO ARTICLE --><a href="'. $post_url .'" style="color:#01aed8;font-weight:bold;text-decoration:none;">  Learn more</a></p>
+                                    <div align="left" class="article-content" style="font-size:13px;line-height:18px;color:#444444;margin-top:0px;margin-bottom:18px;font-family: Arial, Helvetica, sans-serif;">   
+                                    <p style="margin-bottom:15px;">
+                                        <!--BODY TEXT--> '. $post_content .'...
+                                        <!--LEARN MORE LINK TO ARTICLE --><a href="'. $post_url .'" style="color:#01aed8;font-weight:bold;text-decoration:none;">  Learn more</a>
+                                    </p>
 <p style="margin-bottom:15px;">
 	<a href="/t/r-fb-ojylyjt-eidkjkly-xh/?act=wv" likeurl="http://www.greenpag.es/news/monsanto-protection-act-adopted-in-the-us-greenpeace/" rel="cs_facebox" style="color:#01aed8;font-weight:bold;text-decoration:none;" cs_likeurl="/t/r-fb-ojylyjt-eidkjkly-xh/?act=like"><img src="https://img.createsend1.com/img/social/fblike.png" border="0" title="Like this on Facebook" alt="Facebook Like Button" width="51" height="20" style="height:auto;line-height:100%;outline-style:none;text-decoration:none;display:block;max-width:100%;"></a></p>
                                     </div>
