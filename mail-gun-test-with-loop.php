@@ -137,7 +137,7 @@ function get_single_post($row) {
 	
 function get_posts_from_db() {
 
-	$sql = "SELECT post_title, post_content, post_name, post_type, ID, popularity_score 
+	$sql = "SELECT post_title, post_content, post_name, post_type, ID, popularity_score, post_latitude, post_longitude
        		FROM wp_posts 
 	        WHERE post_modified > DATE_SUB(CURDATE(), 
        		    INTERVAL 1 WEEK) 
@@ -251,11 +251,11 @@ function get_posts($user_lat, $user_long) {
 
 function user_post_distance($row, $user_lat, $user_long) {
 
-	$post_title = $row->post_title;	
-	$post_ID = $row->ID;
-	$popularity_score = $row->popularity_score;
-	$post_latitude = $row->post_latitude;
-	$post_longitude = $row->post_longitude;
+	$post_title =        $row->post_title;	
+	$post_ID =           $row->ID;
+	$popularity_score =  $row->popularity_score;
+	$post_latitude =     $row->post_latitude;
+	$post_longitude =    $row->post_longitude;
 
 	$a = $post_latitude -  $user_lat;
 	$b = $post_longitude - $user_long;
@@ -721,7 +721,7 @@ function send_notifcations() {
 	    $row = mysql_fetch_object($users);
         $user_id = $row->ID;
 	    $user_email = $row->user_email;
-	    $meta_key = $row->meta_key;
+	    // $meta_key = $row->meta_key;
 	    
 	    $user_notification_setting = get_user_notification_setting($user_id);
 	    
