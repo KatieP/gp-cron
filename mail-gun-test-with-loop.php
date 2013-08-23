@@ -172,6 +172,32 @@ function get_posts_from_db() {
 	return $db_result;
 }
 
+function get_events_from_db() {
+
+    $epochtime = strtotime('now');
+    
+	$sql = "SELECT post_title, post_content, post_name, post_type, ID, post_latitude, post_longitude
+       		FROM wp_posts 
+       		LEFT JOIN wp_postmeta AS m0 on m0.post_id=wp_posts.ID and m0.meta_key='_thumbnail_id' 
+            LEFT JOIN wp_postmeta AS m1 on m1.post_id=wp_posts.ID and m1.meta_key='gp_events_enddate' 
+            LEFT JOIN wp_postmeta AS m2 on m2.post_id=wp_posts.ID and m2.meta_key='gp_events_startdate' 
+            LEFT JOIN wp_postmeta AS m3 on m3.post_id=wp_posts.ID and m3.meta_key='gp_google_geo_country' 
+            LEFT JOIN wp_postmeta AS m4 on m4.post_id=wp_posts.ID and m4.meta_key='gp_google_geo_administrative_area_level_1' 
+            LEFT JOIN wp_postmeta AS m5 on m5.post_id=wp_posts.ID and m5.meta_key='gp_google_geo_locality_slug'
+            LEFT JOIN wp_postmeta AS m6 on m6.post_id=wp_posts.ID and m6.meta_key='gp_google_geo_locality'
+	        WHERE post_type = 'gp_events'
+       		    AND post_status = 'publish'
+	            AND CAST(CAST(m1.meta_value AS UNSIGNED) AS SIGNED) >= ". $epochtime;
+
+	$db_result = mysql_query($sql);
+
+	if (! $db_result){
+	   echo('Database error: ' . mysql_error());
+	}
+
+	return $db_result;
+}
+
 function get_users() {
 
 	//Get user emails and their location
@@ -205,6 +231,33 @@ function get_user_lat_long($user_id) {
     return $db_result;
 }
 
+function get_all_user_location_data($user_id) {
+    
+    $sql = 'SELECT meta_key, meta_value
+            FROM  wp_usermeta 
+            WHERE user_id = '. $user_id .'
+            AND (
+                meta_key =     "gp_google_geo_location"
+                OR meta_key =  "gp_google_geo_latitude"
+                OR meta_key =  "gp_google_geo_longitude"
+                OR meta_key =  "gp_google_geo_country"
+                OR meta_key =  "gp_google_geo_administrative_area_level_1"
+                OR meta_key =  "gp_google_geo_administrative_area_level_2"
+                OR meta_key =  "gp_google_geo_administrative_area_level_3"
+                OR meta_key =  "gp_google_geo_locality"
+                OR meta_key =  "gp_google_geo_locality_slug"
+            )';
+
+    $db_result = mysql_query($sql);
+
+    if (!$db_result){
+       echo('Database error: ' . mysql_error());
+    }
+
+    return $db_result;
+    
+}
+
 function get_user_notification_setting($user_id) {
 
 	$sql = 'SELECT  meta_value
@@ -223,6 +276,14 @@ function get_user_notification_setting($user_id) {
     $notification_setting =     $notification_setting_row->meta_value;
     
     return $notification_setting;
+}
+
+function get_events($user_id) {
+    
+    $user_location_data = get_all_user_location_data($user_id);
+    
+    // Get events then order by proximity to user
+    
 }
 
 function get_posts($user_lat, $user_long) {
@@ -768,6 +829,10 @@ function send_notifcations() {
 
             $posts_set = get_posts($user_lat, $user_long);
             mb_convert_encoding($posts_set, 'UTF-8');
+
+            $events_set = get_events($user_id);
+            mb_convert_encoding($events_set, 'UTF-8');
+            
             send_email_notification($user_email, $posts_set);
             echo 'Email sent to user '. $user_id;
 	        echo PHP_EOL;
