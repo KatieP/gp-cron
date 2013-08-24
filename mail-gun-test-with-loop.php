@@ -134,8 +134,8 @@ function get_events_heading($user_location_city) {
     return $event_title;    
 }
 
-function get_single_event($row) {
-	//Variables used in content of email	
+function get_single_event($row, $show_country = false) {
+	// Variables used in content of email	
 	$post_title =    strip_non_utf_chars($row->post_title);
 	$post_name =     $row->post_name;
 	$post_ID =       $row->ID;
@@ -145,7 +145,7 @@ function get_single_event($row) {
 	$post_locality = $row->gp_google_geo_locality;
 	$post_country  = $row->gp_google_geo_country;
 	
-	$display_location = $post_locality . ', ' . $post_country;
+	$display_location = ($show_country == false) ? $post_locality : $post_locality . ', ' . $post_country;
 	
 	$displayday =    date('j', $row->gp_events_startdate) . date('S', $row->gp_events_startdate);
 	$displaymonth =  date('F', $row->gp_events_startdate);
@@ -468,7 +468,7 @@ function get_events($user_id) {
         $event =       get_single_event($row);
         
         if ( ($i == 0) && (!empty($event)) ) {
-            $events_title = get_events_heading('in ' .$user_location_city);
+            $events_title = get_events_heading('in ' . $user_location_city);
             $event_set .=  $events_title . '<br />';
             $event_set .= $hr;
             $event_set .=  $event . '<br />';
@@ -535,7 +535,7 @@ function get_events($user_id) {
 
         mysql_data_seek($db_result, $i);
         $row =         mysql_fetch_object($db_result);
-        $event =       get_single_event($row);
+        $event =       get_single_event($row, true);
         
         if ( ($i == 0) && (!empty($event)) ) {
             $events_title = get_events_heading('from around the globe');
