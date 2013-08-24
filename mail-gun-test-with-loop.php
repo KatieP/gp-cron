@@ -19,11 +19,11 @@
 
 //Connect to database s1-wordpress
 
-//$db_connection = mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
-$db_connection = mysql_connect("127.0.0.1", "root", "") or die(mysql_error());
+$db_connection = mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
+//$db_connection = mysql_connect("127.0.0.1", "root", "") or die(mysql_error());
 
-//mysql_select_db("s2-wordpress") or die(mysql_error());
-mysql_select_db("s1-wordpress") or die(mysql_error());
+mysql_select_db("s2-wordpress") or die(mysql_error());
+//mysql_select_db("s1-wordpress") or die(mysql_error());
 
 
 date_default_timezone_set('UTC');
@@ -190,7 +190,7 @@ function get_single_post($row) {
 	$post_name =     $row->post_name;
 	$raw_content =   strip_tags($row->post_content);
 	$content =       strip_non_utf_chars($raw_content);
-	$post_content =  substr($content, 0, 170);
+	$post_content =  substr($content, 0, 160);
 	$post_ID =       $row->ID;
 	$post_url =      get_post_url($row);
 	$post_image =    get_post_image($row);
@@ -201,46 +201,43 @@ function get_single_post($row) {
                             <tbody>
                                 <tr style="border-collapse:collapse;">
                                     <td class="w580" width="580" style="border-collapse:collapse;">
-                                        <p align="left" class="article-title" style="font-size:18px;line-height:24px;color:#787878;font-weight:bold;margin-top:0px;margin-bottom:8px;font-family:Arial, Helvetica, sans-serif;">
-                                            <!--HEADER LINK TO ARTICLE -->
-                                            <a href="'. $post_url .'" style="color:#01aed8;text-decoration:none;"><!--ARTICLE TITLE-->' . $post_title . '</a>
-                                        </p>
-                                        <hr style="padding-top:0px;padding-bottom:0px;padding-right:0px;padding-left:0px;margin-top:0px;margin-bottom:10px;margin-right:0;margin-left:0;">
+                                        <p align="left" class="article-title" style="font-size:18px;line-height:24px;color:#787878;font-weight:bold;margin-top:0px;margin-bottom:8px;font-family:Arial, Helvetica, sans-serif;"><!--HEADER LINK TO ARTICLE --><a href="'. $post_url .'" style="color:#01aed8;text-decoration:none;"><!--ARTICLE TITLE-->' . $post_title . '</a></p><hr style="padding-top:0px;padding-bottom:0px;padding-right:0px;padding-left:0px;margin-top:0px;margin-bottom:10px;margin-right:0;margin-left:0;">
                                         <table cellpadding="0" cellspacing="0" border="0" align="left">
                                             <tbody>
                                                 <tr style="border-collapse:collapse;">
-                                                    <td style="border-collapse:collapse;"><a href="'. $post_url .'"><!--IMAGE LINK--><img label="Image" class="w110" width="110" border="0" '. $post_image .' height="110" style="height:auto;line-height:100%;outline-style:none;text-decoration:none;display:block;"><!--IMAGE HTTP://--></a></td>
+                                                    <td style="border-collapse:collapse;">
+                                                        <a href="'. $post_url .'">
+                                                            <!--IMAGE LINK-->
+                                                            <img label="Image" class="w110" width="110" border="0" '. $post_image .' height="110" style="height:auto;line-height:100%;outline-style:none;text-decoration:none;display:block;">
+                                                            <!--IMAGE HTTP://-->
+                                                        </a>
+                                                    </td>
                                                     <td class="w30" width="15" style="border-collapse:collapse;"></td>
                                                 </tr>
-                                                <tr style="border-collapse:collapse;"><td style="border-collapse:collapse;"></td><td class="w30" width="15" height="5" style="border-collapse:collapse;"></td>
-                                                </tr>
+                                                <tr style="border-collapse:collapse;"><td style="border-collapse:collapse;"></td><td class="w30" width="15" height="5" style="border-collapse:collapse;"></td></tr>
                                             </tbody>
                                         </table>
-                                        <div align="left" class="article-content" style="font-size:13px;line-height:18px;color:#444444;margin-top:0px;margin-bottom:18px;font-family: Arial, Helvetica, sans-serif;">   
-                                            <p style="margin-bottom:15px;">
-                                                <!--BODY TEXT--> 
-                                                '. $post_content .'...
-                                                <!--LEARN MORE LINK TO ARTICLE -->
-                                                <a href="'. $post_url .'" style="color:#01aed8;font-weight:bold;text-decoration:none;"> Learn more</a>
-                                            </p>
-                                            <p style="margin-bottom:15px;">
-    	                                        <a href="/t/r-fb-ojylyjt-eidkjkly-xh/?act=wv" 
-    	                                           likeurl="'. $post_url .'" rel="cs_facebox" 
-    	                                           style="color:#01aed8;font-weight:bold;text-decoration:none;" 
-    	                                           cs_likeurl="/t/r-fb-ojylyjt-eidkjkly-xh/?act=like" >
-    	                                            <img src="https://img.createsend1.com/img/social/fblike.png" border="0" 
-    	                                                 title="Like this on Facebook" alt="Facebook Like Button" width="51" height="20" 
-    	                                                 style="height:auto;line-height:100%;outline-style:none;text-decoration:none;display:block;max-width:100%;">
-    	                                        </a>
-    	                                    </p>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr style="border-collapse:collapse;">
-                                    <td class="w580" width="580" height="10" style="border-collapse:collapse;"></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                    <div align="left" class="article-content" style="font-size:13px;line-height:18px;color:#444444;margin-top:0px;margin-bottom:18px;font-family: Arial, Helvetica, sans-serif;">   
+                                        <p style="margin-bottom:15px;">
+                                            <!--BODY TEXT--> '. $post_content .'...
+                                            <!--LEARN MORE LINK TO ARTICLE --><a href="'. $post_url .'" style="color:#01aed8;font-weight:bold;text-decoration:none;">  Learn more</a>
+                                        </p>
+                                        <p style="margin-bottom:15px;">
+	                                        <a href="/t/r-fb-ojylyjt-eidkjkly-xh/?act=wv" 
+	                                           likeurl="'. $post_url .'" 
+	                                           rel="cs_facebox" 
+	                                           style="color:#01aed8;font-weight:bold;text-decoration:none;" 
+	                                           cs_likeurl="/t/r-fb-ojylyjt-eidkjkly-xh/?act=like">
+	                                            <img src="https://img.createsend1.com/img/social/fblike.png" border="0" 
+	                                                 title="Like this on Facebook" alt="Facebook Like Button" width="51" height="20" 
+	                                                 style="height:auto;line-height:100%;outline-style:none;text-decoration:none;display:block;max-width:100%;">
+	                                        </a>
+	                                    </p>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr style="border-collapse:collapse;"><td class="w580" width="580" height="10" style="border-collapse:collapse;"></td></tr>
+                        </tbody></table>
                         <!-- STORY ENDS -->';	
     } else {
 	    $single_post = '';
