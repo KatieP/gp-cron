@@ -14,7 +14,6 @@
 // Green Middle #67B832
 // Green Lower #5EB723
 
-
 //GET VARIABLES FROM DATABASE
 
 //Connect to database s1-wordpress
@@ -164,8 +163,9 @@ function get_single_event($row) {
                                              <!--HEADER LINK TO ARTICLE -->
                                              <a href="'. $post_url .'" style="color:#01aed8;text-decoration:none;">
                                                  <!--ARTICLE TITLE-->
-                                                 ' . $post_title . ' - ' . $display_location . ' - ' . $displaydate . '
-                                             </a>
+                                                 ' . $post_title . '
+                                             </a> 
+                                             <br /> ' . $display_location . ' - ' . $displaydate . '
                                          </p>
                                      </td>
                                  </tr>
@@ -217,7 +217,7 @@ function get_single_post($row) {
                                                 <tr style="border-collapse:collapse;"><td style="border-collapse:collapse;"></td><td class="w30" width="15" height="5" style="border-collapse:collapse;"></td></tr>
                                             </tbody>
                                         </table>
-                                    <div align="left" class="article-content" style="font-size:13px;line-height:18px;color:#444444;margin-top:0px;margin-bottom:18px;font-family: Arial, Helvetica, sans-serif;">   
+                                        <div align="left" class="article-content" style="font-size:13px;line-height:18px;color:#444444;margin-top:0px;margin-bottom:18px;font-family: Arial, Helvetica, sans-serif;">   
                                         <p style="margin-bottom:15px;">
                                             <!--BODY TEXT--> '. $post_content .'...
                                             <!--LEARN MORE LINK TO ARTICLE --><a href="'. $post_url .'" style="color:#01aed8;font-weight:bold;text-decoration:none;">  Learn more</a>
@@ -990,16 +990,12 @@ a.fb_button_small_rtl:active{background-position:right -458px}
         <tbody><tr style="border-collapse:collapse;">
             <td class="w30" width="30" style="border-collapse:collapse;"></td>
             <td class="w580" width="580" style="border-collapse:collapse;">
-        
-              
+
 			'. $posts_set .
 			   $events_set .'
-
-              
-              
+     
                <!--FOOTER -->
-         
-         
+                  
           </td>
             <td class="w30" width="30" style="border-collapse:collapse;"></td>
         </tr>
