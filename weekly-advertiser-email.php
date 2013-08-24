@@ -24,7 +24,7 @@ echo PHP_EOL;
 echo PHP_EOL;
 
 require '/var/www/production/www.greenpag.es/wordpress/wp-content/themes/gp-au-theme/ga/analytics.class.php';
-require '/var/www/production/www.greenpag.es/wordpress/wp-content/themes/gp-au-theme/functions.php';
+require '/var/www/production/www.greenpag.es/wordpress/wp-content/plugins/gp-theme/core/gp-billing-functions.php';
 
 #require '../ga/analytics.class.php';
 #require '../greenpag.es/gp-au-theme/ga/analytics.class.php';
