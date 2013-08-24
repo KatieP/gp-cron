@@ -19,12 +19,14 @@
 
 //Connect to database s1-wordpress
 
-$db_connection = mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
-//$db_connection = mysql_connect("127.0.0.1", "root", "") or die(mysql_error());
+//$db_connection = mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") or die(mysql_error());
+$db_connection = mysql_connect("127.0.0.1", "root", "") or die(mysql_error());
 
-mysql_select_db("s2-wordpress") or die(mysql_error());
-//mysql_select_db("s1-wordpress") or die(mysql_error());
+//mysql_select_db("s2-wordpress") or die(mysql_error());
+mysql_select_db("s1-wordpress") or die(mysql_error());
 
+
+date_default_timezone_set('UTC');
 
 echo '_______________________________________________________';
 echo PHP_EOL; 
@@ -52,7 +54,7 @@ function get_post_image($row) {
 	//Exract all 'words' beggining with 'src=' and end with .jpg, .png or .gif from $post_content and store as image url variable
 
 	$post_content = $row->post_content;
-	$pattern = 'src';
+	$pattern =      'src';
 
 	preg_match("/(src.*)(jpg)/", $post_content, $matches);
 
@@ -109,13 +111,86 @@ function strip_non_utf_chars($string) {
     return $clean_string;
 }
 
+function get_events_heading($user_location_city) {
+    
+    $event_title  = '<!-- EVENT HEADING -->
+                     <table class="w580" width="580" cellpadding="0" cellspacing="0" border="0">
+                         <tbody>
+                             <tr style="border-collapse:collapse;">
+                                 <td class="w580" width="580" style="border-collapse:collapse;">
+                                     <p align="left" class="article-title" style="font-size:18px;line-height:24px;color:#787878;font-weight:bold;margin-top:0px;margin-bottom:8px;font-family:Arial, Helvetica, sans-serif;">
+                                         <!--EVENT HEADING -->
+                                             Events ' . $user_location_city . '
+                                         </a>
+                                     </p>
+                                 </td>
+                             </tr>
+                             <tr style="border-collapse:collapse;">
+                                 <td class="w580" width="580" height="10" style="border-collapse:collapse;"></td>
+                             </tr>
+                         </tbody>
+                     </table>
+                     <!-- EVENT HEADING ENDS -->';
+
+    return $event_title;    
+}
+
+function get_single_event($row) {
+	//Variables used in content of email	
+	$post_title =    strip_non_utf_chars($row->post_title);
+	$post_name =     $row->post_name;
+	$post_ID =       $row->ID;
+	$post_url =      get_post_url($row);
+	$post_image =    get_post_image($row);
+	
+	$post_locality = $row->gp_google_geo_locality;
+	$post_country  = $row->gp_google_geo_country;
+	
+	$display_location = $post_locality . ', ' . $post_country;
+	
+	$displayday =    date('j', $row->gp_events_startdate) . date('S', $row->gp_events_startdate);
+	$displaymonth =  date('F', $row->gp_events_startdate);
+	$displayyear =   date('y', $row->gp_events_startdate);
+	
+	$displaydate =    $displayday . ' ' . $displaymonth;
+	
+	if (!empty($post_title)) {
+	    $single_event = '<!-- EVENT STARTS -->
+                         <table class="w580" width="580" cellpadding="0" cellspacing="0" border="0">
+                             <tbody>
+                                 <tr style="border-collapse:collapse;">
+                                     <td class="w580" width="580" style="border-collapse:collapse;">
+                                         <p align="left" class="article-title" style="font-size:18px;line-height:24px;color:#787878;font-weight:bold;margin-top:0px;margin-bottom:8px;font-family:Arial, Helvetica, sans-serif;">
+                                             <!--HEADER LINK TO ARTICLE -->
+                                             <a href="'. $post_url .'" style="color:#01aed8;text-decoration:none;">
+                                                 <!--ARTICLE TITLE-->
+                                                 ' . $post_title . ' - ' . $display_location . ' - ' . $displaydate . '
+                                             </a>
+                                         </p>
+                                     </td>
+                                 </tr>
+                                 <tr style="border-collapse:collapse;">
+                                     <td class="w580" width="580" height="10" style="border-collapse:collapse;"></td>
+                                 </tr>
+                             </tbody>
+                         </table>
+                         <!-- EVENT ENDS -->';	
+    } else {
+	    $single_event = '';
+	}
+
+	mb_convert_encoding($single_event, 'UTF-8');
+	
+	return $single_event;	
+}
+
 function get_single_post($row) {
 	//Variables used in content of email	
 	$post_title =    strip_non_utf_chars($row->post_title);
 	$post_name =     $row->post_name;
 	$raw_content =   strip_tags($row->post_content);
 	$content =       strip_non_utf_chars($raw_content);
-	$post_content =  substr($content, 0, 180);
+	$post_content =  substr($content, 0, 170);
 	$post_ID =       $row->ID;
 	$post_url =      get_post_url($row);
 	$post_image =    get_post_image($row);
@@ -123,30 +198,51 @@ function get_single_post($row) {
 	if (!empty($post_title)) {
 	    $single_post = '<!-- STORY STARTS -->
                         <table class="w580" width="580" cellpadding="0" cellspacing="0" border="0">
-                            <tbody><tr style="border-collapse:collapse;">
-                                <td class="w580" width="580" style="border-collapse:collapse;">
-                                    <p align="left" class="article-title" style="font-size:18px;line-height:24px;color:#787878;font-weight:bold;margin-top:0px;margin-bottom:8px;font-family:Arial, Helvetica, sans-serif;"><!--HEADER LINK TO ARTICLE --><a href="'. $post_url .'" style="color:#01aed8;text-decoration:none;"><!--ARTICLE TITLE-->' . $post_title . '</a></p><hr style="padding-top:0px;padding-bottom:0px;padding-right:0px;padding-left:0px;margin-top:0px;margin-bottom:10px;margin-right:0;margin-left:0;">
-                                    <table cellpadding="0" cellspacing="0" border="0" align="left">
-                                        <tbody><tr style="border-collapse:collapse;">
-                                            <td style="border-collapse:collapse;"><a href="'. $post_url .'"><!--IMAGE LINK--><img label="Image" class="w110" width="110" border="0" '. $post_image .' height="110" style="height:auto;line-height:100%;outline-style:none;text-decoration:none;display:block;"><!--IMAGE HTTP://--></a></td>
-                                            <td class="w30" width="15" style="border-collapse:collapse;"></td>
-                                        </tr>
-                                        <tr style="border-collapse:collapse;"><td style="border-collapse:collapse;"></td><td class="w30" width="15" height="5" style="border-collapse:collapse;"></td></tr>
-                                    </tbody></table>
-                                    <div align="left" class="article-content" style="font-size:13px;line-height:18px;color:#444444;margin-top:0px;margin-bottom:18px;font-family: Arial, Helvetica, sans-serif;">   
-                                    <p style="margin-bottom:15px;">
-                                        <!--BODY TEXT--> '. $post_content .'...
-                                        <!--LEARN MORE LINK TO ARTICLE --><a href="'. $post_url .'" style="color:#01aed8;font-weight:bold;text-decoration:none;">  Learn more</a>
-                                    </p>
-<p style="margin-bottom:15px;">
-	<a href="/t/r-fb-ojylyjt-eidkjkly-xh/?act=wv" likeurl="http://www.greenpag.es/news/monsanto-protection-act-adopted-in-the-us-greenpeace/" rel="cs_facebox" style="color:#01aed8;font-weight:bold;text-decoration:none;" cs_likeurl="/t/r-fb-ojylyjt-eidkjkly-xh/?act=like"><img src="https://img.createsend1.com/img/social/fblike.png" border="0" title="Like this on Facebook" alt="Facebook Like Button" width="51" height="20" style="height:auto;line-height:100%;outline-style:none;text-decoration:none;display:block;max-width:100%;"></a></p>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr style="border-collapse:collapse;"><td class="w580" width="580" height="10" style="border-collapse:collapse;"></td></tr>
-                        </tbody></table>
+                            <tbody>
+                                <tr style="border-collapse:collapse;">
+                                    <td class="w580" width="580" style="border-collapse:collapse;">
+                                        <p align="left" class="article-title" style="font-size:18px;line-height:24px;color:#787878;font-weight:bold;margin-top:0px;margin-bottom:8px;font-family:Arial, Helvetica, sans-serif;">
+                                            <!--HEADER LINK TO ARTICLE -->
+                                            <a href="'. $post_url .'" style="color:#01aed8;text-decoration:none;"><!--ARTICLE TITLE-->' . $post_title . '</a>
+                                        </p>
+                                        <hr style="padding-top:0px;padding-bottom:0px;padding-right:0px;padding-left:0px;margin-top:0px;margin-bottom:10px;margin-right:0;margin-left:0;">
+                                        <table cellpadding="0" cellspacing="0" border="0" align="left">
+                                            <tbody>
+                                                <tr style="border-collapse:collapse;">
+                                                    <td style="border-collapse:collapse;"><a href="'. $post_url .'"><!--IMAGE LINK--><img label="Image" class="w110" width="110" border="0" '. $post_image .' height="110" style="height:auto;line-height:100%;outline-style:none;text-decoration:none;display:block;"><!--IMAGE HTTP://--></a></td>
+                                                    <td class="w30" width="15" style="border-collapse:collapse;"></td>
+                                                </tr>
+                                                <tr style="border-collapse:collapse;"><td style="border-collapse:collapse;"></td><td class="w30" width="15" height="5" style="border-collapse:collapse;"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <div align="left" class="article-content" style="font-size:13px;line-height:18px;color:#444444;margin-top:0px;margin-bottom:18px;font-family: Arial, Helvetica, sans-serif;">   
+                                            <p style="margin-bottom:15px;">
+                                                <!--BODY TEXT--> 
+                                                '. $post_content .'...
+                                                <!--LEARN MORE LINK TO ARTICLE -->
+                                                <a href="'. $post_url .'" style="color:#01aed8;font-weight:bold;text-decoration:none;"> Learn more</a>
+                                            </p>
+                                            <p style="margin-bottom:15px;">
+    	                                        <a href="/t/r-fb-ojylyjt-eidkjkly-xh/?act=wv" 
+    	                                           likeurl="'. $post_url .'" rel="cs_facebox" 
+    	                                           style="color:#01aed8;font-weight:bold;text-decoration:none;" 
+    	                                           cs_likeurl="/t/r-fb-ojylyjt-eidkjkly-xh/?act=like" >
+    	                                            <img src="https://img.createsend1.com/img/social/fblike.png" border="0" 
+    	                                                 title="Like this on Facebook" alt="Facebook Like Button" width="51" height="20" 
+    	                                                 style="height:auto;line-height:100%;outline-style:none;text-decoration:none;display:block;max-width:100%;">
+    	                                        </a>
+    	                                    </p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr style="border-collapse:collapse;">
+                                    <td class="w580" width="580" height="10" style="border-collapse:collapse;"></td>
+                                </tr>
+                            </tbody>
+                        </table>
                         <!-- STORY ENDS -->';	
-      	} else {
+    } else {
 	    $single_post = '';
 	}
 
@@ -172,22 +268,38 @@ function get_posts_from_db() {
 	return $db_result;
 }
 
-function get_events_from_db() {
+function get_events_from_db($filterby_country = '', $filterby_state = '', $filterby_city = '', $max_results = '', $offset_num = '') {
 
     $epochtime = strtotime('now');
+    $limit_by =   (!empty($max_results)) ? 'LIMIT '. $max_results : '';
+    $offset =     (!empty($offset_num))  ? 'OFFSET '. $offset_num : '';
     
-	$sql = "SELECT post_title, post_content, post_name, post_type, ID, post_latitude, post_longitude
+	$sql = "SELECT DISTINCT wp_posts.*,
+	            m0.meta_value AS _thumbnail_id,
+	            m1.meta_value AS gp_events_enddate,
+	            m2.meta_value AS gp_events_startdate,
+	            m3.meta_value AS gp_google_geo_country,
+	            m4.meta_value AS gp_google_geo_administrative_area_level_1,
+	            m5.meta_value AS gp_google_geo_locality_slug,
+	            m6.meta_value AS gp_google_geo_locality
        		FROM wp_posts 
-       		LEFT JOIN wp_postmeta AS m0 on m0.post_id=wp_posts.ID and m0.meta_key='_thumbnail_id' 
-            LEFT JOIN wp_postmeta AS m1 on m1.post_id=wp_posts.ID and m1.meta_key='gp_events_enddate' 
-            LEFT JOIN wp_postmeta AS m2 on m2.post_id=wp_posts.ID and m2.meta_key='gp_events_startdate' 
-            LEFT JOIN wp_postmeta AS m3 on m3.post_id=wp_posts.ID and m3.meta_key='gp_google_geo_country' 
-            LEFT JOIN wp_postmeta AS m4 on m4.post_id=wp_posts.ID and m4.meta_key='gp_google_geo_administrative_area_level_1' 
-            LEFT JOIN wp_postmeta AS m5 on m5.post_id=wp_posts.ID and m5.meta_key='gp_google_geo_locality_slug'
-            LEFT JOIN wp_postmeta AS m6 on m6.post_id=wp_posts.ID and m6.meta_key='gp_google_geo_locality'
+	            LEFT JOIN wp_postmeta AS m0 on m0.post_id=wp_posts.ID and m0.meta_key='_thumbnail_id'
+                LEFT JOIN wp_postmeta AS m1 on m1.post_id=wp_posts.ID and m1.meta_key='gp_events_enddate'
+                LEFT JOIN wp_postmeta AS m2 on m2.post_id=wp_posts.ID and m2.meta_key='gp_events_startdate'
+                LEFT JOIN wp_postmeta AS m3 on m3.post_id=wp_posts.ID and m3.meta_key='gp_google_geo_country'
+                LEFT JOIN wp_postmeta AS m4 on m4.post_id=wp_posts.ID and m4.meta_key='gp_google_geo_administrative_area_level_1'
+                LEFT JOIN wp_postmeta AS m5 on m5.post_id=wp_posts.ID and m5.meta_key='gp_google_geo_locality_slug'
+                LEFT JOIN wp_postmeta AS m6 on m6.post_id=wp_posts.ID and m6.meta_key='gp_google_geo_locality'
 	        WHERE post_type = 'gp_events'
        		    AND post_status = 'publish'
-	            AND CAST(CAST(m1.meta_value AS UNSIGNED) AS SIGNED) >= ". $epochtime;
+                " . $filterby_country . "
+                " . $filterby_state . "
+                " . $filterby_city . "       		    
+	            AND CAST(CAST(m1.meta_value AS UNSIGNED) AS SIGNED) >= ". $epochtime ."
+	            ORDER BY gp_events_startdate ASC ".
+    	        $limit_by .
+    	        $max_results . 
+    	        $offset .";";
 
 	$db_result = mysql_query($sql);
 
@@ -281,9 +393,168 @@ function get_user_notification_setting($user_id) {
 function get_events($user_id) {
     
     $user_location_data = get_all_user_location_data($user_id);
+    // need lat, long, country, city for event queries
     
-    // Get events then order by proximity to user
+    $data_set =  mysql_num_rows($user_location_data);
     
+    $i = 0;
+    
+	while ($i < $data_set) {   
+
+	    mysql_data_seek($user_location_data, $i);
+        $user_location_row = mysql_fetch_object($user_location_data);
+        $meta_key =          $user_location_row->meta_key;
+        $meta_value =        $user_location_row->meta_value;    
+
+	    switch ($meta_key) {
+            case 'gp_google_geo_location':
+                $user_location = $meta_value;
+                break;	            
+            case 'gp_google_geo_latitude':
+                $user_lat = $meta_value;
+                break;
+            case 'gp_google_geo_longitude':
+                $user_long = $meta_value;
+                break;
+            case 'gp_google_geo_country':
+                $user_country = $meta_value;
+                break;
+            case 'gp_google_geo_administrative_area_level_1':
+                $user_location_state = $meta_value;
+                break;
+            case 'gp_google_geo_administrative_area_level_2':
+                $user_admin_2 = $meta_value;
+                break;
+            case 'gp_google_geo_administrative_area_level_3':
+                $user_admin_3 = $meta_value;
+                break;
+            case 'gp_google_geo_locality':
+                $user_location_city = $meta_value;
+                break;
+            case 'gp_google_geo_locality_slug':
+                $user_location_country_slug = $meta_value;
+                break;                  
+        }
+        
+        $i++;
+        
+	}
+	
+	// set location query strings based on user location
+	
+	$querystring_country =    ( !empty( $user_country ) )               ? $user_country : '';
+    $querystring_state =      ( !empty( $user_location_state ) )        ? strtoupper( $user_location_state )        : '';
+	$querystring_city =       ( !empty( $user_location_city ) )         ? $user_location_city                       : '';
+	
+	$filterby_country =       ( !empty($querystring_country) ) ? ' AND m3.meta_value ="'. $querystring_country .'"' : '';
+    $filterby_state =         ( !empty($querystring_state) )   ? ' AND m4.meta_value ="'. $querystring_state .'"'  : '';
+    $filterby_city =          ( !empty($querystring_city) )    ? ' AND m6.meta_value ="'. $querystring_city .'"'   : '';
+	
+   	$db_result = get_events_from_db($filterby_country, $filterby_state, $filterby_city);
+   	
+    if (!$db_result){
+       echo PHP_EOL;
+       echo('Database error: ' . mysql_error());
+       echo PHP_EOL;
+    }
+   	
+    $data_set =  mysql_num_rows($db_result);
+
+    $i = 0;
+    $events_set = '';
+    $hr = '<hr style="padding-top:0px;padding-bottom:0px;padding-right:0px;padding-left:0px;margin-top:0px;margin-bottom:10px;margin-right:0;margin-left:0;"> ';
+
+	while ($i < $data_set) {
+
+        mysql_data_seek($db_result, $i);
+        $row =         mysql_fetch_object($db_result);
+        $event =       get_single_event($row);
+        
+        if ( ($i == 0) && (!empty($event)) ) {
+            $events_title = get_events_heading('in ' .$user_location_city);
+            $event_set .=  $events_title . '<br />';
+            $event_set .= $hr;
+            $event_set .=  $event . '<br />';
+        } elseif (!empty($event)) {
+            $event_set .=  $event . '<br />';
+        }
+
+        $i++;
+
+	}
+
+	$filterby_country =       ( !empty($querystring_country) ) ? ' AND m3.meta_value ="'. $querystring_country .'"' : '';
+    $filterby_state =         '';
+    $filterby_city =          ( !empty($querystring_city) )    ? ' AND m6.meta_value !="'. $querystring_city .'"'   : '';	
+
+   	$db_result = get_events_from_db($filterby_country, $filterby_state, $filterby_city);
+   	
+    if (!$db_result){
+       echo PHP_EOL;
+       echo('Database error: ' . mysql_error());
+       echo PHP_EOL;
+    }
+   	
+    $data_set =  mysql_num_rows($db_result);
+
+    $i = 0;
+
+	while ($i < $data_set) {
+
+        mysql_data_seek($db_result, $i);
+        $row =         mysql_fetch_object($db_result);
+        $event =       get_single_event($row);
+        
+        if ( ($i == 0) && (!empty($event)) ) {
+            $events_title = get_events_heading('in surrounding '. $user_country);
+            $event_set .=  $events_title . '<br />';
+            $event_set .= $hr;
+            $event_set .=  $event . '<br />';
+        } elseif (!empty($event)) {
+            $event_set .=  $event . '<br />';
+        }
+
+        $i++;
+
+	}
+	
+	$filterby_country =       ( !empty($querystring_country) ) ? ' AND m3.meta_value !="'. $querystring_country .'"' : '';
+    $filterby_state =         '';
+    $filterby_city =          '';	
+
+   	$db_result = get_events_from_db($filterby_country, $filterby_state, $filterby_city);
+   	
+    if (!$db_result){
+       echo PHP_EOL;
+       echo('Database error: ' . mysql_error());
+       echo PHP_EOL;
+    }
+   	
+    $data_set =  mysql_num_rows($db_result);
+
+    $i = 0;
+
+	while ($i < $data_set) {
+
+        mysql_data_seek($db_result, $i);
+        $row =         mysql_fetch_object($db_result);
+        $event =       get_single_event($row);
+        
+        if ( ($i == 0) && (!empty($event)) ) {
+            $events_title = get_events_heading('from around the globe');
+            $event_set .=  $events_title . '<br />';
+            $event_set .= $hr;
+            $event_set .=  $event . '<br />';
+        } elseif (!empty($event)) {
+            $event_set .=  $event . '<br />';
+        }
+
+        $i++;
+
+	}	
+
+	return $event_set;
+
 }
 
 function get_posts($user_lat, $user_long) {
@@ -300,12 +571,10 @@ function get_posts($user_lat, $user_long) {
 
 	    mysql_data_seek($db_result, $i);
 		$row = mysql_fetch_object($db_result);
-		// $post = get_single_post($row);
-		// $posts_set .= $post . '<br />';
-			
+
 		$c = user_post_distance($row, $user_lat, $user_long);
 		$popularity_score_thisuser = page_rank($c, $row);
-		
+
 		$post = get_single_post($row);
 
 		$unsorted_posts[$popularity_score_thisuser] = $post;
@@ -370,7 +639,7 @@ function page_rank($c, $row) {
 
 //Send email using mailgun API
 
-function send_email_notification($user_email, $posts_set) {
+function send_email_notification($user_email, $posts_set, $events_set) {
   $ch = curl_init();
 
   curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
@@ -726,7 +995,8 @@ a.fb_button_small_rtl:active{background-position:right -458px}
             <td class="w580" width="580" style="border-collapse:collapse;">
         
               
-			'. $posts_set .'
+			'. $posts_set .
+			   $events_set .'
 
               
               
@@ -833,7 +1103,7 @@ function send_notifcations() {
             $events_set = get_events($user_id);
             mb_convert_encoding($events_set, 'UTF-8');
             
-            send_email_notification($user_email, $posts_set);
+            send_email_notification($user_email, $posts_set, $events_set);
             echo 'Email sent to user '. $user_id;
 	        echo PHP_EOL;
 	    }
