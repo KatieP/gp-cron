@@ -24,6 +24,7 @@ $db_connection = mysql_connect("127.0.0.1", "s2-wordpress", "7BXmxPmwy4LJZNhR") 
 mysql_select_db("s2-wordpress") or die(mysql_error());
 //mysql_select_db("s1-wordpress") or die(mysql_error());
 
+require '/var/www/production/www.greenpag.es/wordpress/wp-content/plugins/gp-theme/core/gp-functions.php';
 
 date_default_timezone_set('UTC');
 
@@ -110,7 +111,7 @@ function strip_non_utf_chars($string) {
     return $clean_string;
 }
 
-function get_events_heading($user_location_city) {
+function get_events_heading($heading) {
     
     $event_title  = '<!-- EVENT HEADING -->
                      <table class="w580" width="580" cellpadding="0" cellspacing="0" border="0">
@@ -119,7 +120,7 @@ function get_events_heading($user_location_city) {
                                  <td class="w580" width="580" style="border-collapse:collapse;">
                                      <p align="left" class="article-title" style="font-size:18px;line-height:24px;color:#787878;font-weight:bold;margin-top:0px;margin-bottom:8px;font-family:Arial, Helvetica, sans-serif;">
                                          <!--EVENT HEADING -->
-                                             Events ' . $user_location_city . '
+                                             Events ' . $heading . '
                                          </a>
                                      </p>
                                  </td>
@@ -145,7 +146,10 @@ function get_single_event($row, $show_country = false) {
 	$post_locality = $row->gp_google_geo_locality;
 	$post_country  = $row->gp_google_geo_country;
 	
-	$display_location = ($show_country == false) ? $post_locality : $post_locality . ', ' . $post_country;
+    $country_map =           get_country_map();
+	$country_pretty_name =   $country_map[$post_country];	
+	
+	$display_location = ($show_country == false) ? $post_locality : $post_locality . ', ' . $country_pretty_name;
 	
 	$displayday =    date('j', $row->gp_events_startdate) . date('S', $row->gp_events_startdate);
 	$displaymonth =  date('F', $row->gp_events_startdate);
@@ -496,6 +500,9 @@ function get_events($user_id) {
 
     $i = 0;
 
+    $country_map =           get_country_map();
+	$country_pretty_name =   $country_map[$querystring_country];
+    
 	while ($i < $data_set) {
 
         mysql_data_seek($db_result, $i);
@@ -503,21 +510,21 @@ function get_events($user_id) {
         $event =       get_single_event($row);
         
         if ( ($i == 0) && (!empty($event)) ) {
-            $events_title = get_events_heading('in surrounding '. $user_country);
-            $event_set .=  $events_title . '<br />';
-            $event_set .= $hr;
-            $event_set .=  $event . '<br />';
+            $events_title =  get_events_heading('in surrounding '. $country_pretty_name);
+            $event_set .=    $events_title . '<br />';
+            $event_set .=    $hr;
+            $event_set .=    $event . '<br />';
         } elseif (!empty($event)) {
-            $event_set .=  $event . '<br />';
+            $event_set .=    $event . '<br />';
         }
 
         $i++;
 
 	}
 	
-	$filterby_country =       ( !empty($querystring_country) ) ? ' AND m3.meta_value !="'. $querystring_country .'"' : '';
-    $filterby_state =         '';
-    $filterby_city =          '';	
+	$filterby_country =      ( !empty($querystring_country) ) ? ' AND m3.meta_value !="'. $querystring_country .'"' : '';
+    $filterby_state =        '';
+    $filterby_city =         '';	
 
    	$db_result = get_events_from_db($filterby_country, $filterby_state, $filterby_city);
    	
