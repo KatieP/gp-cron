@@ -474,7 +474,7 @@ function get_events($user_id) {
         if ( ($i == 0) && (!empty($event)) ) {
             $events_title = get_events_heading('in ' . $user_location_city);
             $event_set .=  $events_title . '<br />';
-            $event_set .= $hr;
+            $event_set .=  $hr;
             $event_set .=  $event . '<br />';
         } elseif (!empty($event)) {
             $event_set .=  $event . '<br />';
@@ -483,10 +483,45 @@ function get_events($user_id) {
         $i++;
 
 	}
+	
+	$filterby_country =       ( !empty($querystring_country) ) ? ' AND m3.meta_value ="'. $querystring_country .'"' : '';
+    $filterby_state =         ( !empty($querystring_state) )   ? ' AND m4.meta_value ="'. $querystring_state .'"'  : '';
+    $filterby_city =          ( !empty($querystring_city) )    ? ' AND m6.meta_value !="'. $querystring_city .'"'   : '';
+	
+   	$db_result = get_events_from_db($filterby_country, $filterby_state, $filterby_city);
+   	
+    if (!$db_result){
+       echo PHP_EOL;
+       echo('Database error: ' . mysql_error());
+       echo PHP_EOL;
+    }
+   	
+    $data_set =  mysql_num_rows($db_result);
+
+    $i = 0;
+
+	while ($i < $data_set) {
+
+        mysql_data_seek($db_result, $i);
+        $row =         mysql_fetch_object($db_result);
+        $event =       get_single_event($row);
+        
+        if ( ($i == 0) && (!empty($event)) ) {
+            $events_title = get_events_heading('in ' . $querystring_state);
+            $event_set .=  $events_title . '<br />';
+            $event_set .=  $hr;
+            $event_set .=  $event . '<br />';
+        } elseif (!empty($event)) {
+            $event_set .=  $event . '<br />';
+        }
+
+        $i++;
+
+	}	
 
 	$filterby_country =       ( !empty($querystring_country) ) ? ' AND m3.meta_value ="'. $querystring_country .'"' : '';
-    $filterby_state =         '';
-    $filterby_city =          ( !empty($querystring_city) )    ? ' AND m6.meta_value !="'. $querystring_city .'"'   : '';	
+    $filterby_state =         ( !empty($querystring_state) )   ? ' AND m4.meta_value !="'. $querystring_state .'"'  : '';
+    $filterby_city =          ( !empty($querystring_city) )    ? ' AND m6.meta_value !="'. $querystring_city .'"'   : '';
 
    	$db_result = get_events_from_db($filterby_country, $filterby_state, $filterby_city);
    	
@@ -510,7 +545,7 @@ function get_events($user_id) {
         $event =       get_single_event($row);
         
         if ( ($i == 0) && (!empty($event)) ) {
-            $events_title =  get_events_heading('in surrounding '. $country_pretty_name);
+            $events_title =  get_events_heading('in '. $country_pretty_name);
             $event_set .=    $events_title . '<br />';
             $event_set .=    $hr;
             $event_set .=    $event . '<br />';
