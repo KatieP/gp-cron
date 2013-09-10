@@ -505,7 +505,7 @@ function get_events($user_id) {
         $event =       get_single_event($row);
         
         if ( ($i == 0) && (!empty($event)) ) {
-            $event_set .=    $hr . '<br />';          
+            $event_set .=    $hr;          
             $events_title =  get_heading('Events in ' . $querystring_state);
             $event_set .=    $events_title;
             $event_set .=    $hr;
@@ -544,9 +544,9 @@ function get_events($user_id) {
         $event =       get_single_event($row);
         
         if ( ($i == 0) && (!empty($event)) ) {
-            $event_set .=    $hr . '<br />';
+            $event_set .=    $hr;
             $events_title =  get_heading('Events in '. $country_pretty_name);
-            $event_set .=    $events_title . '<br />';
+            $event_set .=    $events_title;
             $event_set .=    $hr;
             $event_set .=    $event . '<br />';
         } elseif (!empty($event)) {
@@ -580,9 +580,9 @@ function get_events($user_id) {
         $event =       get_single_event($row, true);
         
         if ( ($i == 0) && (!empty($event)) ) { 
-            $event_set .=   $hr . '<br />';           
+            $event_set .=   $hr;           
             $events_title = get_heading('Events from around the globe');
-            $event_set .=   $events_title . '<br />';
+            $event_set .=   $events_title;
             $event_set .=   $hr;
             $event_set .=   $event . '<br />';
         } elseif (!empty($event)) {
