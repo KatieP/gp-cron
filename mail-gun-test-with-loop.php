@@ -51,47 +51,21 @@ function get_post_url($row) {
 }
 
 function get_post_image($row) {
-	//Exract all 'words' beggining with 'src=' and end with .jpg, .png or .gif from $post_content and store as image url variable
 
 	$post_content = $row->post_content;
 	$pattern =      'src';
 
+	// Extract all 'words' beggining with 'src=' and end with .jpg, .png or .gif from $post_content and store as image url variable
 	preg_match("/(src.*)(jpg)/", $post_content, $matches);
 
 	$image_url = $matches[0];
 
 	// if no match choose random image
 	if ( empty($image_url) ) {
-
-		//If image src is not found, then randomly show a cool image
-
-		$random_images = array(
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random23.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random22.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random21.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random20.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random19.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random18.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random17.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random16.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random15.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random14.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random13.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random12.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random11.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random10.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random9.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random8.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random7.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random6.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random5.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random4.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random3.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random2.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random1.jpg"
-		);
-
-		$rand_keys = array_rand($random_images, 2);
+		// If image src is not found, then randomly show a cool image
+		$random_images = array();
+		$random_images = get_random_images();
+		$rand_keys =     array_rand($random_images, 2);
 		$image_url_img = 'img src = '. $random_images[$rand_keys[0]];		
 	} else {
 		$image_url_img = 'img '. $image_url .'"';
