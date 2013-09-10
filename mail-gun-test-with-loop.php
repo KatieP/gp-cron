@@ -111,7 +111,7 @@ function strip_non_utf_chars($string) {
     return $clean_string;
 }
 
-function get_events_heading($heading) {
+function get_heading($heading) {
     
     $event_title  = '<!-- EVENT HEADING -->
                      <table class="w580" width="580" cellpadding="0" cellspacing="0" border="0">
@@ -119,9 +119,7 @@ function get_events_heading($heading) {
                              <tr style="border-collapse:collapse;">
                                  <td class="w580" width="580" style="border-collapse:collapse;">
                                      <p align="left" class="article-title" style="font-size:18px;line-height:24px;color:#787878;font-weight:bold;margin-top:0px;margin-bottom:8px;font-family:Arial, Helvetica, sans-serif;">
-                                         <!--EVENT HEADING -->
-                                             Events ' . $heading . '
-                                         </a>
+                                         ' . $heading . '
                                      </p>
                                  </td>
                              </tr>
@@ -252,16 +250,12 @@ function get_single_post($row) {
 	return $single_post;	
 }
 	
-function get_posts_from_db() {
+function get_posts_from_db($post_type) {
 
 	$sql = "SELECT post_title, post_content, post_name, post_type, ID, popularity_score, post_latitude, post_longitude
        		FROM wp_posts 
 	        WHERE post_modified > DATE_SUB(CURDATE(), INTERVAL 1 WEEK) 
-	            AND (
-	                post_type = 'gp_advertorial' OR 
-	                post_type = 'gp_projects' OR 
-	                post_type = 'gp_news'
-	            )
+	            AND post_type = '". $post_type ."'
        		    AND post_status = 'publish'";
 
 	$db_result = mysql_query($sql);
@@ -476,7 +470,7 @@ function get_events($user_id) {
         $event =       get_single_event($row);
         
         if ( ($i == 0) && (!empty($event)) ) {
-            $events_title = get_events_heading('in ' . $user_location_city);
+            $events_title = get_heading('Events in ' . $user_location_city);
             $event_set .=  $events_title . '<br />';
             $event_set .=  $hr;
             $event_set .=  $event . '<br />';
@@ -514,7 +508,7 @@ function get_events($user_id) {
             $event_set .=  $events_title . '<br />';
             $event_set .=  $hr;
             $event_set .=  $event . '<br />';            
-            $events_title = get_events_heading('in ' . $querystring_state);
+            $events_title = get_heading('Events in ' . $querystring_state);
         } elseif (!empty($event)) {
             $event_set .=  $event . '<br />';
         }
@@ -552,7 +546,7 @@ function get_events($user_id) {
             $event_set .=    $events_title . '<br />';
             $event_set .=    $hr;
             $event_set .=    $event . '<br />';
-            $events_title =  get_events_heading('in '. $country_pretty_name);
+            $events_title =  get_heading('Events in '. $country_pretty_name);
         } elseif (!empty($event)) {
             $event_set .=    $event . '<br />';
         }
@@ -587,7 +581,7 @@ function get_events($user_id) {
             $event_set .=  $events_title . '<br />';
             $event_set .= $hr;
             $event_set .=  $event . '<br />';            
-            $events_title = get_events_heading('from around the globe');
+            $events_title = get_heading('Events from around the globe');
         } elseif (!empty($event)) {
             $event_set .=  $event . '<br />';
         }
@@ -600,16 +594,31 @@ function get_events($user_id) {
 
 }
 
-function get_posts($user_lat, $user_long) {
-    
-   	$db_result = get_posts_from_db();
-    $data_set =  mysql_num_rows($db_result);
+function get_sorted_posts($post_type, $user_lat, $user_long) {
    	
-	$unsorted_posts = array();	    
-    
+    $db_result =  get_posts_from_db($post_type);
+    $data_set =   mysql_num_rows($db_result);
+   	
+	$unsorted_posts =  array();	    
+    $sorted_posts =    array();
+	
    	$i = 0;
 	$posts_set = '';
 
+	if ($data_set > 0) {
+	    switch ($post_type) {
+	        case 'gp_news':
+	            $posts_set = get_heading('News');
+	            break;
+	        case 'gp_advertorial':
+	            $posts_set = get_heading('Products');
+	            break;
+	        case 'gp_projects':
+	            $posts_set = get_heading('Projects');
+	            break;	            
+	    }
+	}
+	
 	while ($i < $data_set) {
 
 	    mysql_data_seek($db_result, $i);
@@ -625,20 +634,37 @@ function get_posts($user_lat, $user_long) {
 
 	}
 
-	$post = '';
-
 	krsort($unsorted_posts);
-	$sorted_posts = array_slice($unsorted_posts, 0, 15, true);
+	
+	$sorted_posts = ($post_type == 'gp_news') ? array_slice($unsorted_posts, 0, 15, true) : $unsorted_posts;
 
 	foreach ($sorted_posts as $post) {
     	$posts_set .= $post . '<br />';
 	}
+	
+	return $posts_set;
+}
 
+function get_posts($user_lat, $user_long) {
+    
+    $post_set =    '';
+    
+    // Get news
+    $post_type =   'gp_news';
+    $posts_set .=  get_sorted_posts($post_type, $user_lat, $user_long);
+    
+    // Get products
+    $post_type =   'gp_advertorial';
+   	$posts_set .=  get_sorted_posts($post_type, $user_lat, $user_long);
+	
+    // Get projects
+    $post_type =   'gp_projects';
+   	$posts_set .=  get_sorted_posts($post_type, $user_lat, $user_long);
+	
 	return $posts_set;
 }
 
 //STEP 3: Work out distance of user to post by hypotenuse  
-
 function user_post_distance($row, $user_lat, $user_long) {
 
 	$post_title =        $row->post_title;	
