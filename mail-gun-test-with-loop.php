@@ -470,6 +470,8 @@ function get_events($user_id) {
         $event =       get_single_event($row);
         
         if ( ($i == 0) && (!empty($event)) ) {
+            $event_set .=    '<br />';
+	        $event_set .=    $hr;
             $events_title =  get_heading('Events in ' . $user_location_city);
             $event_set .=    $events_title . '<br />';
             $event_set .=    $hr;
@@ -505,7 +507,8 @@ function get_events($user_id) {
         $event =       get_single_event($row);
         
         if ( ($i == 0) && (!empty($event)) ) {
-            $event_set .=    $hr;          
+            $event_set .=    '<br />';
+	        $event_set .=    $hr;       
             $events_title =  get_heading('Events in ' . $querystring_state);
             $event_set .=    $events_title;
             $event_set .=    $hr;
@@ -544,7 +547,8 @@ function get_events($user_id) {
         $event =       get_single_event($row);
         
         if ( ($i == 0) && (!empty($event)) ) {
-            $event_set .=    $hr;
+            $event_set .=    '<br />';
+	        $event_set .=    $hr;
             $events_title =  get_heading('Events in '. $country_pretty_name);
             $event_set .=    $events_title;
             $event_set .=    $hr;
@@ -580,7 +584,8 @@ function get_events($user_id) {
         $event =       get_single_event($row, true);
         
         if ( ($i == 0) && (!empty($event)) ) { 
-            $event_set .=   $hr;           
+            $event_set .=    '<br />';
+	        $event_set .=    $hr;           
             $events_title = get_heading('Events from around the globe');
             $event_set .=   $events_title;
             $event_set .=   $hr;
@@ -612,12 +617,14 @@ function get_sorted_posts($post_type, $user_lat, $user_long) {
 	if ($data_set > 0) {
 	    switch ($post_type) {
 	        case 'gp_advertorial':
-	            $posts_set =  $hr;
+	            $posts_set =  '<br />';
+	            $posts_set .=  $hr;
 	            $posts_set .= get_heading('Products &amp; Services');
 	            $posts_set .=  $hr;
 	            break;
 	        case 'gp_projects':
-	            $posts_set =  $hr;
+	            $posts_set =  '<br />';
+	            $posts_set .=  $hr;
 	            $posts_set .= get_heading('Projects');
 	            $posts_set .=  $hr;
 	            break;	            
