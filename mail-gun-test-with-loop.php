@@ -725,8 +725,8 @@ function send_email_notification($user_email, $posts_set, $events_set) {
   
   curl_setopt($ch, CURLOPT_POSTFIELDS, array('from' => 'hello@greenpag.es',
                                              'to' => $user_email,
-                                             //'cc' => 'info@thegreenpages.com.au',
-                                             'subject' => 'Look who\'s changing the world around you this week!',
+                                             'cc' => 'info@thegreenpages.com.au',
+                                             'subject' => 'Green Razor: Look who\'s changing the world around you this week!',
                                              'text' => 'Some text',
                                              'html' => '
                                              
