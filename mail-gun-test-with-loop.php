@@ -612,14 +612,14 @@ function get_sorted_posts($post_type, $user_lat, $user_long) {
 	if ($data_set > 0) {
 	    switch ($post_type) {
 	        case 'gp_advertorial':
-	            $posts_set =  $hr . '<br />';
+	            $posts_set =  $hr;
 	            $posts_set .= get_heading('Products &amp; Services');
-	            $posts_set .=  $hr . '<br />';
+	            $posts_set .=  $hr;
 	            break;
 	        case 'gp_projects':
-	            $posts_set =  $hr . '<br />';
+	            $posts_set =  $hr;
 	            $posts_set .= get_heading('Projects');
-	            $posts_set .=  $hr . '<br />';
+	            $posts_set .=  $hr;
 	            break;	            
 	    }
 	}
