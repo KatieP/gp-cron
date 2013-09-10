@@ -607,6 +607,7 @@ function get_sorted_posts($post_type, $user_lat, $user_long) {
 	
    	$i = 0;
 	$posts_set = '';
+	$hr = '<hr style="padding-top:0px;padding-bottom:0px;padding-right:0px;padding-left:0px;margin-top:0px;margin-bottom:10px;margin-right:0;margin-left:0;"> ';
 
 	if ($data_set > 0) {
 	    switch ($post_type) {
