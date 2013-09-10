@@ -257,7 +257,11 @@ function get_posts_from_db() {
 	$sql = "SELECT post_title, post_content, post_name, post_type, ID, popularity_score, post_latitude, post_longitude
        		FROM wp_posts 
 	        WHERE post_modified > DATE_SUB(CURDATE(), INTERVAL 1 WEEK) 
-	            AND (post_type = 'gp_news' OR post_type = 'gp_projects' OR post_type = 'gp_advertorial')
+	            AND (
+	                post_type = 'gp_advertorial' OR 
+	                post_type = 'gp_projects' OR 
+	                post_type = 'gp_news'
+	            )
        		    AND post_status = 'publish'";
 
 	$db_result = mysql_query($sql);
@@ -484,8 +488,8 @@ function get_events($user_id) {
 
 	}
 	
-	$filterby_country =       ( !empty($querystring_country) ) ? ' AND m3.meta_value ="'. $querystring_country .'"' : '';
-    $filterby_state =         ( !empty($querystring_state) )   ? ' AND m4.meta_value ="'. $querystring_state .'"'  : '';
+	$filterby_country =       ( !empty($querystring_country) ) ? ' AND m3.meta_value ="'.  $querystring_country .'"' : '';
+    $filterby_state =         ( !empty($querystring_state) )   ? ' AND m4.meta_value ="'.  $querystring_state .'"'  : '';
     $filterby_city =          ( !empty($querystring_city) )    ? ' AND m6.meta_value !="'. $querystring_city .'"'   : '';
 	
    	$db_result = get_events_from_db($filterby_country, $filterby_state, $filterby_city);
@@ -507,10 +511,10 @@ function get_events($user_id) {
         $event =       get_single_event($row);
         
         if ( ($i == 0) && (!empty($event)) ) {
-            $events_title = get_events_heading('in ' . $querystring_state);
             $event_set .=  $events_title . '<br />';
             $event_set .=  $hr;
-            $event_set .=  $event . '<br />';
+            $event_set .=  $event . '<br />';            
+            $events_title = get_events_heading('in ' . $querystring_state);
         } elseif (!empty($event)) {
             $event_set .=  $event . '<br />';
         }
@@ -545,10 +549,10 @@ function get_events($user_id) {
         $event =       get_single_event($row);
         
         if ( ($i == 0) && (!empty($event)) ) {
-            $events_title =  get_events_heading('in '. $country_pretty_name);
             $event_set .=    $events_title . '<br />';
             $event_set .=    $hr;
             $event_set .=    $event . '<br />';
+            $events_title =  get_events_heading('in '. $country_pretty_name);
         } elseif (!empty($event)) {
             $event_set .=    $event . '<br />';
         }
@@ -580,10 +584,10 @@ function get_events($user_id) {
         $event =       get_single_event($row, true);
         
         if ( ($i == 0) && (!empty($event)) ) {
-            $events_title = get_events_heading('from around the globe');
             $event_set .=  $events_title . '<br />';
             $event_set .= $hr;
-            $event_set .=  $event . '<br />';
+            $event_set .=  $event . '<br />';            
+            $events_title = get_events_heading('from around the globe');
         } elseif (!empty($event)) {
             $event_set .=  $event . '<br />';
         }
