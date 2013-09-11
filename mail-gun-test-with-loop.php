@@ -62,7 +62,7 @@ function get_post_image($row) {
 	if ($row->_thumbnail_id != NULL) {
 	    $upload_url =    'http://www.greenpag.es/wp-content/uploads';
 	    $upload_year =   substr($row->post_date, 0, 4);
-	    $upload_month =  substr($row->post_date, 4, 2);
+	    $upload_month =  substr($row->post_date, 5, 2);
 	    $image_url_2 =   $upload_url . '/' . $upload_year . '/' . $upload_month . '/';
 	    
 	    echo PHP_EOL;
