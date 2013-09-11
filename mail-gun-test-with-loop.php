@@ -53,13 +53,23 @@ function get_post_url($row) {
 function get_post_image($row) {
 
 	$post_content = $row->post_content;
-	$pattern =      'src';
 
+	$pattern =      'src';
 	// Extract all 'words' beggining with 'src=' and end with .jpg, .png or .gif from $post_content and store as image url variable
 	preg_match("/(src.*)(jpg)/", $post_content, $matches);
-
 	$image_url = $matches[0];
 
+	if ($row->_thumbnail_id != NULL) {
+	    $upload_url =    'http://www.greenpag.es/wp-content/uploads';
+	    $upload_year =   substr($row->post_date, 0, 4);
+	    $upload_month =  substr($row->post_date, 4, 2);
+	    $image_url_2 =   $upload_url . '/' . $upload_year . '/' . $upload_month . '/';
+	    
+	    echo PHP_EOL;
+	    var_dump($image_url_2);
+	    echo PHP_EOL;
+	}
+	
 	// if no match choose random image
 	if ( empty($image_url) ) {
 		// If image src is not found, then randomly show a cool image
@@ -138,7 +148,6 @@ function get_single_event($row, $show_country = false) {
 	$post_name =     $row->post_name;
 	$post_ID =       $row->ID;
 	$post_url =      get_post_url($row);
-	$post_image =    get_post_image($row);
 	
 	$post_locality = $row->gp_google_geo_locality;
 	$post_country  = $row->gp_google_geo_country;
