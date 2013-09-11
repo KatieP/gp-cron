@@ -68,21 +68,16 @@ function get_post_image($row) {
 	        $f_name =    strrchr($image_url, '/');
 	        $dot_pos =   strpos($f_name, '.');
 	        $s_f_name =  substr($f_name, 1, $dot_pos -1);
-	        
-	        $image_url_2 =   $upload_url . '/' . $upload_year . '/' . $upload_month . '/' . $s_f_name . '-110x110.jpg';
-	    
-    	    echo PHP_EOL;
-    	    var_dump($image_url_2);
-    	    echo PHP_EOL;
+	        $image_url =   $upload_url . '/' . $upload_year . '/' . $upload_month . '/' . $s_f_name . '-110x110.jpg';
 	    }  
 	}
 	
 	// if no match choose random image
 	if ( empty($image_url) ) {
 		// If image src is not found, then randomly show a cool image
-		// $random_images = array();
-		// $random_images = get_random_images();
-		$random_images = array(
+		$random_images = array();
+		$random_images = get_random_images();
+	/*	$random_images = array(
 			"http://www.greenpag.es/wp-content/uploads/2013/04/random23.jpg",
 			"http://www.greenpag.es/wp-content/uploads/2013/04/random22.jpg",
 			"http://www.greenpag.es/wp-content/uploads/2013/04/random21.jpg",
@@ -106,7 +101,7 @@ function get_post_image($row) {
 			"http://www.greenpag.es/wp-content/uploads/2013/04/random3.jpg",
 			"http://www.greenpag.es/wp-content/uploads/2013/04/random2.jpg",
 			"http://www.greenpag.es/wp-content/uploads/2013/04/random1.jpg"
-		);
+		); */
 		$rand_keys =     array_rand($random_images, 2);
 		$image_url_img = 'img src='. $random_images[$rand_keys[0]];		
 	} else {
