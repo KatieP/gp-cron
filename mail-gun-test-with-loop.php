@@ -59,10 +59,21 @@ function get_post_image($row) {
 	preg_match("/(src.*)(jpg)/", $post_content, $matches);
 	$image_url = $matches[0];
 
-	if ($row->_thumbnail_id != NULL) {
+	if ($row->_thumbnail_id != NULL && $row->post_type == 'gp_news') {
 	    $upload_url =    'http://www.greenpag.es/wp-content/uploads';
 	    $upload_year =   substr($row->post_date, 0, 4);
 	    $upload_month =  substr($row->post_date, 5, 2);
+	    
+	    if ( !empty($image_url) ) {
+	        $file_name = strrchr($image_url, '/');
+
+	        echo PHP_EOL;
+	        echo '$file_name: ';
+	        echo PHP_EOL;
+	        var_dump($file_name);
+	        echo PHP_EOL;
+	    }
+	    
 	    $image_url_2 =   $upload_url . '/' . $upload_year . '/' . $upload_month . '/';
 	    
 	    echo PHP_EOL;
