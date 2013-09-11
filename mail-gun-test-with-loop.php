@@ -252,7 +252,7 @@ function get_single_post($row) {
 function get_posts_from_db($post_type) {
 
 	$sql = "SELECT wp_posts.*,
-	            m0.meta_value AS _thumbnail_id,
+	            m0.meta_value AS _thumbnail_id
        		FROM wp_posts 
 	            LEFT JOIN wp_postmeta AS m0 on m0.post_id=wp_posts.ID and m0.meta_key='_thumbnail_id'
 	        WHERE post_modified > DATE_SUB(CURDATE(), INTERVAL 1 WEEK) 
