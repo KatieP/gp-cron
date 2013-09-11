@@ -68,26 +68,13 @@ function get_post_image($row) {
 	        $f_name =    strrchr($image_url, '/');
 	        $dot_pos =   strpos($f_name, '.');
 	        $s_f_name =  substr($f_name, 1, $dot_pos -1);
-
 	        
-	        echo PHP_EOL;
-	        echo '$f_name: ';
-	        echo PHP_EOL;
-	        var_dump($f_name);
-	        echo PHP_EOL;
-	        
-	        echo PHP_EOL;
-	        echo '$s_f_name: ';
-	        echo PHP_EOL;
-	        var_dump($s_f_name);
-	        echo PHP_EOL;
-	    }
+	        $image_url_2 =   $upload_url . '/' . $upload_year . '/' . $upload_month . '/' . $s_f_name . '-110x110.jpg';
 	    
-	    $image_url_2 =   $upload_url . '/' . $upload_year . '/' . $upload_month . '/';
-	    
-	    echo PHP_EOL;
-	    var_dump($image_url_2);
-	    echo PHP_EOL;
+    	    echo PHP_EOL;
+    	    var_dump($image_url_2);
+    	    echo PHP_EOL;
+	    }  
 	}
 	
 	// if no match choose random image
