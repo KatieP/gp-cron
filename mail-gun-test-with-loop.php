@@ -65,10 +65,13 @@ function get_post_image($row) {
 	    $upload_month =  substr($row->post_date, 5, 2);
 	    
 	    if ( !empty($image_url) ) {
-	        $f_name =    strrchr($image_url, '/');
-	        $dot_pos =   strpos($f_name, '.');
-	        $s_f_name =  substr($f_name, 1, $dot_pos -1);
-	        $image_url =   $upload_url . '/' . $upload_year . '/' . $upload_month . '/' . $s_f_name . '-110x110.jpg';
+	        $f_name =     strrchr($image_url, '/');
+	        $dot_pos =    strpos($f_name, '.');
+	        $s_f_name =   substr($f_name, 1, $dot_pos -1);
+	        $image_url =  'src="' . $upload_url . '/' . $upload_year . '/' . $upload_month . '/' . $s_f_name . '-110x110.jpg"';
+	        echo PHP_EOL;
+	        var_dump($image_url);
+	        echo PHP_EOL;
 	    }  
 	}
 	
