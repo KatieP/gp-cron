@@ -63,10 +63,35 @@ function get_post_image($row) {
 	// if no match choose random image
 	if ( empty($image_url) ) {
 		// If image src is not found, then randomly show a cool image
-		$random_images = array();
-		$random_images = get_random_images();
+		// $random_images = array();
+		// $random_images = get_random_images();
+		$random_images = array(
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random23.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random22.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random21.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random20.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random19.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random18.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random17.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random16.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random15.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random14.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random13.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random12.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random11.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random10.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random9.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random8.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random7.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random6.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random5.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random4.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random3.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random2.jpg",
+			"http://www.greenpag.es/wp-content/uploads/2013/04/random1.jpg"
+		);
 		$rand_keys =     array_rand($random_images, 2);
-		$image_url_img = 'img src = '. $random_images[$rand_keys[0]];		
+		$image_url_img = 'img src='. $random_images[$rand_keys[0]];		
 	} else {
 		$image_url_img = 'img '. $image_url .'"';
 	}
@@ -87,7 +112,7 @@ function strip_non_utf_chars($string) {
 
 function get_heading($heading) {
     
-    $event_title  = '<!-- EVENT HEADING -->
+    $title        = '<!-- HEADING -->
                      <table class="w580" width="580" cellpadding="0" cellspacing="0" border="0">
                          <tbody>
                              <tr style="border-collapse:collapse;">
@@ -102,9 +127,9 @@ function get_heading($heading) {
                              </tr>
                          </tbody>
                      </table>
-                     <!-- EVENT HEADING ENDS -->';
+                     <!-- HEADING -->';
 
-    return $event_title;    
+    return $title;    
 }
 
 function get_single_event($row, $show_country = false) {
@@ -226,8 +251,10 @@ function get_single_post($row) {
 	
 function get_posts_from_db($post_type) {
 
-	$sql = "SELECT post_title, post_content, post_name, post_type, ID, popularity_score, post_latitude, post_longitude
+	$sql = "SELECT wp_posts.*,
+	            m0.meta_value AS _thumbnail_id,
        		FROM wp_posts 
+	            LEFT JOIN wp_postmeta AS m0 on m0.post_id=wp_posts.ID and m0.meta_key='_thumbnail_id'
 	        WHERE post_modified > DATE_SUB(CURDATE(), INTERVAL 1 WEEK) 
 	            AND post_type = '". $post_type ."'
        		    AND post_status = 'publish'";
@@ -243,7 +270,7 @@ function get_posts_from_db($post_type) {
 
 function get_events_from_db($filterby_country = '', $filterby_state = '', $filterby_city = '', $max_results = '', $offset_num = '') {
 
-    $epochtime = strtotime('now');
+    $epochtime =  strtotime('now');
     $limit_by =   (!empty($max_results)) ? 'LIMIT '. $max_results : '';
     $offset =     (!empty($offset_num))  ? 'OFFSET '. $offset_num : '';
     
@@ -560,7 +587,7 @@ function get_events($user_id) {
         if ( ($i == 0) && (!empty($event)) ) { 
             $event_set .=    '<br />';
 	        $event_set .=    $hr;           
-            $events_title = get_heading('Events from around the globe');
+            $events_title = get_heading('Events from around the world');
             $event_set .=   $events_title;
             $event_set .=   $hr;
             $event_set .=   $event . '<br />';
