@@ -65,12 +65,21 @@ function get_post_image($row) {
 	    $upload_month =  substr($row->post_date, 5, 2);
 	    
 	    if ( !empty($image_url) ) {
-	        $file_name = strrchr($image_url, '/');
+	        $f_name =    strrchr($image_url, '/');
+	        $dot_pos =   strpos($f_name, '.');
+	        $s_f_name =  substr($f_name, 1, $dot_pos -1);
 
+	        
 	        echo PHP_EOL;
-	        echo '$file_name: ';
+	        echo '$f_name: ';
 	        echo PHP_EOL;
-	        var_dump($file_name);
+	        var_dump($f_name);
+	        echo PHP_EOL;
+	        
+	        echo PHP_EOL;
+	        echo '$s_f_name: ';
+	        echo PHP_EOL;
+	        var_dump($s_f_name);
 	        echo PHP_EOL;
 	    }
 	    
