@@ -122,7 +122,7 @@ function get_post_image($row) {
 		$rand_keys =     array_rand($random_images, 2);
 		$image_url_img = 'img src='. $random_images[$rand_keys[0]];		
     } else {
-        $image_url_img = 'img '. $image_url .'"';
+        $image_url_img = 'img '. $image_url;
         
         echo PHP_EOL;
         echo $row->post_title . ' Final else $image_url_img:';
