@@ -97,10 +97,18 @@ function get_post_image($row) {
             		echo PHP_EOL;
             		var_dump($file_type);
             		echo PHP_EOL;
-
-            		$s_f_name = '';
             		
-            		$image_url_img = 'img src='. $new_row->guid;
+            		$len = strlen($new_row->guid);
+
+            		$s_f_name = substr($new_row->guid, 0, $len - 4);
+            		
+            		$image_url_img = 'img src="' . $s_f_name . '-110x110' . $file_type .'"';
+            		
+            		echo PHP_EOL;
+            		echo '$image_url_img:';
+            		echo PHP_EOL;
+            		var_dump($image_url_img);
+            		echo PHP_EOL;
         		}
         		$i++;
             }
