@@ -75,36 +75,13 @@ function get_post_image($row) {
 	    }  
 	}
 	
-	// if no match choose random image
-	if ( empty($image_url) ) {
+	if ( empty($image_url) && ($row->_thumbnail_id != NULL) ) {
+	    // Get url for featured image thumbnail from db
+	    
+	} elseif ( empty($image_url) ) {
 		// If image src is not found, then randomly show a cool image
 		$random_images = array();
 		$random_images = get_random_images();
-	/*	$random_images = array(
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random23.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random22.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random21.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random20.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random19.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random18.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random17.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random16.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random15.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random14.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random13.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random12.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random11.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random10.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random9.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random8.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random7.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random6.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random5.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random4.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random3.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random2.jpg",
-			"http://www.greenpag.es/wp-content/uploads/2013/04/random1.jpg"
-		); */
 		$rand_keys =     array_rand($random_images, 2);
 		$image_url_img = 'img src='. $random_images[$rand_keys[0]];		
 	} else {
@@ -262,7 +239,24 @@ function get_single_post($row) {
 	
 	return $single_post;	
 }
-	
+
+function get_featured_image_url_from_db($author_id) {
+
+	$sql = "SELECT post_date, post_title, guid
+       		FROM wp_posts
+	        WHERE post_modified > DATE_SUB(CURDATE(), INTERVAL 1 WEEK) 
+	            AND post_type = 'attachment'
+       		    AND post_status = 'inherit'";
+
+	$db_result = mysql_query($sql);
+
+	if (! $db_result){
+	   echo('Database error: ' . mysql_error());
+	}
+		
+	return $db_result;
+}
+
 function get_posts_from_db($post_type) {
 
 	$sql = "SELECT wp_posts.*,
