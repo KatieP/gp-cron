@@ -103,7 +103,7 @@ function get_post_image($row) {
             		$f_name = substr($new_row->guid, 0, $len - 4);
             		$s_f_name = $f_name . '-110x110' . $file_type;
             		
-            		$image_url_img = 'img src=' . $s_f_name;
+            		$image_url_img = 'img src="' . $s_f_name .'"';
             		
             		echo PHP_EOL;
             		echo '$image_url_img:';
