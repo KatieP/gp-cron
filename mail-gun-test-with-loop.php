@@ -70,7 +70,7 @@ function get_post_image($row) {
 	        $s_f_name =   substr($f_name, 1, $dot_pos - 1);
 	        $image_url =  'src="' . $upload_url . '/' . $upload_year . '/' . $upload_month . '/' . $s_f_name . '-110x110.jpg"';
 	        echo PHP_EOL;
-	        var_dump($image_url);
+	        #var_dump($image_url);
 	        echo PHP_EOL;
 	    }  
 	}
@@ -90,12 +90,12 @@ function get_post_image($row) {
         		
         		if ($post_date_tr == $new_post_date_tr) {
             		echo PHP_EOL;
-            		var_dump($new_row);
+            		#var_dump($new_row);
             		echo PHP_EOL;
             		
             		$file_type = substr($new_row->guid, -4);
             		echo PHP_EOL;
-            		var_dump($file_type);
+            		#var_dump($file_type);
             		echo PHP_EOL;
             		
             		$len = strlen($new_row->guid);
