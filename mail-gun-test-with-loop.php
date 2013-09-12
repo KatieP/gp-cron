@@ -73,9 +73,7 @@ function get_post_image($row) {
 	        var_dump($image_url);
 	        echo PHP_EOL;
 	    }  
-	}
-	
-	if ( empty($image_url) && ($row->_thumbnail_id != NULL) ) {
+	} elseif ( empty($image_url) && ($row->_thumbnail_id != NULL) ) {
 	    // Get url for featured image thumbnail from db
 	    $db_result =     get_featured_image_urls_from_db($row->post_author);
         $data_set =      mysql_num_rows($db_result);
