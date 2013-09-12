@@ -120,7 +120,9 @@ function get_post_image($row) {
 		$random_images = get_random_images();
 		$rand_keys =     array_rand($random_images, 2);
 		$image_url_img = 'img src='. $random_images[$rand_keys[0]];		
-	} 
+    } else {
+        $image_url_img = 'img '. $image_url .'"';
+    } 
 
 	return $image_url_img;
 }
