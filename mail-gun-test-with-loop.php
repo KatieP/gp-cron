@@ -80,13 +80,20 @@ function get_post_image($row) {
 	    $db_result =     get_featured_image_urls_from_db($row->post_author);
         $data_set =      mysql_num_rows($db_result);
         $i =             0;
-        $post_date_tr =  substr($row->post_date, 0, 12);
+        $post_date_tr =  substr($row->post_date, 0, 11);
         
         if ($i > 0) {
             while ($i < $data_set) {
         	    mysql_data_seek($db_result, $i);
-        		$new_row = mysql_fetch_object($db_result);
-        		$new_post_date_tr =  substr($new_row->post_date, 0, 12);
+        		$new_row =           mysql_fetch_object($db_result);
+        		$new_post_date_tr =  substr($new_row->post_date, 0, 11);
+        		
+            	echo PHP_EOL;
+            	echo '$new_row:';
+            	echo PHP_EOL;
+            	var_dump($new_row);
+            	echo PHP_EOL;        		
+        		
         		if ($post_date_tr == $new_post_date_tr) {
             		echo PHP_EOL;
             		var_dump($new_row);
