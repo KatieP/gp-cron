@@ -53,8 +53,8 @@ function get_post_url($row) {
 function get_post_image($row) {
 
 	$post_content = $row->post_content;
-
 	$pattern =      'src';
+
 	// Extract all 'words' beggining with 'src=' and end with .jpg, .png or .gif from $post_content and store as image url variable
 	preg_match("/(src.*)(jpg)/", $post_content, $matches);
 	$image_url = $matches[0];
@@ -77,7 +77,24 @@ function get_post_image($row) {
 	
 	if ( empty($image_url) && ($row->_thumbnail_id != NULL) ) {
 	    // Get url for featured image thumbnail from db
-	    
+	    $db_result =     get_featured_image_urls_from_db($row->post_author);
+        $data_set =      mysql_num_rows($db_result);
+        $i =             0;
+        $post_date_tr =  substr($row->post_date, 0, 12);
+        
+        if ($i > 0) {
+            while ($i < $data_set) {
+        	    mysql_data_seek($db_result, $i);
+        		$new_row = mysql_fetch_object($db_result);
+        		$new_post_date_tr =  substr($new_row->post_date, 0, 12);
+        		if ($post_date_tr == $new_post_date_tr) {
+            		echo PHP_EOL;
+            		var_dump($new_row);
+            		echo PHP_EOL;
+        		}
+        		$i++;
+            }
+        }
 	} elseif ( empty($image_url) ) {
 		// If image src is not found, then randomly show a cool image
 		$random_images = array();
@@ -240,7 +257,7 @@ function get_single_post($row) {
 	return $single_post;	
 }
 
-function get_featured_image_url_from_db($author_id) {
+function get_featured_image_urls_from_db($author_id) {
 
 	$sql = "SELECT post_date, post_title, guid
        		FROM wp_posts
