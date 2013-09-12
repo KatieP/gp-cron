@@ -67,7 +67,7 @@ function get_post_image($row) {
 	    if ( !empty($image_url) ) {
 	        $f_name =     strrchr($image_url, '/');
 	        $dot_pos =    strpos($f_name, '.');
-	        $s_f_name =   substr($f_name, 1, $dot_pos -1);
+	        $s_f_name =   substr($f_name, 1, $dot_pos - 1);
 	        $image_url =  'src="' . $upload_url . '/' . $upload_year . '/' . $upload_month . '/' . $s_f_name . '-110x110.jpg"';
 	        echo PHP_EOL;
 	        var_dump($image_url);
@@ -92,6 +92,14 @@ function get_post_image($row) {
             		echo PHP_EOL;
             		var_dump($new_row);
             		echo PHP_EOL;
+            		
+            		$file_type = substr($new_row->guid, -4);
+            		echo PHP_EOL;
+            		var_dump($file_type);
+            		echo PHP_EOL;
+
+            		$s_f_name = '';
+            		
             		$image_url_img = 'img src='. $new_row->guid;
         		}
         		$i++;
@@ -137,8 +145,7 @@ function get_heading($heading) {
                                  <td class="w580" width="580" height="10" style="border-collapse:collapse;"></td>
                              </tr>
                          </tbody>
-                     </table>
-                     <!-- HEADING -->';
+                     </table>';
 
     return $title;    
 }
