@@ -70,13 +70,6 @@ function get_post_image($row) {
 	        $s_f_name =   substr($f_name, 1, $dot_pos - 1);
 	        $url =        $upload_url . '/' . $upload_year . '/' . $upload_month . '/' . $s_f_name . '-110x110.jpg';
 	        $image_url =  'src="' . $url . '"';
-	        
-	        echo PHP_EOL;
-            echo $row->post_title . ' $image_url:';
-            echo PHP_EOL;
-	        echo PHP_EOL;
-	        var_dump($image_url);
-	        echo PHP_EOL;
 	    }  
 	}
 	
@@ -92,29 +85,12 @@ function get_post_image($row) {
         	    mysql_data_seek($db_result, $i);
         		$new_row =           mysql_fetch_object($db_result);
         		$new_post_date_tr =  substr($new_row->post_date, 0, 11);       		
-        		
         		if ($post_date_tr == $new_post_date_tr) {
-            		echo PHP_EOL;
-            		#var_dump($new_row);
-            		echo PHP_EOL;
-            		
-            		$file_type = substr($new_row->guid, -4);
-            		echo PHP_EOL;
-            		#var_dump($file_type);
-            		echo PHP_EOL;
-            		
-            		$len = strlen($new_row->guid);
-
-            		$f_name = substr($new_row->guid, 0, $len - 4);
-            		$s_f_name = $f_name . '-110x110' . $file_type;
-            		
+            		$file_type =  substr($new_row->guid, -4);
+            		$len =        strlen($new_row->guid);
+            		$f_name =     substr($new_row->guid, 0, $len - 4);
+            		$s_f_name =   $f_name . '-110x110' . $file_type;
             		$image_url_img = 'img src="' . $s_f_name .'"';
-            		
-            		echo PHP_EOL;
-            		echo $row->post_title . ' $image_url_img:';
-            		echo PHP_EOL;
-            		var_dump($image_url_img);
-            		echo PHP_EOL;
         		}
         		$i++;
             }
@@ -180,16 +156,14 @@ function get_single_event($row, $show_country = false) {
 	$post_locality = $row->gp_google_geo_locality;
 	$post_country  = $row->gp_google_geo_country;
 	
-    $country_map =           get_country_map();
-	$country_pretty_name =   $country_map[$post_country];	
+    $country_map =          get_country_map();
+	$country_pretty_name =  $country_map[$post_country];	
+	$display_location =     ($show_country == false) ? $post_locality : $post_locality . ', ' . $country_pretty_name;
 	
-	$display_location = ($show_country == false) ? $post_locality : $post_locality . ', ' . $country_pretty_name;
-	
-	$displayday =    date('j', $row->gp_events_startdate) . date('S', $row->gp_events_startdate);
-	$displaymonth =  date('F', $row->gp_events_startdate);
-	$displayyear =   date('y', $row->gp_events_startdate);
-	
-	$displaydate =    $displayday . ' ' . $displaymonth;
+	$displayday =           date('j', $row->gp_events_startdate) . date('S', $row->gp_events_startdate);
+	$displaymonth =         date('F', $row->gp_events_startdate);
+	$displayyear =          date('y', $row->gp_events_startdate);
+	$displaydate =          $displayday . ' ' . $displaymonth;
 	
 	if (!empty($post_title)) {
 	    $single_event = '<!-- EVENT STARTS -->
@@ -223,7 +197,7 @@ function get_single_event($row, $show_country = false) {
 }
 
 function get_single_post($row) {
-	//Variables used in content of email	
+	// Variables used in content of email	
 	$post_title =    strip_non_utf_chars($row->post_title);
 	$post_name =     $row->post_name;
 	$raw_content =   strip_tags($row->post_content);
@@ -674,13 +648,13 @@ function get_sorted_posts($post_type, $user_lat, $user_long) {
 	        case 'gp_advertorial':
 	            $posts_set =  '<br />';
 	            $posts_set .=  $hr;
-	            $posts_set .= get_heading('Products &amp; Services');
+	            $posts_set .= get_heading('Awesome Eco Friendly Products &amp; Services');
 	            $posts_set .=  $hr;
 	            break;
 	        case 'gp_projects':
 	            $posts_set =  '<br />';
 	            $posts_set .=  $hr;
-	            $posts_set .= get_heading('Projects');
+	            $posts_set .= get_heading('Green Projects');
 	            $posts_set .=  $hr;
 	            break;	            
 	    }
@@ -773,7 +747,7 @@ function page_rank($c, $row) {
 
 }
 
-//Send email using mailgun API
+// Send email using mailgun API
 
 function send_email_notification($user_email, $posts_set, $events_set) {
   $ch = curl_init();
