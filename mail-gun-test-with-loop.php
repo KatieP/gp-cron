@@ -92,6 +92,7 @@ function get_post_image($row) {
             		echo PHP_EOL;
             		var_dump($new_row);
             		echo PHP_EOL;
+            		$image_url_img = 'img src='. $new_row->guid;
         		}
         		$i++;
             }
