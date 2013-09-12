@@ -69,7 +69,7 @@ function get_post_image($row) {
 	        $dot_pos =    strpos($f_name, '.');
 	        $s_f_name =   substr($f_name, 1, $dot_pos - 1);
 	        $url =        $upload_url . '/' . $upload_year . '/' . $upload_month . '/' . $s_f_name . '-110x110.jpg';
-	        $image_url =  'src="' . $url . "';
+	        $image_url =  'src="' . $url . '"';
 	        echo PHP_EOL;
 	        #var_dump($image_url);
 	        echo PHP_EOL;
