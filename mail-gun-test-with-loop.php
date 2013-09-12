@@ -106,7 +106,7 @@ function get_post_image($row) {
             		$image_url_img = 'img src="' . $s_f_name .'"';
             		
             		echo PHP_EOL;
-            		echo '$image_url_img:';
+            		echo $row->post_title . ' $image_url_img:';
             		echo PHP_EOL;
             		var_dump($image_url_img);
             		echo PHP_EOL;
@@ -120,9 +120,7 @@ function get_post_image($row) {
 		$random_images = get_random_images();
 		$rand_keys =     array_rand($random_images, 2);
 		$image_url_img = 'img src='. $random_images[$rand_keys[0]];		
-	} else {
-		$image_url_img = 'img '. $image_url .'"';
-	}
+	} 
 
 	return $image_url_img;
 }
