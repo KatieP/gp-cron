@@ -1216,7 +1216,11 @@ function send_notifcations() {
         
 	    $i++;
     }
-
+    $total = $i + 1;
+    echo PHP_EOL;
+    echo PHP_EOL;
+    echo $total .' emails sent.';
+	echo PHP_EOL;
 }
 
 send_notifcations();
