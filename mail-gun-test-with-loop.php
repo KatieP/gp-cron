@@ -75,7 +75,7 @@ function get_post_image($row) {
 	    }  
 	}
 	
-	if ( empty($image_url) && ($row->_thumbnail_id != NULL) ) {
+	if ( empty($image_url) && ($row->_thumbnail_id != NULL) && ($row->post_type != 'gp_news') ) {
 	    // Get url for featured image thumbnail from db
 	    $db_result =     get_featured_image_urls_from_db($row->post_author);
         $data_set =      mysql_num_rows($db_result);
