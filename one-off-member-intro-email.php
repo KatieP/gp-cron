@@ -38,6 +38,7 @@ function send_notifcations() {
 
     $users = get_users();
     $i = 0;
+    $total = 0;
     $data_set = mysql_num_rows($users);    
 
     while ($i < $data_set) {
@@ -47,17 +48,18 @@ function send_notifcations() {
         $user_id = (int) $row->ID;
 	    $user_email = $row->user_email;
         
-	    if ( ($user_id > 1) && ($user_id < 4) ) {
-            send_email_notification($user_email);
+	    if ( ($user_id >= 3968) && ($user_id <= 18782) ) {
+            // send_email_notification($user_email);
             echo 'Email sent to user '. $user_id;
     	    echo PHP_EOL;
+    	    $total++;
 	    }
         
 	    $i++;
     }
     echo PHP_EOL;
     echo PHP_EOL;
-    echo $i .' emails sent.';
+    echo $total .' emails sent.';
 	echo PHP_EOL;
 }
 
