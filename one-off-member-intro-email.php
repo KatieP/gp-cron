@@ -21,7 +21,9 @@ function get_users() {
 
 	//Get user emails and their location
 	$sql_user = 'SELECT DISTINCT user_email, display_name, ID
-                     FROM   wp_users';
+                 FROM   wp_users
+                 WHERE ID = "3" OR
+                       ID ="2"';
 
 	$db_result = mysql_query($sql_user);
 
@@ -46,12 +48,12 @@ function send_notifcations() {
         $user_id = (int) $row->ID;
 	    $user_email = $row->user_email;
         
-	    if ( ($user_id >= 3968) && ($user_id <= 18782) ) {
+	    // if ( ($user_id >= 3968) && ($user_id <= 18782) ) {
             // send_email_notification($user_email);
             echo 'Email sent to user '. $user_id;
     	    echo PHP_EOL;
     	    $total++;
-	    }
+	    // }
         
 	    $i++;
     }
@@ -71,9 +73,9 @@ function send_email_notification($user_email) {
   curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
   curl_setopt($ch, CURLOPT_URL, 'https://api.mailgun.net/v2/greenpag.es/messages');
   
-  curl_setopt($ch, CURLOPT_POSTFIELDS, array('from' => 'hello@greenpag.es',
+  curl_setopt($ch, CURLOPT_POSTFIELDS, array('from' => 'noreply@greenpag.es',
                                              'to' => $user_email,
-                                             'cc' => 'info@thegreenpages.com.au',
+                                             
                                              'subject' => 'Set your location for The Green Razor, here\'s your log in details!',
                                              'text' => 'Some text',
                                              'html' => '
@@ -312,7 +314,7 @@ body, td { font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif; 
                                     <p align="left" class="article-title" style="font-size:18px;line-height:24px;color:#01aed8;font-weight:bold;margin-top:0px;margin-bottom:18px;font-family:"Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;">News directly from environmental groups</p>
                                     <div align="left" class="article-content" style="font-size:13px;line-height:18px;color:#444444;margin-top:0px;margin-bottom:18px;font-family:"Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;">
                                         <p style="margin-bottom:15px;">
-	Greenpag.es only publishes news articles directly from environmental groups and universities. That means no journalists, bloggers or opinions. All real information from the primiary source.&nbsp;</p>
+	Greenpag.es only publishes news articles directly from environmental groups and universities. That means no journalists, bloggers or opinions. All of the greenpag.es news is real information direct from the primary source. <a href="http://www.greenpag.es/about/partners/">View content partners here.</a> &nbsp;</p>
 <p style="margin-bottom:15px;">
 	&nbsp;</p>
                                     </div>
