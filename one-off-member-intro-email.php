@@ -22,7 +22,8 @@ function get_users() {
 	//Get user emails and their location
 	$sql_user = 'SELECT DISTINCT user_email, display_name, ID
                      FROM   wp_users
-                     WHERE  ID = "3"';
+                     WHERE  ID = "3" OR
+                            ID = "2"';
 
 	$db_result = mysql_query($sql_user);
 
@@ -43,19 +44,20 @@ function send_notifcations() {
 		
         mysql_data_seek($users, $i);
 	    $row = mysql_fetch_object($users);
-        $user_id = $row->ID;
+        $user_id = (int) $row->ID;
 	    $user_email = $row->user_email;
-            
-        send_email_notification($user_email);
-        echo 'Email sent to user '. $user_id;
-	    echo PHP_EOL;
+        
+	    if ( ($user_id > 1) && ($user_id < 4) ) {
+            send_email_notification($user_email);
+            echo 'Email sent to user '. $user_id;
+    	    echo PHP_EOL;
+	    }
         
 	    $i++;
     }
     echo PHP_EOL;
     echo PHP_EOL;
-    $total = $i + 1;
-    echo $total .' emails sent.';
+    echo $i .' emails sent.';
 	echo PHP_EOL;
 }
 
@@ -470,7 +472,7 @@ body, td { font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif; 
             <td class="w30" width="30" style="font-family:"Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;border-collapse:collapse;"></td>
             <td class="w580" width="360" valign="top" style="font-family:"Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;border-collapse:collapse;">
             <span class="hide"><p id="permission-reminder" align="left" class="footer-content-left" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;font-size:12px;line-height:15px;color:#e2e2e2;margin-top:0px;margin-bottom:15px;white-space:normal;"><span>You\'re receiving this because you are subscribed to Green Pages email notifications. </span></p></span>
-            <p align="left" class="footer-content-left" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;font-size:12px;line-height:15px;color:#e2e2e2;margin-top:0px;margin-bottom:15px;"><a href="http://greenpages2.updatemyprofile.com/r-buhhhik-97F827F4-tryhldtiju-t" lang="en" style="color:#E2E2E2;text-decoration:none;font-weight:bold;">Edit your subscription</a> | <a href="http://greenpages2.createsend1.com/t/r-u-buhhhik-tryhldtiju-i/" style="color:#E2E2E2;text-decoration:none;font-weight:bold;">Unsubscribe</a></p>
+            <p align="left" class="footer-content-left" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;font-size:12px;line-height:15px;color:#e2e2e2;margin-top:0px;margin-bottom:15px;"><a href="http://www.greenpag.es/forms/profile-notifications/" lang="en" style="color:#E2E2E2;text-decoration:none;font-weight:bold;">Edit your email preferences</a></p>
             </td>
             <td class="hide w0" width="60" style="font-family:"Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;border-collapse:collapse;"></td>
             <td class="hide w0" width="160" valign="top" style="font-family:"Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;border-collapse:collapse;">
