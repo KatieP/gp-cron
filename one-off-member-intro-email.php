@@ -46,12 +46,12 @@ function send_notifcations() {
         $user_id = (int) $row->ID;
 	    $user_email = $row->user_email;
         
-	    // if ( ($user_id >= 3968) && ($user_id <= 18782) ) {
-            // send_email_notification($user_email);
+	    if ( ($user_id >= 3968) && ($user_id <= 18782) ) {
+            send_email_notification($user_email);
             echo 'Email sent to user '. $user_id;
     	    echo PHP_EOL;
     	    $total++;
-	    // }
+	    }
         
 	    $i++;
     }
