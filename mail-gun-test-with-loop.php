@@ -57,8 +57,12 @@ function get_post_image($row) {
 	$image_url_img = '';
 
 	// Extract all 'words' beggining with 'src=' and end with .jpg, .png or .gif from $post_content and store as image url variable
-	preg_match("/(src.*)(jpg)/", $post_content, $matches);
-	$image_url = $matches[0];
+	if (preg_match("/(src.*)(jpg)/", $post_content, $matches)){
+	    $image_url = $matches[0];
+	} else {
+	    $image_url = '';
+	}
+	
 
 	if ($row->_thumbnail_id != NULL && $row->post_type == 'gp_news') {
 	    $upload_url =    'http://www.greenpag.es/wp-content/uploads';
