@@ -104,19 +104,19 @@ function get_post_image($row) {
 		$image_url_img = 'img src='. $random_images[$rand_keys[0]];		
     } else {
         $image_url_img = 'img '. $image_url;
-	
-	if ($row->post_type == 'gp_advertorial' || $row->post_type == 'gp_projects') { 
-		echo PHP_EOL;
-		echo 'Post type: '. $row->post_type;
-		echo PHP_EOL;
-		echo $row->post_title . ' Final else $image_url_img:';
-		echo PHP_EOL;
-		var_dump($image_url_img);
-		echo PHP_EOL;
-	}
-    } 
+    }
+    
+    if ($row->post_type != 'gp_news') { 
+	echo PHP_EOL;
+	echo 'Post type: '. $row->post_type;
+	echo PHP_EOL;
+	echo $row->post_title . ' Final else $image_url_img:';
+	echo PHP_EOL;
+	var_dump($image_url_img);
+	echo PHP_EOL;
+    }
 
-	return $image_url_img;
+    return $image_url_img;
 }
 
 function strip_non_utf_chars($string) {
