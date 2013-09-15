@@ -1169,7 +1169,8 @@ function send_notifcations() {
 	    $row = mysql_fetch_object($users);
         $user_id = $row->ID;
 	    $user_email = $row->user_email;
-	    // $meta_key = $row->meta_key;
+	    $user_lat = '';
+	    $user_long = '';
 	    
 	    $user_notification_setting = get_user_notification_setting($user_id);
 	    
