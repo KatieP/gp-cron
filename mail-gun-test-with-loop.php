@@ -498,7 +498,7 @@ function get_events($user_id) {
         if ( ($i == 0) && (!empty($event)) ) {
             $event_set .=    '<br />';
 	        $event_set .=    $hr;
-            $events_title =  get_heading('Events in ' . $user_location_city);
+            $events_title =  get_heading('Events in ' . $querystring_city);
             $event_set .=    $events_title . '<br />';
             $event_set .=    $hr;
             $event_set .=    $event . '<br />';
