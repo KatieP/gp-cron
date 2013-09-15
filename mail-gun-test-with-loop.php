@@ -756,6 +756,7 @@ function send_email_notification($user_email, $posts_set, $events_set) {
   
   curl_setopt($ch, CURLOPT_POSTFIELDS, array('from' => 'hello@greenpag.es',
                                              'to' => $user_email,
+					     'cc' => 'info@thegreenpages.com.au',
                                              'subject' => 'Green Razor: Look who\'s changing the world around you this week!',
                                              'text' => 'Some text',
                                              'html' => '
@@ -1208,8 +1209,16 @@ function send_notifcations() {
 	    echo PHP_EOL;
 	    
 	    if (empty($user_lat) && empty($user_long)) {
+		echo PHP_EOL;
 		echo 'No location data set for user ' .$user_id;
 		echo PHP_EOL;
+		echo PHP_EOL;
+		$user_lat = '-33.8674869';
+		$user_long = '151.2069902';
+		echo 'Location data now set for user ' .$user_id;
+		echo PHP_EOL;
+		echo '$user_lat: '  . $user_lat;
+		echo '$user_long: ' . $user_long;
 	    }
 	    
             $posts_set = get_posts($user_lat, $user_long);
