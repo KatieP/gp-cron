@@ -1213,6 +1213,11 @@ function send_notifcations() {
 	    var_dump($user_long);
 	    echo PHP_EOL;
 	    
+	    if ($user_lat == null && $user_long == null) {
+		echo 'No location data set for user ' .$user_id;
+		echo PHP_EOL;
+	    }
+	    
             $posts_set = get_posts($user_lat, $user_long);
             mb_convert_encoding($posts_set, 'UTF-8');
 
