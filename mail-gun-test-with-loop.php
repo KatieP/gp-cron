@@ -104,6 +104,16 @@ function get_post_image($row) {
 		$image_url_img = 'img src='. $random_images[$rand_keys[0]];		
     } else {
         $image_url_img = 'img '. $image_url;
+	
+	if ($row->post_type == 'gp_advertorial' || $row->post_type == 'gp_projects') { 
+		echo PHP_EOL;
+		echo 'Post type: '. $row->post_type;
+		echo PHP_EOL;
+		echo $row->post_title . ' Final else $image_url_img:';
+		echo PHP_EOL;
+		var_dump($image_url_img);
+		echo PHP_EOL;
+	}
     } 
 
 	return $image_url_img;
@@ -511,8 +521,8 @@ function get_events($user_id) {
 	}
 	
 	$filterby_country =       ( !empty($querystring_country) ) ? ' AND m3.meta_value ="'.  $querystring_country .'"' : '';
-    $filterby_state =         ( !empty($querystring_state) )   ? ' AND m4.meta_value ="'.  $querystring_state .'"'  : '';
-    $filterby_city =          ( !empty($querystring_city) )    ? ' AND m6.meta_value !="'. $querystring_city .'"'   : '';
+        $filterby_state =         ( !empty($querystring_state) )   ? ' AND m4.meta_value ="'.  $querystring_state .'"'  : '';
+        $filterby_city =          ( !empty($querystring_city) )    ? ' AND m6.meta_value !="'. $querystring_city .'"'   : '';
 	
    	$db_result = get_events_from_db($filterby_country, $filterby_state, $filterby_city);
    	
