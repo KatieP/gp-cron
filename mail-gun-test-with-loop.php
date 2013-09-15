@@ -467,9 +467,9 @@ function get_events($user_id) {
 	
 	// set location query strings based on user location
 	
-	$querystring_country =    ( !empty( $user_country ) )               ? $user_country : '';
-    $querystring_state =      ( !empty( $user_location_state ) )        ? strtoupper( $user_location_state )        : '';
-	$querystring_city =       ( !empty( $user_location_city ) )         ? $user_location_city                       : '';
+	$querystring_country =    ( !empty( $user_country ) )               ? $user_country                             : 'AU';
+        $querystring_state =      ( !empty( $user_location_state ) )        ? strtoupper( $user_location_state )        : 'NSW';
+	$querystring_city =       ( !empty( $user_location_city ) )         ? $user_location_city                       : 'Sydney';
 	
 	$filterby_country =       ( !empty($querystring_country) ) ? ' AND m3.meta_value ="'. $querystring_country .'"' : '';
     $filterby_state =         ( !empty($querystring_state) )   ? ' AND m4.meta_value ="'. $querystring_state .'"'  : '';
