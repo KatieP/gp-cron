@@ -54,6 +54,7 @@ function get_post_image($row) {
 
 	$post_content = $row->post_content;
 	$pattern =      'src';
+	$image_url_img = '';
 
 	// Extract all 'words' beggining with 'src=' and end with .jpg, .png or .gif from $post_content and store as image url variable
 	preg_match("/(src.*)(jpg)/", $post_content, $matches);
@@ -258,7 +259,8 @@ function get_featured_image_urls_from_db($author_id) {
 
 	$sql = "SELECT post_date, post_title, guid
        		FROM wp_posts
-	        WHERE post_author = ' . $author_id . ' 
+	        WHERE post_modified > DATE_SUB(CURDATE(), INTERVAL 3 WEEK)
+		    AND post_author = ' . $author_id . '
 	            AND post_type = 'attachment'
        		    AND post_status = 'inherit'";
 
