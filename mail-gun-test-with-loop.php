@@ -258,7 +258,7 @@ function get_featured_image_urls_from_db($author_id) {
 
 	$sql = "SELECT post_date, post_title, guid
        		FROM wp_posts
-	        WHERE post_modified > DATE_SUB(CURDATE(), INTERVAL 2 WEEK) 
+	        WHERE post_author = ' . $author_id . ' 
 	            AND post_type = 'attachment'
        		    AND post_status = 'inherit'";
 
@@ -277,7 +277,7 @@ function get_posts_from_db($post_type) {
 	            m0.meta_value AS _thumbnail_id
        		FROM wp_posts 
 	            LEFT JOIN wp_postmeta AS m0 on m0.post_id=wp_posts.ID and m0.meta_key='_thumbnail_id'
-	        WHERE post_modified > DATE_SUB(CURDATE(), INTERVAL 2 WEEK) 
+	        WHERE post_modified > DATE_SUB(CURDATE(), INTERVAL 3 WEEK) 
 	            AND post_type = '". $post_type ."'
        		    AND post_status = 'publish'";
 
