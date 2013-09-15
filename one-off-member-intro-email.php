@@ -501,7 +501,7 @@ body, td { font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif; 
  
 }
 
-send_notifcations();
+// send_notifcations();
 
 echo '_______________________________________________________';
 echo PHP_EOL; 
