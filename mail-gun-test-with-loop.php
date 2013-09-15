@@ -1207,7 +1207,7 @@ function send_notifcations() {
 	    var_dump($user_long);
 	    echo PHP_EOL;
 	    
-	    if ($user_lat == null && $user_long == null) {
+	    if (empty($user_lat) && empty($user_long)) {
 		echo 'No location data set for user ' .$user_id;
 		echo PHP_EOL;
 	    }
