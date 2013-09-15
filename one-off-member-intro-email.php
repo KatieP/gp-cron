@@ -36,7 +36,6 @@ function send_notifcations() {
 
     $users = get_users();
     $i = 0;
-    $total = 0;
     $data_set = mysql_num_rows($users);    
 
     while ($i < $data_set) {
@@ -50,15 +49,14 @@ function send_notifcations() {
             send_email_notification($user_email);
             echo 'Email sent to user '. $user_id;
     	    echo PHP_EOL;
-    	    $total++;
 	    }
         
 	    $i++;
     }
     echo PHP_EOL;
     echo PHP_EOL;
-    echo $total .' emails sent.';
-	echo PHP_EOL;
+    echo $i .' emails sent.';
+    echo PHP_EOL;
 }
 
 function send_email_notification($user_email) {

@@ -103,12 +103,6 @@ function get_post_image($row) {
 		$image_url_img = 'img src='. $random_images[$rand_keys[0]];		
     } else {
         $image_url_img = 'img '. $image_url;
-        
-        echo PHP_EOL;
-        echo $row->post_title . ' Final else $image_url_img:';
-        echo PHP_EOL;
-        var_dump($image_url_img);
-        echo PHP_EOL;
     } 
 
 	return $image_url_img;
@@ -681,7 +675,7 @@ function get_sorted_posts($post_type, $user_lat, $user_long) {
 	$sorted_posts = ($post_type == 'gp_news') ? array_slice($unsorted_posts, 0, 15, true) : $unsorted_posts;
 
 	foreach ($sorted_posts as $post) {
-    	$posts_set .= $post . '<br />';
+    	    $posts_set .= $post . '<br />';
 	}
 	
 	return $posts_set;
@@ -762,7 +756,6 @@ function send_email_notification($user_email, $posts_set, $events_set) {
   
   curl_setopt($ch, CURLOPT_POSTFIELDS, array('from' => 'hello@greenpag.es',
                                              'to' => $user_email,
-                                             'cc' => 'info@thegreenpages.com.au',
                                              'subject' => 'Green Razor: Look who\'s changing the world around you this week!',
                                              'text' => 'Some text',
                                              'html' => '
