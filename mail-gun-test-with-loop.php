@@ -343,7 +343,8 @@ function get_users() {
 	//Get user emails and their location
 	$sql_user = 'SELECT DISTINCT user_email, display_name, ID
                      FROM   wp_users
-                     WHERE  ID = "3"';
+                     WHERE  ID = "3" OR
+		            ID = "7"';
 
 	$db_result = mysql_query($sql_user);
 
@@ -1202,7 +1203,16 @@ function send_notifcations() {
                     }
                     $j++;
             }
-
+	    
+	    echo '$user_lat: ';
+	    echo PHP_EOL;
+	    var_dump($user_lat);
+	    echo PHP_EOL;
+	    echo '$user_long: ';
+	    echo PHP_EOL;
+	    var_dump($user_long);
+	    echo PHP_EOL;
+	    
             $posts_set = get_posts($user_lat, $user_long);
             mb_convert_encoding($posts_set, 'UTF-8');
 
