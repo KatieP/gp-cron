@@ -1217,8 +1217,14 @@ function send_notifcations() {
 		$user_long = '151.2069902';
 		echo 'Location data now set for user ' .$user_id;
 		echo PHP_EOL;
-		echo '$user_lat: '  . $user_lat;
-		echo '$user_long: ' . $user_long;
+		echo '$user_lat: ';
+		echo PHP_EOL;
+		var_dump($user_lat);
+		echo PHP_EOL;
+		echo '$user_long: ';
+		echo PHP_EOL;
+		var_dump($user_long);
+		echo PHP_EOL;
 	    }
 	    
             $posts_set = get_posts($user_lat, $user_long);
