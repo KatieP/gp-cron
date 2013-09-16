@@ -219,7 +219,7 @@ function get_single_post($row) {
 	$post_name =     $row->post_name;
 	$raw_content =   strip_tags($row->post_content);
 	$content =       strip_non_utf_chars($raw_content);
-	$post_content =  substr($content, 0, 240);
+	$post_content =  substr($content, 0, 280);
 	$post_ID =       $row->ID;
 	$post_url =      get_post_url($row);
 	$post_image =    get_post_image($row);
