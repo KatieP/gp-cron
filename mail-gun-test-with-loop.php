@@ -109,7 +109,7 @@ function get_post_image($row) {
         	    }
         	    $i++;
                 }
-		if (empty($image_url_img) || $image_url_img == '-110x110'){
+		if (empty($image_url_img) || $image_url_img == 'img src="-110x110"'){
 			// If image src is not found, then randomly show a cool image
 			$random_images = array();
 			$random_images = get_random_images();
