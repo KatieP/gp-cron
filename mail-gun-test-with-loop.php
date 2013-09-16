@@ -219,7 +219,7 @@ function get_single_post($row) {
 	$post_name =     $row->post_name;
 	$raw_content =   strip_tags($row->post_content);
 	$content =       strip_non_utf_chars($raw_content);
-	$post_content =  substr($content, 0, 280);
+	$post_content =  substr($content, 0, 220);
 	$post_ID =       $row->ID;
 	$post_url =      get_post_url($row);
 	$post_image =    get_post_image($row);
@@ -351,7 +351,8 @@ function get_users() {
 	//Get user emails and their location
 	$sql_user = 'SELECT DISTINCT user_email, display_name, ID
                      FROM   wp_users
-		     WHERE ID = "3"';
+		     WHERE ID = "3"
+		     OR ID = "2"';
 
 	$db_result = mysql_query($sql_user);
 
