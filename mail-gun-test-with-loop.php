@@ -84,13 +84,13 @@ function get_post_image($row) {
 	    $db_img_result =  get_featured_image_urls_from_db($row->post_author);
             $data_set =       mysql_num_rows($db_img_result);
             $i =              0;
-            $post_date_tr =   substr($row->post_date, 0, 14);
+            $post_date_tr =   substr($row->post_date, 0, 11);
 
             if ($data_set != FALSE) {
                 while ($i <= $data_set) {
             	    mysql_data_seek($db_img_result, $i);
         	    $new_row =           mysql_fetch_object($db_img_result);
-        	    $new_post_date_tr =  substr($new_row->post_date, 0, 14);       		
+        	    $new_post_date_tr =  substr($new_row->post_date, 0, 11);       		
         	    if ($post_date_tr == $new_post_date_tr) {
             	        $file_type =      substr($new_row->guid, -4);
             		$len =            strlen($new_row->guid);
