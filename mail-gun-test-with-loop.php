@@ -499,7 +499,7 @@ function get_events($user_id) {
     $data_set =  mysql_num_rows($db_result);
 
     $i = 0;
-    $events_set = '';
+    $event_set = '';
     $hr = '<hr style="padding-top:0px;padding-bottom:0px;padding-right:0px;padding-left:0px;margin-top:0px;margin-bottom:10px;margin-right:0;margin-left:0;"> ';
 
 	while ($i < $data_set) {
@@ -698,7 +698,7 @@ function get_sorted_posts($post_type, $user_lat, $user_long) {
 
 function get_posts($user_lat, $user_long) {
     
-    $post_set =    '';
+    $posts_set =    '';
     
     // Get news
     $post_type =   'gp_news';
