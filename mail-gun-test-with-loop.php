@@ -77,7 +77,6 @@ function get_post_image($row) {
 	    }
 	} elseif ( empty($image_url) && ($row->_thumbnail_id != NULL) && ($row->post_type != 'gp_news') ) {
 	    // Get url for featured image thumbnail from db
-	    
 	    echo PHP_EOL;
 	    echo 'Get url for featured image thumbnail from db';
 	    echo PHP_EOL;
@@ -95,9 +94,9 @@ function get_post_image($row) {
         	    if ($post_date_tr == $new_post_date_tr) {
             	        $file_type =  substr($new_row->guid, -4);
             		$len =        strlen($new_row->guid);
-            		$f_name =     substr($new_row->guid, 0, $len - 4);
-            		$s_f_name =   $f_name . '-110x110' . $file_type;
-            		$image_url_img = 'img src="' . $s_f_name .'"';
+            		$f_i_name =     substr($new_row->guid, 0, $len - 4);
+            		$s_f_i_name =   $f_i_name . '-110x110' . $file_type;
+            		$image_url_img = 'img src="' . $s_f_i_name .'"';
         	    }
         	    $i++;
                 }
