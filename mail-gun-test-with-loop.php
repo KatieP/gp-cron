@@ -91,7 +91,7 @@ function get_post_image($row) {
             $post_date_tr =   substr($row->post_date, 0, 14);
             
 	    echo PHP_EOL;
-	    echo 'Post_date: '. $post_date_tr;
+	    echo 'Data set: '. $data_set;
 	    echo PHP_EOL;
             
 	    if ($data_set != FALSE) {
