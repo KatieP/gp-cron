@@ -100,11 +100,6 @@ function get_post_image($row) {
         	    $new_row =           mysql_fetch_object($db_img_result);
         	    $new_post_date_tr =  substr($new_row->post_date, 0, 14);       		
         	    if ($post_date_tr == $new_post_date_tr) {
-			
-		        echo PHP_EOL;
-	                echo 'Image post_date: '. $new_post_date_tr;
-	                echo PHP_EOL;
-			
             	        $file_type =      substr($new_row->guid, -4);
             		$len =            strlen($new_row->guid);
             		$f_i_name =       substr($new_row->guid, 0, $len - 4);
@@ -114,6 +109,14 @@ function get_post_image($row) {
         	    }
         	    $i++;
                 }
+		if (empty($image_url_img) || $image_url_img == '-110x110'){
+			// If image src is not found, then randomly show a cool image
+			$random_images = array();
+			$random_images = get_random_images();
+			$rand_keys =     array_rand($random_images, 2);
+			$image_url_img = 'img src='. $random_images[$rand_keys[0]];			
+		}
+
             }
 	} elseif ( empty($image_url) || $row->post_author == '712' ) {
 		// If image src is not found, then randomly show a cool image
