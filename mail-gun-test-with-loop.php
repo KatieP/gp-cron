@@ -86,7 +86,7 @@ function get_post_image($row) {
             $i =              0;
             $post_date_tr =   substr($row->post_date, 0, 14);
 
-            if ($data_set > 0) {
+            if ($data_set != FALSE) {
                 while ($i < $data_set) {
             	    mysql_data_seek($db_img_result, $i);
         	    $new_row =           mysql_fetch_object($db_img_result);
@@ -97,6 +97,7 @@ function get_post_image($row) {
             		$f_i_name =       substr($new_row->guid, 0, $len - 4);
             		$s_f_i_name =     $f_i_name . '-110x110' . $file_type;
             		$image_url_img =  'img src="' . $s_f_i_name .'"';
+			break;
         	    }
         	    $i++;
                 }
