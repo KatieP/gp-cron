@@ -82,7 +82,7 @@ function get_post_image($row) {
 	} elseif ( empty($image_url) && ($row->_thumbnail_id != NULL) && $row->post_author != '712' ) {
 	    // Get url for featured image thumbnail from db
 	    echo PHP_EOL;
-	    echo 'Get url for featured image thumbnail from db';
+	    echo 'Get url for featured image thumbnail from db for '. $row->post_title;
 	    echo PHP_EOL;
 	    
 	    $db_img_result =  get_featured_image_urls_from_db($row->post_author);
