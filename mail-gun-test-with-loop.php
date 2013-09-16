@@ -137,6 +137,15 @@ function get_post_image($row) {
 	    var_dump($image_url_img);
 	    echo PHP_EOL;
 	}
+
+	if (empty($image_url_img)) {
+		// If image src is not found, then randomly show a cool image
+		$random_images = array();
+		$random_images = get_random_images();
+		$rand_keys =     array_rand($random_images, 2);
+		$image_url_img = 'img src='. $random_images[$rand_keys[0]];		
+	}
+
         return $image_url_img;
 }
 
