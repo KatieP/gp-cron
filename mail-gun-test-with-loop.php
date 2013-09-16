@@ -57,15 +57,15 @@ function get_post_image($row) {
 	$image_url_img = '';
 
 	// Extract all 'words' beggining with 'src=' and end with .jpg, .png or .gif from $post_content and store as image url variable
-	/*
+	
 	if (preg_match("/(src.*)(jpg)/", $post_content, $matches)){
 	    $image_url = $matches[0];
 	} else {
 	    $image_url = '';
 	}
-	*/
-	preg_match("/(src.*)(jpg)/", $post_content, $matches);
-	$image_url = $matches[0];
+	
+	// preg_match("/(src.*)(jpg)/", $post_content, $matches);
+	// $image_url = $matches[0];
 	
 	if ($row->_thumbnail_id != NULL && $row->post_type == 'gp_news' && !empty($image_url) && $row->post_author != '712' ) {
 	    $upload_url =    'http://www.greenpag.es/wp-content/uploads';
@@ -128,7 +128,7 @@ function get_post_image($row) {
             $image_url_img = 'img '. $image_url;
         }
     
-        
+        if ($row->post_title == 'Reshape. Redesign. Recreate. Urban little piece of nature.') {
 	    echo PHP_EOL;
 	    echo 'Post type: '. $row->post_type;
 	    echo PHP_EOL;
@@ -136,7 +136,7 @@ function get_post_image($row) {
 	    echo PHP_EOL;
 	    var_dump($image_url_img);
 	    echo PHP_EOL;
-        
+	}
         return $image_url_img;
 }
 
@@ -790,7 +790,6 @@ function send_email_notification($user_email, $posts_set, $events_set) {
   
   curl_setopt($ch, CURLOPT_POSTFIELDS, array('from' => 'hello@greenpag.es',
                                              'to' => $user_email,
-					     'cc' => 'jessebrowne78@gmail.com',
                                              'subject' => 'Green Razor: Look who\'s changing the world around you this week!',
                                              'text' => 'Some text',
                                              'html' => '
@@ -1066,7 +1065,7 @@ a.fb_button_small_rtl:active{background-position:right -458px}
             <table class="w325" width="350" cellpadding="0" cellspacing="0" border="0">
                 <tbody><tr style="border-collapse:collapse;"><td class="w325" width="350" height="8" style="border-collapse:collapse;"></td></tr>
             </tbody></table>
-            <div class="header-content" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;font-size:12px;color:#ffffff;"><a href="http://greenpages.createsend1.com/t/r-e-ojylyjt-eidkjkly-u/" style="font-weight:bold;color:#ffffff;text-decoration:none;">greenpag.es</a><span class="hide">&nbsp;&nbsp;<a href="http://greenpages.createsend1.com/t/r-l-ojylyjt-eidkjkly-a/" style="font-weight:bold;color:#ffffff;text-decoration:none;">this week</a>&nbsp;&nbsp;&nbsp;</span></div>
+            <div class="header-content" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;font-size:12px;color:#ffffff;"><a href="http://www.greenpag.es" style="font-weight:bold;color:#ffffff;text-decoration:none;">greenpag.es</a><span class="hide">&nbsp;&nbsp;<a href="http://greenpages.createsend1.com/t/r-l-ojylyjt-eidkjkly-a/" style="font-weight:bold;color:#ffffff;text-decoration:none;">this week</a>&nbsp;&nbsp;&nbsp;</span></div>
             <table class="w325" width="350" cellpadding="0" cellspacing="0" border="0">
                 <tbody><tr style="border-collapse:collapse;"><td class="w325" width="350" height="8" style="border-collapse:collapse;"></td></tr>
             </tbody></table>
@@ -1233,32 +1232,9 @@ function send_notifcations() {
                     $j++;
             }
 	    
-	    echo '$user_lat: ';
-	    echo PHP_EOL;
-	    var_dump($user_lat);
-	    echo PHP_EOL;
-	    echo '$user_long: ';
-	    echo PHP_EOL;
-	    var_dump($user_long);
-	    echo PHP_EOL;
-	    
 	    if (empty($user_lat) && empty($user_long)) {
-		echo PHP_EOL;
-		echo 'No location data set for user ' .$user_id;
-		echo PHP_EOL;
-		echo PHP_EOL;
 		$user_lat = '-33.8674869';
 		$user_long = '151.2069902';
-		echo 'Location data now set for user ' .$user_id;
-		echo PHP_EOL;
-		echo '$user_lat: ';
-		echo PHP_EOL;
-		var_dump($user_lat);
-		echo PHP_EOL;
-		echo '$user_long: ';
-		echo PHP_EOL;
-		var_dump($user_long);
-		echo PHP_EOL;
 	    }
 	    
             $posts_set = get_posts($user_lat, $user_long);
