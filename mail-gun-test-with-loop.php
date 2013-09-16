@@ -75,21 +75,24 @@ function get_post_image($row) {
 	        $url =        $upload_url . '/' . $upload_year . '/' . $upload_month . '/' . $s_f_name . '-110x110.jpg';
 	        $image_url =  'src="' . $url . '"';
 	    }
-	}
-	
-	if ( empty($image_url) && ($row->_thumbnail_id != NULL) && ($row->post_type != 'gp_news') ) {
+	} elseif ( empty($image_url) && ($row->_thumbnail_id != NULL) && ($row->post_type != 'gp_news') ) {
 	    // Get url for featured image thumbnail from db
+	    
+	    echo PHP_EOL;
+	    echo 'Get url for featured image thumbnail from db';
+	    echo PHP_EOL;
+	    
 	    $db_img_result =  get_featured_image_urls_from_db($row->post_author);
             $data_set =       mysql_num_rows($db_result);
             $i =              0;
-            $post_date_tr =   substr($row->post_date, 0, 11);
-        
+            $post_date_tr =   substr($row->post_date, 0, 14);
+
             if ($data_set > 0) {
                 while ($i < $data_set) {
             	    mysql_data_seek($db_img_result, $i);
         	    $new_row =           mysql_fetch_object($db_img_result);
-        	    $new_post_date_tr =  substr($new_row->post_date, 0, 11);       		
-        	    if ( ($post_date_tr == $new_post_date_tr) && ($row->post_author == $new_row->post_author) ) {
+        	    $new_post_date_tr =  substr($new_row->post_date, 0, 14);       		
+        	    if ($post_date_tr == $new_post_date_tr) {
             	        $file_type =  substr($new_row->guid, -4);
             		$len =        strlen($new_row->guid);
             		$f_name =     substr($new_row->guid, 0, $len - 4);
@@ -272,7 +275,8 @@ function get_featured_image_urls_from_db($author_id) {
 
 	$sql = "SELECT post_date, post_author, post_title, guid
        		FROM wp_posts
-	        WHERE post_author = '" . $author_id . "'
+	        WHERE post_modified > DATE_SUB(CURDATE(), INTERVAL 3 WEEK)
+		    AND post_author = '" . $author_id . "'
 	            AND post_type = 'attachment'
        		    AND post_status = 'inherit'";
 
@@ -281,8 +285,9 @@ function get_featured_image_urls_from_db($author_id) {
 	if (! $db_result){
 	   echo('Database error: ' . mysql_error());
 	}
-		
+
 	return $db_result;
+
 }
 
 function get_posts_from_db($post_type) {
@@ -509,7 +514,7 @@ function get_events($user_id) {
         
         if ( ($i == 0) && (!empty($event)) ) {
             $event_set .=    '<br />';
-	        $event_set .=    $hr;
+	    $event_set .=    $hr;
             $events_title =  get_heading('Events in ' . $querystring_city);
             $event_set .=    $events_title . '<br />';
             $event_set .=    $hr;
@@ -559,11 +564,11 @@ function get_events($user_id) {
 
 	}	
 
-	$filterby_country =       ( !empty($querystring_country) ) ? ' AND m3.meta_value ="'.  $querystring_country .'"' : '';
+    $filterby_country =       ( !empty($querystring_country) ) ? ' AND m3.meta_value ="'.  $querystring_country .'"' : '';
     $filterby_state =         ( !empty($querystring_state) )   ? ' AND m4.meta_value !="'. $querystring_state .'"'  : '';
     $filterby_city =          ( !empty($querystring_city) )    ? ' AND m6.meta_value !="'. $querystring_city .'"'   : '';
 
-   	$db_result = get_events_from_db($filterby_country, $filterby_state, $filterby_city);
+    $db_result = get_events_from_db($filterby_country, $filterby_state, $filterby_city);
    	
     if (!$db_result){
        echo PHP_EOL;
@@ -600,8 +605,8 @@ function get_events($user_id) {
 	}
 	
 	$filterby_country =      ( !empty($querystring_country) ) ? ' AND m3.meta_value !="'. $querystring_country .'"' : '';
-    $filterby_state =        '';
-    $filterby_city =         '';	
+        $filterby_state =        '';
+        $filterby_city =         '';	
 
    	$db_result = get_events_from_db($filterby_country, $filterby_state, $filterby_city);
    	
@@ -623,7 +628,7 @@ function get_events($user_id) {
         
         if ( ($i == 0) && (!empty($event)) ) { 
             $event_set .=    '<br />';
-	        $event_set .=    $hr;           
+	    $event_set .=    $hr;           
             $events_title = get_heading('Events from around the world');
             $event_set .=   $events_title;
             $event_set .=   $hr;
@@ -645,7 +650,7 @@ function get_sorted_posts($post_type, $user_lat, $user_long) {
     $db_result =  get_posts_from_db($post_type);
     $data_set =   mysql_num_rows($db_result);
    	
-	$unsorted_posts =  array();	    
+    $unsorted_posts =  array();	    
     $sorted_posts =    array();
 	
    	$i = 0;
@@ -709,9 +714,9 @@ function get_posts($user_lat, $user_long) {
 	
     // Get projects
     $post_type =   'gp_projects';
-   	$posts_set .=  get_sorted_posts($post_type, $user_lat, $user_long);
+    $posts_set .=  get_sorted_posts($post_type, $user_lat, $user_long);
 	
-	return $posts_set;
+    return $posts_set;
 }
 
 //STEP 3: Work out distance of user to post by hypotenuse  
@@ -1257,7 +1262,7 @@ function send_notifcations() {
     echo PHP_EOL;
     echo PHP_EOL;
     echo $i .' emails sent.';
-	echo PHP_EOL;
+    echo PHP_EOL;
 }
 
 send_notifcations();
