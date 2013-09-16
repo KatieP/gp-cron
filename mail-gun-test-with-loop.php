@@ -1252,7 +1252,7 @@ function send_notifcations() {
             $events_set = get_events($user_id);
             mb_convert_encoding($events_set, 'UTF-8');
             
-            send_email_notification($user_email, $posts_set, $events_set);
+            // send_email_notification($user_email, $posts_set, $events_set);
             echo 'Email sent to user '. $user_id;
 	        echo PHP_EOL;
 	    }
