@@ -57,11 +57,15 @@ function get_post_image($row) {
 	$image_url_img = '';
 
 	// Extract all 'words' beggining with 'src=' and end with .jpg, .png or .gif from $post_content and store as image url variable
+	/*
 	if (preg_match("/(src.*)(jpg)/", $post_content, $matches)){
 	    $image_url = $matches[0];
 	} else {
 	    $image_url = '';
 	}
+	*/
+	preg_match("/(src.*)(jpg)/", $post_content, $matches);
+	$image_url = $matches[0];
 	
 	if ($row->_thumbnail_id != NULL && $row->post_type == 'gp_news' && !empty($image_url) && $row->post_author != '712' ) {
 	    $upload_url =    'http://www.greenpag.es/wp-content/uploads';
@@ -130,7 +134,6 @@ function get_post_image($row) {
 	    var_dump($image_url_img);
 	    echo PHP_EOL;
         
-
         return $image_url_img;
 }
 
@@ -1087,7 +1090,7 @@ a.fb_button_small_rtl:active{background-position:right -458px}
         <td class="w10" width="10" style="border-collapse:collapse;"></td>
         <td valign="middle" style="border-collapse:collapse;"><a href="http://greenpages.forwardtomyfriend.com/r-eidkjkly-226DE05E-ojylyjt-l-x" style="font-weight:bold;color:#ffffff;text-decoration:none;"><img src="http://i7.createsend1.com/ti/r/F0/850/BDD/134918//csimport/forward-glyph_2.png" border="0" width="19" height="14" alt="Forward icon" =""="" style="height:auto;line-height:100%;outline-style:none;text-decoration:none;display:block;"></a></td>
         <td width="3" style="border-collapse:collapse;"></td>
-        <td valign="middle" style="border-collapse:collapse;"><div class="header-content" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;font-size:12px;color:#ffffff;"><a href="http://greenpages.forwardtomyfriend.com/r-eidkjkly-226DE05E-ojylyjt-l-m" style="font-weight:bold;color:#ffffff;text-decoration:none;">Forward</a>&nbsp;&nbsp;&nbsp;</div></td>
+        <td valign="middle" style="border-collapse:collapse;"><div class="header-content" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;font-size:12px;color:#ffffff;"><a href="http://greenpages.forwardtomyfriend.com/r-eidkjkly-226DE05E-ojylyjt-l-m" style="font-weight:bold;color:#ffffff;text-decoration:none;">Forward</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div></td>
         
     </tr>
 </tbody></table>
