@@ -83,7 +83,7 @@ function get_post_image($row) {
 	    echo PHP_EOL;
 	    
 	    $db_img_result =  get_featured_image_urls_from_db($row->post_author);
-            $data_set =       mysql_num_rows($db_result);
+            $data_set =       mysql_num_rows($db_img_result);
             $i =              0;
             $post_date_tr =   substr($row->post_date, 0, 14);
 
