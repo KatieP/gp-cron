@@ -1046,7 +1046,7 @@ a.fb_button_small_rtl:active{background-position:right -458px}
             <table class="w325" width="350" cellpadding="0" cellspacing="0" border="0">
                 <tbody><tr style="border-collapse:collapse;"><td class="w325" width="350" height="8" style="border-collapse:collapse;"></td></tr>
             </tbody></table>
-            <div class="header-content" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;font-size:12px;color:#ffffff;"><a href="http://www.greenpag.es" style="font-weight:bold;color:#ffffff;text-decoration:none;">The Green Razor from greenpag.es</a><span class="hide">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+            <div class="header-content" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;font-size:12px;color:#ffffff;"><a href="http://www.greenpag.es" style="font-weight:bold;color:#ffffff;text-decoration:none;">The Green Razor from greenpag.es this week</a><span class="hide">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
             <table class="w325" width="350" cellpadding="0" cellspacing="0" border="0">
                 <tbody><tr style="border-collapse:collapse;"><td class="w325" width="350" height="8" style="border-collapse:collapse;"></td></tr>
             </tbody></table>
