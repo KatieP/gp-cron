@@ -42,10 +42,10 @@ function get_post_url($row) {
    	$post_type =     $row->post_type;
    	$post_name =     $row->post_name;
    	$post_type_map = array( "gp_news" => "news", 
-                            "gp_advertorial" => "eco-friendly-products", 
-                            "gp_projects" => "projects");
+                                "gp_advertorial" => "eco-friendly-products", 
+                                "gp_projects" => "projects");
      	 					
-    $post_url = "http://www.greenpag.es/" . $post_type_map[$post_type] . "/" . $post_name;
+        $post_url = "http://www.greenpag.es/" . $post_type_map[$post_type] . "/" . $post_name;
 	return $post_url;
 
 }
@@ -81,18 +81,11 @@ function get_post_image($row) {
 	    }
 	} elseif ( empty($image_url) && ($row->_thumbnail_id != NULL) && $row->post_author != '712' ) {
 	    // Get url for featured image thumbnail from db
-	    echo PHP_EOL;
-	    echo 'Get url for featured image thumbnail from db for '. $row->post_title;
-	    echo PHP_EOL;
 	    
 	    $db_img_result =  get_featured_image_urls_from_db($row->post_author);
             $data_set =       mysql_num_rows($db_img_result);
             $i =              0;
             $post_date_tr =   substr($row->post_date, 0, 14);
-            
-	    echo PHP_EOL;
-	    echo 'Data set: '. $data_set;
-	    echo PHP_EOL;
             
 	    if ($data_set != FALSE) {
                 while ($i <= $data_set) {
@@ -116,7 +109,6 @@ function get_post_image($row) {
 			$rand_keys =     array_rand($random_images, 2);
 			$image_url_img = 'img src='. $random_images[$rand_keys[0]];			
 		}
-
             }
 	} elseif ( empty($image_url) || $row->post_author == '712' ) {
 		// If image src is not found, then randomly show a cool image
@@ -127,16 +119,6 @@ function get_post_image($row) {
         } else {
             $image_url_img = 'img '. $image_url;
         }
-    
-        if ($row->post_title == 'Reshape. Redesign. Recreate. Urban little piece of nature.') {
-	    echo PHP_EOL;
-	    echo 'Post type: '. $row->post_type;
-	    echo PHP_EOL;
-	    echo $row->post_title . ' Final else $image_url_img:';
-	    echo PHP_EOL;
-	    var_dump($image_url_img);
-	    echo PHP_EOL;
-	}
 
 	if ($image_url_img == '') {
 		// If image src is not found, then randomly show a cool image
@@ -191,7 +173,7 @@ function get_single_event($row, $show_country = false) {
 	$post_locality = $row->gp_google_geo_locality;
 	$post_country  = $row->gp_google_geo_country;
 	
-    $country_map =          get_country_map();
+        $country_map =          get_country_map();
 	$country_pretty_name =  $country_map[$post_country];	
 	$display_location =     ($show_country == false) ? $post_locality : $post_locality . ', ' . $country_pretty_name;
 	
