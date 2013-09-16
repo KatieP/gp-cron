@@ -272,8 +272,7 @@ function get_featured_image_urls_from_db($author_id) {
 
 	$sql = "SELECT post_date, post_author, post_title, guid
        		FROM wp_posts
-	        WHERE post_modified > DATE_SUB(CURDATE(), INTERVAL 3 WEEK)
-		    AND post_author = ' . $author_id . '
+	        WHERE post_author = ' . $author_id . '
 	            AND post_type = 'attachment'
        		    AND post_status = 'inherit'";
 
