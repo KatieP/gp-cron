@@ -219,7 +219,7 @@ function get_single_post($row) {
 	$post_name =     $row->post_name;
 	$raw_content =   strip_tags($row->post_content);
 	$content =       strip_non_utf_chars($raw_content);
-	$post_content =  substr($content, 0, 160);
+	$post_content =  substr($content, 0, 240);
 	$post_ID =       $row->ID;
 	$post_url =      get_post_url($row);
 	$post_image =    get_post_image($row);
@@ -251,17 +251,6 @@ function get_single_post($row) {
                                             <!--BODY TEXT--> '. $post_content .'...
                                             <!--LEARN MORE LINK TO ARTICLE --><a href="'. $post_url .'" style="color:#01aed8;font-weight:bold;text-decoration:none;">  Learn more</a>
                                         </p>
-                                        <p style="margin-bottom:15px;">
-	                                        <a href="/t/r-fb-ojylyjt-eidkjkly-xh/?act=wv" 
-	                                           likeurl="'. $post_url .'" 
-	                                           rel="cs_facebox" 
-	                                           style="color:#01aed8;font-weight:bold;text-decoration:none;" 
-	                                           cs_likeurl="/t/r-fb-ojylyjt-eidkjkly-xh/?act=like">
-	                                            <img src="https://img.createsend1.com/img/social/fblike.png" border="0" 
-	                                                 title="Like this on Facebook" alt="Facebook Like Button" width="51" height="20" 
-	                                                 style="height:auto;line-height:100%;outline-style:none;text-decoration:none;display:block;max-width:100%;">
-	                                        </a>
-	                                    </p>
                                     </div>
                                 </td>
                             </tr>
@@ -361,7 +350,8 @@ function get_users() {
 
 	//Get user emails and their location
 	$sql_user = 'SELECT DISTINCT user_email, display_name, ID
-                     FROM   wp_users';
+                     FROM   wp_users
+		     WHERE ID = "3"';
 
 	$db_result = mysql_query($sql_user);
 
@@ -1232,7 +1222,7 @@ function send_notifcations() {
             $events_set = get_events($user_id);
             mb_convert_encoding($events_set, 'UTF-8');
             
-            // send_email_notification($user_email, $posts_set, $events_set);
+            send_email_notification($user_email, $posts_set, $events_set);
             echo 'Email sent to user '. $user_id;
 	        echo PHP_EOL;
 	    }
