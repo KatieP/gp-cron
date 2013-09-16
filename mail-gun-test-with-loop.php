@@ -272,7 +272,7 @@ function get_featured_image_urls_from_db($author_id) {
 
 	$sql = "SELECT post_date, post_author, post_title, guid
        		FROM wp_posts
-	        WHERE post_author = ' . $author_id . '
+	        WHERE post_author = '" . $author_id . "'
 	            AND post_type = 'attachment'
        		    AND post_status = 'inherit'";
 
