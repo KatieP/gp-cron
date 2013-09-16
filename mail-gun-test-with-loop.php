@@ -75,7 +75,7 @@ function get_post_image($row) {
 	        $url =        $upload_url . '/' . $upload_year . '/' . $upload_month . '/' . $s_f_name . '-110x110.jpg';
 	        $image_url =  'src="' . $url . '"';
 	    }
-	} elseif ( empty($image_url) && ($row->_thumbnail_id != NULL) ) {
+	} elseif ( empty($image_url) && ($row->_thumbnail_id != NULL) && $row->post_author != '712' ) {
 	    // Get url for featured image thumbnail from db
 	    echo PHP_EOL;
 	    echo 'Get url for featured image thumbnail from db';
@@ -111,7 +111,7 @@ function get_post_image($row) {
         	    $i++;
                 }
             }
-	} elseif ( empty($image_url) ) {
+	} elseif ( empty($image_url) || $row->post_author == '712' ) {
 		// If image src is not found, then randomly show a cool image
 		$random_images = array();
 		$random_images = get_random_images();
