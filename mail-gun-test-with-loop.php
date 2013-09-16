@@ -43,7 +43,7 @@ function get_post_url($row) {
    	$post_name =     $row->post_name;
    	$post_type_map = array( "gp_news" => "news", 
                             "gp_advertorial" => "eco-friendly-products", 
-                            "projects" => "projects");
+                            "gp_projects" => "projects");
      	 					
     $post_url = "http://www.greenpag.es/" . $post_type_map[$post_type] . "/" . $post_name;
 	return $post_url;
