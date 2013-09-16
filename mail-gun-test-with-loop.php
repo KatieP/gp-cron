@@ -63,7 +63,7 @@ function get_post_image($row) {
 	    $image_url = '';
 	}
 	
-	if ($row->_thumbnail_id != NULL && $row->post_type == 'gp_news') {
+	if ($row->_thumbnail_id != NULL && $row->post_type == 'gp_news' && !empty($image_url) ) {
 	    $upload_url =    'http://www.greenpag.es/wp-content/uploads';
 	    $upload_year =   substr($row->post_date, 0, 4);
 	    $upload_month =  substr($row->post_date, 5, 2);
@@ -87,7 +87,7 @@ function get_post_image($row) {
             $post_date_tr =   substr($row->post_date, 0, 14);
 
             if ($data_set != FALSE) {
-                while ($i < $data_set) {
+                while ($i <= $data_set) {
             	    mysql_data_seek($db_img_result, $i);
         	    $new_row =           mysql_fetch_object($db_img_result);
         	    $new_post_date_tr =  substr($new_row->post_date, 0, 14);       		
