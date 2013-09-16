@@ -43,7 +43,8 @@ function get_post_url($row) {
    	$post_name =     $row->post_name;
    	$post_type_map = array( "gp_news" => "news", 
                                 "gp_advertorial" => "eco-friendly-products", 
-                                "gp_projects" => "projects");
+                                "gp_projects" => "projects",
+				"gp_events" => "events");
      	 					
         $post_url = "http://www.greenpag.es/" . $post_type_map[$post_type] . "/" . $post_name;
 	return $post_url;
@@ -1045,7 +1046,7 @@ a.fb_button_small_rtl:active{background-position:right -458px}
             <table class="w325" width="350" cellpadding="0" cellspacing="0" border="0">
                 <tbody><tr style="border-collapse:collapse;"><td class="w325" width="350" height="8" style="border-collapse:collapse;"></td></tr>
             </tbody></table>
-            <div class="header-content" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;font-size:12px;color:#ffffff;">The Green Razor: from <a href="http://www.greenpag.es" style="font-weight:bold;color:#ffffff;text-decoration:none;">greenpag.es</a><span class="hide">&nbsp;&nbsp;<a href="http://greenpages.createsend1.com/t/r-l-ojylyjt-eidkjkly-a/" style="font-weight:bold;color:#ffffff;text-decoration:none;">this week</a>&nbsp;&nbsp;&nbsp;</span></div>
+            <div class="header-content" style="-webkit-text-size-adjust:none;-ms-text-size-adjust:none;font-size:12px;color:#ffffff;"><a href="http://www.greenpag.es" style="font-weight:bold;color:#ffffff;text-decoration:none;">The Green Razor from greenpag.es</a><span class="hide">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
             <table class="w325" width="350" cellpadding="0" cellspacing="0" border="0">
                 <tbody><tr style="border-collapse:collapse;"><td class="w325" width="350" height="8" style="border-collapse:collapse;"></td></tr>
             </tbody></table>
