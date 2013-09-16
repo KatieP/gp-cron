@@ -63,7 +63,6 @@ function get_post_image($row) {
 	    $image_url = '';
 	}
 	
-
 	if ($row->_thumbnail_id != NULL && $row->post_type == 'gp_news') {
 	    $upload_url =    'http://www.greenpag.es/wp-content/uploads';
 	    $upload_year =   substr($row->post_date, 0, 4);
@@ -75,52 +74,52 @@ function get_post_image($row) {
 	        $s_f_name =   substr($f_name, 1, $dot_pos - 1);
 	        $url =        $upload_url . '/' . $upload_year . '/' . $upload_month . '/' . $s_f_name . '-110x110.jpg';
 	        $image_url =  'src="' . $url . '"';
-	    }  
+	    }
 	}
 	
 	if ( empty($image_url) && ($row->_thumbnail_id != NULL) && ($row->post_type != 'gp_news') ) {
 	    // Get url for featured image thumbnail from db
-	    $db_result =     get_featured_image_urls_from_db($row->post_author);
-        $data_set =      mysql_num_rows($db_result);
-        $i =             0;
-        $post_date_tr =  substr($row->post_date, 0, 11);
+	    $db_img_result =  get_featured_image_urls_from_db($row->post_author);
+            $data_set =       mysql_num_rows($db_result);
+            $i =              0;
+            $post_date_tr =   substr($row->post_date, 0, 11);
         
-        if ($data_set > 0) {
-            while ($i < $data_set) {
-        	    mysql_data_seek($db_result, $i);
-        		$new_row =           mysql_fetch_object($db_result);
-        		$new_post_date_tr =  substr($new_row->post_date, 0, 11);       		
-        		if ($post_date_tr == $new_post_date_tr) {
-            		$file_type =  substr($new_row->guid, -4);
+            if ($data_set > 0) {
+                while ($i < $data_set) {
+            	    mysql_data_seek($db_img_result, $i);
+        	    $new_row =           mysql_fetch_object($db_img_result);
+        	    $new_post_date_tr =  substr($new_row->post_date, 0, 11);       		
+        	    if ( ($post_date_tr == $new_post_date_tr) && ($row->post_author == $new_row->post_author) ) {
+            	        $file_type =  substr($new_row->guid, -4);
             		$len =        strlen($new_row->guid);
             		$f_name =     substr($new_row->guid, 0, $len - 4);
             		$s_f_name =   $f_name . '-110x110' . $file_type;
             		$image_url_img = 'img src="' . $s_f_name .'"';
-        		}
-        		$i++;
+        	    }
+        	    $i++;
+                }
             }
-        }
 	} elseif ( empty($image_url) ) {
 		// If image src is not found, then randomly show a cool image
 		$random_images = array();
 		$random_images = get_random_images();
 		$rand_keys =     array_rand($random_images, 2);
 		$image_url_img = 'img src='. $random_images[$rand_keys[0]];		
-    } else {
-        $image_url_img = 'img '. $image_url;
-    }
+        } else {
+            $image_url_img = 'img '. $image_url;
+        }
     
-    if ($row->post_type != 'gp_news') { 
-	echo PHP_EOL;
-	echo 'Post type: '. $row->post_type;
-	echo PHP_EOL;
-	echo $row->post_title . ' Final else $image_url_img:';
-	echo PHP_EOL;
-	var_dump($image_url_img);
-	echo PHP_EOL;
-    }
+        if ($row->post_type != 'gp_news') { 
+	    echo PHP_EOL;
+	    echo 'Post type: '. $row->post_type;
+	    echo PHP_EOL;
+	    echo $row->post_title . ' Final else $image_url_img:';
+	    echo PHP_EOL;
+	    var_dump($image_url_img);
+	    echo PHP_EOL;
+        }
 
-    return $image_url_img;
+        return $image_url_img;
 }
 
 function strip_non_utf_chars($string) {
@@ -271,7 +270,7 @@ function get_single_post($row) {
 
 function get_featured_image_urls_from_db($author_id) {
 
-	$sql = "SELECT post_date, post_title, guid
+	$sql = "SELECT post_date, post_author, post_title, guid
        		FROM wp_posts
 	        WHERE post_modified > DATE_SUB(CURDATE(), INTERVAL 3 WEEK)
 		    AND post_author = ' . $author_id . '
