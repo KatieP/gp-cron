@@ -112,7 +112,7 @@ function get_post_image($row) {
             $image_url_img = 'img '. $image_url;
         }
     
-        if ($row->post_type != 'gp_news') { 
+        
 	    echo PHP_EOL;
 	    echo 'Post type: '. $row->post_type;
 	    echo PHP_EOL;
@@ -120,7 +120,7 @@ function get_post_image($row) {
 	    echo PHP_EOL;
 	    var_dump($image_url_img);
 	    echo PHP_EOL;
-        }
+        
 
         return $image_url_img;
 }
