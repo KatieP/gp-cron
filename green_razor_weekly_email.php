@@ -174,7 +174,7 @@ function get_single_event($row, $show_country = false) {
 	$post_locality = $row->gp_google_geo_locality;
 	$post_country  = $row->gp_google_geo_country;
 	
-        $country_map =          get_country_map();
+    $country_map =          get_country_map();
 	$country_pretty_name =  $country_map[$post_country];	
 	$display_location =     ($show_country == false) ? $post_locality : $post_locality . ', ' . $country_pretty_name;
 	
