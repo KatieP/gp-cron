@@ -483,42 +483,42 @@ function get_events($user_id) {
 	$querystring_city =       ( !empty( $user_location_city ) )         ? $user_location_city                       : 'Sydney';
 	
 	$filterby_country =       ( !empty($querystring_country) ) ? ' AND m3.meta_value ="'. $querystring_country .'"' : '';
-    $filterby_state =         ( !empty($querystring_state) )   ? ' AND m4.meta_value ="'. $querystring_state .'"'  : '';
-    $filterby_city =          ( !empty($querystring_city) )    ? ' AND m6.meta_value ="'. $querystring_city .'"'   : '';
+	$filterby_state =         ( !empty($querystring_state) )   ? ' AND m4.meta_value ="'. $querystring_state .'"'  : '';
+	$filterby_city =          ( !empty($querystring_city) )    ? ' AND m6.meta_value ="'. $querystring_city .'"'   : '';
 	
    	$db_result = get_events_from_db($filterby_country, $filterby_state, $filterby_city);
    	
-    if (!$db_result){
-       echo PHP_EOL;
-       echo('Database error: ' . mysql_error());
-       echo PHP_EOL;
-    }
+	if (!$db_result){
+	   echo PHP_EOL;
+	   echo('Database error: ' . mysql_error());
+	   echo PHP_EOL;
+	}
    	
-    $data_set =  mysql_num_rows($db_result);
-
-    $i = 0;
-    $event_set = '';
-    $hr = '<hr style="padding-top:0px;padding-bottom:0px;padding-right:0px;padding-left:0px;margin-top:0px;margin-bottom:10px;margin-right:0;margin-left:0;"> ';
-
+	$data_set =  mysql_num_rows($db_result);
+    
+	$i = 0;
+	$event_set = '';
+	$hr = '<hr style="padding-top:0px;padding-bottom:0px;padding-right:0px;padding-left:0px;margin-top:0px;margin-bottom:10px;margin-right:0;margin-left:0;"> ';
+    
 	while ($i < $data_set) {
-
-        mysql_data_seek($db_result, $i);
-        $row =         mysql_fetch_object($db_result);
-        $event =       get_single_event($row);
-        
-        if ( ($i == 0) && (!empty($event)) ) {
-            $event_set .=    '<br />';
-	    $event_set .=    $hr;
-            $events_title =  get_heading('Events in ' . $querystring_city);
-            $event_set .=    $events_title . '<br />';
-            $event_set .=    $hr;
-            $event_set .=    $event . '<br />';
-        } elseif (!empty($event)) {
-            $event_set .=    $event . '<br />';
-        }
-
-        $i++;
-
+    
+		mysql_data_seek($db_result, $i);
+		$row =         mysql_fetch_object($db_result);
+		$event =       get_single_event($row);
+		
+		if ( ($i == 0) && (!empty($event)) ) {
+			$event_set .=    '<br />';
+			$event_set .=    $hr;
+			$events_title =  get_heading('Events in ' . $querystring_city);
+			$event_set .=    $events_title . '<br />';
+			$event_set .=    $hr;
+			$event_set .=    $event . '<br />';
+		} elseif (!empty($event)) {
+			$event_set .=    $event . '<br />';
+		}
+	
+		$i++;
+    
 	}
 	
 	$filterby_country =       ( !empty($querystring_country) ) ? ' AND m3.meta_value ="'.  $querystring_country .'"' : '';
