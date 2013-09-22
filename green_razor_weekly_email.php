@@ -655,15 +655,15 @@ function get_sorted_posts($post_type, $user_lat, $user_long) {
 	if ($data_set > 0) {
 	    switch ($post_type) {
 	        case 'gp_advertorial':
-	            $posts_set =  '<br />';
+	            $posts_set =   '<br />';
 	            $posts_set .=  $hr;
-	            $posts_set .= get_heading('Awesome Eco Friendly Products &amp; Services');
+	            $posts_set .=  get_heading('Awesome Eco Friendly Products &amp; Services');
 	            $posts_set .=  $hr;
 	            break;
 	        case 'gp_projects':
-	            $posts_set =  '<br />';
+	            $posts_set =   '<br />';
 	            $posts_set .=  $hr;
-	            $posts_set .= get_heading('Green Projects');
+	            $posts_set .=  get_heading('Green Projects');
 	            $posts_set .=  $hr;
 	            break;	            
 	    }
@@ -677,9 +677,9 @@ function get_sorted_posts($post_type, $user_lat, $user_long) {
 		$c = user_post_distance($row, $user_lat, $user_long);
 		$popularity_score_thisuser = page_rank($c, $row);
 
-		$post = get_single_post($row);
+		// $post = get_single_post($row);
 
-		$unsorted_posts[$popularity_score_thisuser] = $post;
+		$unsorted_posts[$popularity_score_thisuser] = $row;
 		$i++;
 
 	}
@@ -691,11 +691,12 @@ function get_sorted_posts($post_type, $user_lat, $user_long) {
 		$display_posts = array();
 		$display_posts = get_display_posts($unsorted_posts);
 	}
-	
+
 	$sorted_posts = ($post_type == 'gp_news') ? array_slice($display_posts, 0, 15, true) : $unsorted_posts;
 
 	foreach ($sorted_posts as $post) {
-    	    $posts_set .= $post . '<br />';
+		$this_post =  get_single_post($post);
+    	$posts_set .= $this_post . '<br />';
 	}
 	
 	return $posts_set;
