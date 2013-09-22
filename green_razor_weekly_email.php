@@ -42,9 +42,9 @@ function get_post_url($row) {
    	$post_type =     $row->post_type;
    	$post_name =     $row->post_name;
    	$post_type_map = array( "gp_news" => "news", 
-                                "gp_advertorial" => "eco-friendly-products", 
-                                "gp_projects" => "projects",
-				"gp_events" => "events");
+                            "gp_advertorial" => "eco-friendly-products", 
+                            "gp_projects" => "projects",
+				            "gp_events" => "events");
      	 					
         $post_url = "http://www.greenpag.es/" . $post_type_map[$post_type] . "/" . $post_name;
 	return $post_url;
@@ -351,7 +351,8 @@ function get_users() {
 
 	//Get user emails and their location
 	$sql_user = 'SELECT DISTINCT user_email, display_name, ID
-                     FROM   wp_users';
+				 FROM   wp_users
+				 WHERE  ID="3"';
 
 	$db_result = mysql_query($sql_user);
 
@@ -685,7 +686,13 @@ function get_sorted_posts($post_type, $user_lat, $user_long) {
 
 	krsort($unsorted_posts);
 	
-	$sorted_posts = ($post_type == 'gp_news') ? array_slice($unsorted_posts, 0, 15, true) : $unsorted_posts;
+	// Filter posts here to avoid duplicate authors
+	if ($post_type == 'gp_news') {
+		$display_posts = array();
+		$display_posts = get_display_posts($unsorted_posts);
+	}
+	
+	$sorted_posts = ($post_type == 'gp_news') ? array_slice($display_posts, 0, 15, true) : $unsorted_posts;
 
 	foreach ($sorted_posts as $post) {
     	    $posts_set .= $post . '<br />';
