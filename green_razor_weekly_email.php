@@ -351,8 +351,7 @@ function get_users() {
 
 	//Get user emails and their location
 	$sql_user = 'SELECT DISTINCT user_email, display_name, ID
-				 FROM   wp_users
-				 WHERE  ID="3"';
+				 FROM   wp_users';
 
 	$db_result = mysql_query($sql_user);
 
