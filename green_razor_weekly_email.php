@@ -709,10 +709,9 @@ function get_create_post_links() {
 	
 	$create_post_links =   '<br />';
 	$create_post_links .=  $hr;
-	$create_post_links .=  get_heading('Post My Event on greenpag.es', '/forms/create-event-post/');
-	$create_post_links .=  get_heading('Post My Project on greenpag.es', '/forms/create-project-post/');
-	$create_post_links .=  get_heading('Promote My Products/Services on greenpag.es', '/eco-friendly-products/');
-	$create_post_links .=  $hr;
+	$create_post_links .=  get_heading('Post my Event on greenpag.es', '/forms/create-event-post/');
+	$create_post_links .=  get_heading('Post my Project on greenpag.es', '/forms/create-project-post/');
+	$create_post_links .=  get_heading('Promote my Awesome Products/Services on greenpag.es', '/eco-friendly-products/');
 	
 	return $create_post_links;
 }
