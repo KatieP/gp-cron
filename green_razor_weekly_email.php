@@ -143,15 +143,18 @@ function strip_non_utf_chars($string) {
     return $clean_string;
 }
 
-function get_heading($heading) {
+function get_heading($heading, $link_uri = '') {
     
+	$open_a =       (!empty($link_uri)) ? '<a href="http://www.greenpag.es' . $link_uri .'">' : '';
+	$close_a =      (!empty($link_uri)) ? '</a>' : '';
+	
     $title        = '<!-- HEADING -->
                      <table class="w580" width="580" cellpadding="0" cellspacing="0" border="0">
                          <tbody>
                              <tr style="border-collapse:collapse;">
                                  <td class="w580" width="580" style="border-collapse:collapse;">
                                      <p align="left" class="article-title" style="font-size:18px;line-height:24px;color:#787878;font-weight:bold;margin-top:0px;margin-bottom:8px;font-family:Arial, Helvetica, sans-serif;">
-                                         ' . $heading . '
+                                         ' . $open_a . $heading . $close_a . '
                                      </p>
                                  </td>
                              </tr>
@@ -351,7 +354,8 @@ function get_users() {
 
 	//Get user emails and their location
 	$sql_user = 'SELECT DISTINCT user_email, display_name, ID
-				 FROM   wp_users';
+				 FROM   wp_users
+				 WHERE  ID="3"';
 
 	$db_result = mysql_query($sql_user);
 
@@ -479,12 +483,12 @@ function get_events($user_id) {
 	// set location query strings based on user location
 	
 	$querystring_country =    ( !empty( $user_country ) )               ? $user_country                             : 'AU';
-        $querystring_state =      ( !empty( $user_location_state ) )        ? strtoupper( $user_location_state )        : 'NSW';
+    $querystring_state =      ( !empty( $user_location_state ) )        ? strtoupper( $user_location_state )        : 'NSW';
 	$querystring_city =       ( !empty( $user_location_city ) )         ? $user_location_city                       : 'Sydney';
 	
 	$filterby_country =       ( !empty($querystring_country) ) ? ' AND m3.meta_value ="'. $querystring_country .'"' : '';
-	$filterby_state =         ( !empty($querystring_state) )   ? ' AND m4.meta_value ="'. $querystring_state .'"'  : '';
-	$filterby_city =          ( !empty($querystring_city) )    ? ' AND m6.meta_value ="'. $querystring_city .'"'   : '';
+	$filterby_state =         ( !empty($querystring_state) )   ? ' AND m4.meta_value ="'. $querystring_state .'"'   : '';
+	$filterby_city =          ( !empty($querystring_city) )    ? ' AND m6.meta_value ="'. $querystring_city .'"'    : '';
 	
    	$db_result = get_events_from_db($filterby_country, $filterby_state, $filterby_city);
    	
@@ -522,8 +526,8 @@ function get_events($user_id) {
 	}
 	
 	$filterby_country =       ( !empty($querystring_country) ) ? ' AND m3.meta_value ="'.  $querystring_country .'"' : '';
-        $filterby_state =         ( !empty($querystring_state) )   ? ' AND m4.meta_value ="'.  $querystring_state .'"'  : '';
-        $filterby_city =          ( !empty($querystring_city) )    ? ' AND m6.meta_value !="'. $querystring_city .'"'   : '';
+    $filterby_state =         ( !empty($querystring_state) )   ? ' AND m4.meta_value ="'.  $querystring_state .'"'  : '';
+    $filterby_city =          ( !empty($querystring_city) )    ? ' AND m6.meta_value !="'. $querystring_city .'"'   : '';
 	
    	$db_result = get_events_from_db($filterby_country, $filterby_state, $filterby_city);
    	
@@ -599,8 +603,8 @@ function get_events($user_id) {
 	}
 	
 	$filterby_country =      ( !empty($querystring_country) ) ? ' AND m3.meta_value !="'. $querystring_country .'"' : '';
-        $filterby_state =        '';
-        $filterby_city =         '';	
+    $filterby_state =        '';
+    $filterby_city =         '';	
 
    	$db_result = get_events_from_db($filterby_country, $filterby_state, $filterby_city);
    	
@@ -676,8 +680,6 @@ function get_sorted_posts($post_type, $user_lat, $user_long) {
 		$c = user_post_distance($row, $user_lat, $user_long);
 		$popularity_score_thisuser = page_rank($c, $row);
 
-		// $post = get_single_post($row);
-
 		$unsorted_posts[$popularity_score_thisuser] = $row;
 		$i++;
 
@@ -701,6 +703,20 @@ function get_sorted_posts($post_type, $user_lat, $user_long) {
 	return $posts_set;
 }
 
+function get_create_post_links() {
+
+	$hr = '<hr style="padding-top:0px;padding-bottom:0px;padding-right:0px;padding-left:0px;margin-top:0px;margin-bottom:10px;margin-right:0;margin-left:0;"> ';
+	
+	$create_post_links =   '<br />';
+	$create_post_links .=  $hr;
+	$create_post_links .=  get_heading('Post My Event on greenpag.es', '/forms/create-event-post/');
+	$create_post_links .=  get_heading('Post My Project on greenpag.es', '/forms/create-project-post/');
+	$create_post_links .=  get_heading('Promote My Products/Services on greenpag.es', '/eco-friendly-products/');
+	$create_post_links .=  $hr;
+	
+	return $create_post_links;
+}
+
 function get_posts($user_lat, $user_long) {
     
     $posts_set =    '';
@@ -716,6 +732,9 @@ function get_posts($user_lat, $user_long) {
     // Get projects
     $post_type =   'gp_projects';
     $posts_set .=  get_sorted_posts($post_type, $user_lat, $user_long);
+
+    // Create post links
+	$posts_set .= get_create_post_links();
 	
     return $posts_set;
 }
