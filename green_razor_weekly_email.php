@@ -791,7 +791,7 @@ function send_email_notification($user_email, $posts_set, $events_set) {
   curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
   curl_setopt($ch, CURLOPT_URL, 'https://api.mailgun.net/v2/greenpag.es/messages');
   
-  curl_setopt($ch, CURLOPT_POSTFIELDS, array('from' => 'hello@greenpag.es',
+  curl_setopt($ch, CURLOPT_POSTFIELDS, array('from' => 'greenrazor@greenpag.es',
                                              'to' => $user_email,
                                              'subject' => 'Green Razor: Look who\'s changing the world around you this week!',
                                              'text' => 'Some text',
